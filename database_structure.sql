@@ -1,18 +1,17 @@
 CREATE TABLE Roles(
-  id INTEGER PRIMARY KEY NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   description TEXT
 );
 CREATE TABLE Teams(
-  id UUID PRIMARY KEY NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   description TEXT
 );
 CREATE TABLE Users(
-  id UUID PRIMARY KEY NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
   username TEXT NOT NULL,
-  user_role INTEGER REFERENCES Roles NOT NULL,
-  user_team UUID REFERENCES Teams,
+  user_role SERIAL REFERENCES Roles NOT NULL,
   password_hash TEXT NOT NULL,
   name TEXT NOT NULL,
   email TEXT,
@@ -20,18 +19,18 @@ CREATE TABLE Users(
 );
 CREATE TABLE Permissions(
   task TEXT PRIMARY KEY NOT NULL,
-  needed_role INTEGER REFERENCES Roles NOT NULL
+  needed_role SERIAL REFERENCES Roles NOT NULL
 );
 CREATE TABLE Projects(
-  id UUID PRIMARY KEY NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT [],
   added_on TIMESTAMP NOT NULL
 );
 CREATE TABLE Features(
-  id UUID PRIMARY KEY NOT NULL,
-  project_id UUID REFERENCES Projects NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
+  project_id SERIAL REFERENCES Projects NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT [],
@@ -41,9 +40,9 @@ CREATE TABLE Features(
   ready TIMESTAMP
 );
 CREATE TABLE Tasks(
-  id UUID PRIMARY KEY NOT NULL,
-  feature_id UUID REFERENCES Features NOT NULL,
-  assignee UUID REFERENCES Users NOT NULL,
+  id SERIAL PRIMARY KEY NOT NULL,
+  feature_id SERIAL REFERENCES Features NOT NULL,
+  assignee SERIAL REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT [],
@@ -52,4 +51,16 @@ CREATE TABLE Tasks(
   priority INTEGER,
   time_spent FLOAT,
   ready TIMESTAMP
+);
+CREATE TABLE Comments(
+  id SERIAL PRIMARY KEY NOT NULL,
+  feature_id SERIAL REFERENCES Features,
+  task_id SERIAL REFERENCES Tasks,
+  comment TEXT NOT NULL,
+  assignee SERIAL REFERENCES Users,
+  added_on TIMESTAMP NOT NULL
+);
+CREATE TABLE Teamsusers(
+  user_id SERIAL NOT NULL,
+  team_id SERIAL NOT NULL
 );
