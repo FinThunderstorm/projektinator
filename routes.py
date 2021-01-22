@@ -9,6 +9,60 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/projects")
+def list_projects():
+    projects = queries.get_project()
+    return render_template("projects.html", projects=projects)
+
+
+@app.route("/projects/new", methods=["GET", "POST"])
+def new_project():
+    if request.method == "GET":
+        return render_template("projects_new.html")
+    if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
+        name = request.form["name"]
+        description = request.form["description"]
+        flags = request.form["flags"]
+        if queries.add_project(name, description, flags):
+            return redirect("/projects")
+        else:
+            return "error"
+
+
+@app.route("/projects/remove/<int:id>", methods=["POST"])
+def remove_project(id):
+    if session["token"] != request.form["token"]:
+        abort(403)
+    if queries.remove_project(id):
+        return redirect("/projects")
+    else:
+        return "error"
+
+
+@app.route("/projects/<int:id>", methods=["GET", "POST"])
+def update_project(id):
+    if request.method == "GET":
+        project = queries.get_project(id)
+        if project == None:
+            return redirect("/projects")
+        else:
+            return render_template("project_info.html", project=project)
+    if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
+        name = request.form["name"]
+        description = request.form["description"]
+        flags = request.form["flags"]
+        added_on = request.form["added_on"]
+        print('project_id', id)
+        if queries.update_project(id, name, description, flags, added_on):
+            return redirect("/projects/" + id)
+        else:
+            return "error"
+
+
 @app.route("/login", methods=["POST"])
 def login():
     username = request.form["username"]
@@ -36,7 +90,7 @@ def users():
     return render_template("settings_users.html", users=users)
 
 
-@app.route("/settings/users/modify/<id>", methods=["GET", "POST"])
+@app.route("/settings/users/modify/<int:id>", methods=["GET", "POST"])
 def modify_user(id):
     if request.method == "GET":
         user = queries.find_user(id)
@@ -52,14 +106,13 @@ def modify_user(id):
         name = request.form["name"]
         email = request.form["email"]
         user_role = request.form["user_role"]
-        print('user_id', id)
         if queries.update_user(id, username, user_role, password, name, email):
             return redirect("/settings/users/modify/" + id)
         else:
             return "error"
 
 
-@app.route("/settings/users/remove/<id>", methods=["POST"])
+@app.route("/settings/users/remove/<int:id>", methods=["POST"])
 def remote_user(id):
     if session["token"] != request.form["token"]:
         abort(403)

@@ -16,7 +16,7 @@
 
   <h1>Käyttäjän {{ user[1] }} asetukset</h1>
   <form action="/settings/users/modify/{{ user[0] }}" method="POST">
-    <input type="hidden" name="id" value="{{ user[0] }}"
+    <input type="hidden" name="id" value="{{ user[0] }}" />
     <div>Nimi: <input type="text" name="name" value="{{ user[1] }}" /></div>
     <div>Käyttäjänimi: <input type="text" name="username" value="{{ user[2] }}" /></div>
     <div>Sähköposti: <input type="text" name="email" value="{{ user[3] }}" /></div>
@@ -28,5 +28,5 @@
     <input type="submit" name="save" value="Tallenna" />
   </form> 
   <br>
-  <form action="/settings/users/remove/{{ user[0] }}" type="GET"><input type="submit" value="Poista käyttäjä"/></form>
+  <form action="/settings/users/remove/{{ user[0] }}" method="POST"><input type="hidden" name="token" value={{ session.token }} /><input type="submit" value="Poista käyttäjä"/></form>
 {% endblock %}

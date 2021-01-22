@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Projektit{% endblock %}
+{% block content %}
+  <h1>Projektit</h1>
+    {% for project in projects %}
+      <p>{{ project }}</p><form action="/projects/{{ project[0] }}" method="GET"><input type="submit" value="Katso lisää"/></form>
+    {% endfor %}
+  </table>
+{% endblock %}

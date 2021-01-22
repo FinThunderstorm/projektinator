@@ -1,6 +1,62 @@
 from db import db
+from datetime import datetime
 from uuid import uuid4
 from werkzeug.security import generate_password_hash, check_password_hash
+
+
+def add_project(name, description, flags):
+    sql = "INSERT INTO Projects (name, description, flags, added_on) VALUES (:name, :description, :flags, :added_on)"
+    values = {
+        "name": name,
+        "description": description,
+        "flags": flags,
+        "added_on": datetime.now()
+    }
+    try:
+        db.session.execute(sql, values)
+        db.session.commit()
+        return True
+    except Exception as error:
+        print('>', error)
+        return False
+
+
+def get_project(id=None):
+    if id == None:
+        sql = "SELECT * FROM Projects"
+        result = db.session.execute(sql)
+        return result.fetchall()
+    else:
+        sql = "SELECT * FROM Projects WHERE id=:id"
+        result = db.session.execute(sql, {"id": id})
+        return result.fetchone()
+
+
+def remove_project(id):
+    sql = "DELETE FROM Projects WHERE id=:id"
+    try:
+        db.session.execute(sql, {"id": id})
+        db.session.commit()
+        return True
+    except:
+        return False
+
+
+def update_project(id, name, description, flags, added_on):
+    sql = "UPDATE Projects SET name=:name, description=:description, flags=:flags, added_on=:added_on WHERE id=:id"
+    values = {
+        "name": name,
+        "description": description,
+        "flags": flags,
+        "added_on": added_on,
+        "id": id
+    }
+    try:
+        db.session.execute(sql, values)
+        db.session.commit()
+        return True
+    except:
+        return False
 
 
 def add_role(name):

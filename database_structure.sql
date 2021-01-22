@@ -25,7 +25,7 @@ CREATE TABLE Projects(
   id SERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT [],
+  flags TEXT,
   added_on TIMESTAMP NOT NULL
 );
 CREATE TABLE Features(
@@ -33,7 +33,7 @@ CREATE TABLE Features(
   project_id SERIAL REFERENCES Projects NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT [],
+  flags TEXT,
   status TEXT,
   priority INTEGER,
   added_on TIMESTAMP NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE Tasks(
   assignee SERIAL REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT [],
+  flags TEXT,
   status TEXT,
   added_on TIMESTAMP NOT NULL,
   priority INTEGER,

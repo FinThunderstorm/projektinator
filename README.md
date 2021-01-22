@@ -49,7 +49,7 @@ Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 | Kehitysympäristö ja automatisoitu Herokuun vienti                            | ✅      |
 | Tietokannan suunnittelu / 1. versio                                          | ✅      |
 | Käyttäjänhallinnan vaatimat SQL-komennot Python-funktioihin käärittynä       | ✅      |
-| Projektin hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä      | ❌      |
+| Projektin hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä      | 🏃      |
 | Ominaisuuksien hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä | ❌      |
 | Tehtävien hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä      | ❌      |
 | Pääsivu                                                                      | ❌      |
@@ -57,8 +57,8 @@ Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 | Kommentoinnin vaatimat SQL-komennot Python-funktioihin käärittyinä           | ❌      |
 | Pääsivu / henkilökohtainen työpöytä                                          | ❌      |
 | Kirjautumissivu + rekisteröitymislomake                                      | ❌      |
-| Listaus projekteista                                                         | ❌      |
-| Projektin sivu                                                               | ❌      |
+| Listaus projekteista                                                         | 🏃      |
+| Projektin sivu                                                               | 🏃      |
 | Ominaisuuden sivu                                                            | ❌      |
 | Tehtävän sivu                                                                | ❌      |
 | Tiimien hallinta                                                             | ❌      |

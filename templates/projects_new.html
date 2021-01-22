@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Uusi projekti{% endblock %}
+{% block content %}
+  <h1>Uusi projekti</h1>
+  <form action="/projects/new" method="POST">
+    Nimi: <input type="text" name="name" /><br />
+    Kuvaus: <input type="text" name="description" /><br />
+    Tunnisteet: <input type="text" name="flags" /><br />
+    <input type="hidden" name="token" value="{{ session.token }}" />
+    <input type="submit" value="Lähetä" />
+  </form>
+{% endblock %}
