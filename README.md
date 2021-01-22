@@ -26,6 +26,9 @@ Sivurakenne:
 - Tiimien hallinta
 - Hallintasivu, josta voi hallita asennuksen oikeuksia ja käyttäjien asetuksia.
 
+Testaustunnukset:
+Pääkäyttäjä: admin/admin
+
 ## Tech stack
 
 - Python & Flask
@@ -63,6 +66,7 @@ Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 | Mahdollisuus heittää virheilmoituksia                                        | ❌      |
 | Profiilikuvan lisäämismahdollisuus                                           | ❌      |
 | Ulkoasu                                                                      | ❌      |
+|                                                                              | ❌      |
 
 ## Projektin aikana tapahtunutta tulevaisuuden varalle muistiin
 

@@ -4,7 +4,6 @@ import os
 from werkzeug.security import generate_password_hash
 load_dotenv()
 
-<<<<<<< HEAD
 print('Starting release check')
 database_url = os.getenv("DATABASE_URL")
 if database_url == None:
@@ -12,12 +11,6 @@ if database_url == None:
     database_url = os.environ["DATABASE_URL"]
 
 db_conn = psycopg2.connect(database_url)
-=======
-database_url = "sd"
-print('Starting release check')
-
-db_conn = psycopg2.connect(os.getenv("DATABASE_URL"))
->>>>>>> 8acb7d42b813f965ea170ed21f786f10c215e623
 db = db_conn.cursor()
 
 #lets check if role admin exists

@@ -23,7 +23,7 @@ def add_team(name):
 
 def login(username, password):
     sql = "SELECT id, password_hash FROM Users WHERE username=:username"
-    result = db.session.execute(sql, {"username": username})
+    result = db.session.execute(sql, {"username": username.lower()})
     user = result.fetchone()
     if user == None:
         return None
@@ -49,7 +49,7 @@ def add_user(username, password, name, email, user_role):
     password_hash = generate_password_hash(password)
     user_role = int(user_role)
     values = {
-        "username": username,
+        "username": username.lower(),
         "user_role": user_role,
         "password_hash": password_hash,
         "name": name,
@@ -82,7 +82,7 @@ def update_user(id, username, user_role, password, name, email):
         password_hash = generate_password_hash(password)
         sql = "UPDATE Users SET username=:username, user_role=:user_role, password_hash=:password_hash, name=:name, email=:email WHERE id=:id"
         values = {
-            "username": username,
+            "username": username.lower(),
             "user_role": user_role,
             "password_hash": password_hash,
             "name": name,
@@ -98,7 +98,7 @@ def update_user(id, username, user_role, password, name, email):
     else:
         sql = "UPDATE Users SET username=:username, user_role=:user_role, name=:name, email=:email WHERE id=:id"
         values = {
-            "username": username,
+            "username": username.lower(),
             "user_role": user_role,
             "name": name,
             "email": email,
