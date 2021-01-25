@@ -2,8 +2,10 @@
 <html>
   <head>
     <title>Projektinator - {% block title %}{% endblock %}</title>
+    <script src="{{ url_for('static', filename='notification.js')}}"></script>
   </head>
   <body>
+
     <!--Navigointi-->
     <div class="navbar">
       <h1>Projektinator</h1>
@@ -12,6 +14,13 @@
     <!--Sivun sisöltö-->
     {% if session.user %}
     <div class="content">
+      {% with notifications = get_flashed_messages(with_categories=true) %} 
+        {% if notifications %}
+          {% for type, notification in notifications %}
+            <div class="{{ type }}" name="notification">HOX! {{ notification }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
       {% block content %}{% endblock %}
     </div>
     {% else %}

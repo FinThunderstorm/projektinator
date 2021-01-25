@@ -63,7 +63,7 @@ Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 | Tehtävän sivu                                                                | ❌      |
 | Tiimien hallinta                                                             | ❌      |
 | Hallintasivu                                                                 | ❌      |
-| Mahdollisuus heittää virheilmoituksia = better errors pls                    | ❌      |
+| Mahdollisuus heittää virheilmoituksia = better errors pls                    | 🏃      |
 | Profiilikuvan lisäämismahdollisuus                                           | ❌      |
 | Ulkoasu                                                                      | ❌      |
 |                                                                              | ❌      |

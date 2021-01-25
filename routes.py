@@ -1,11 +1,12 @@
 from app import app
 import os
-from flask import redirect, render_template, request, session, abort
+from flask import redirect, render_template, request, session, abort, flash
 import queries
 
 
 @app.route("/")
 def index():
+    flash("Hello world!", "error")
     return render_template("index.html")
 
 
@@ -26,24 +27,34 @@ def new_project():
         description = request.form["description"]
         flags = request.form["flags"]
         if queries.add_project(name, description, flags):
+            flash("Uusi projekti " + name + " lisätty onnistuneesti.",
+                  "success")
             return redirect("/projects")
         else:
-            return "error"
+            flash("Virhe lisättäessä uutta projektia, yritä uudelleen.",
+                  "error")
+            return redirect("/projects")
 
 
 @app.route("/projects/remove/<int:id>", methods=["POST"])
 def remove_project(id):
     if session["token"] != request.form["token"]:
         abort(403)
+    if id == None:
+        flash("Virhe poistettaessa projektia, yritä uudelleen.", "error")
+        return redirect("/projects")
     if queries.remove_project(id):
         return redirect("/projects")
     else:
-        return "error"
+        flash("Virhe poistettaessa projektia, yritä uudelleen.", "error")
+        return redirect("/projects")
 
 
 @app.route("/projects/<int:id>", methods=["GET", "POST"])
 def update_project(id):
     if request.method == "GET":
+        if id == None:
+            return "error"
         project = queries.get_project(id)
         if project == None:
             return redirect("/projects")
@@ -56,11 +67,12 @@ def update_project(id):
         description = request.form["description"]
         flags = request.form["flags"]
         added_on = request.form["added_on"]
-        print('project_id', id)
         if queries.update_project(id, name, description, flags, added_on):
-            return redirect("/projects/" + id)
+            flash("Projekti " + name + " päivitetty onnistuneesti.", "success")
+            return redirect("/projects/" + str(id))
         else:
-            return "error"
+            flash("Virhe päivitettäessä projektia, yritä uudelleen.", "error")
+            return redirect("/projects" + str(id))
 
 
 @app.route("/login", methods=["POST"])
@@ -70,7 +82,8 @@ def login():
 
     result = queries.login(username, password)
     if result == None:
-        return "error"
+        flash("Annettu käyttäjätunnus tai salasana on virheellinen.", "error")
+        return redirect("/")
     else:
         session["user"] = result
         session["token"] = os.urandom(16).hex()
@@ -93,11 +106,15 @@ def users():
 @app.route("/settings/users/modify/<int:id>", methods=["GET", "POST"])
 def modify_user(id):
     if request.method == "GET":
-        user = queries.find_user(id)
-        if user != None:
-            return render_template("settings_users_modify.html", user=user)
-        else:
+        if id == None:
+            flash("Etsittyä käyttäjää ei löydy.", "error")
             return redirect("/settings/users")
+        user = queries.find_user(id)
+        if user == None:
+            flash("Etsittyä käyttäjää ei löydy.", "error")
+            return redirect("/settings/users")
+        else:
+            return render_template("settings_users_modify.html", user=user)
     if request.method == "POST":
         if session["token"] != request.form["token"]:
             abort(403)
@@ -107,19 +124,28 @@ def modify_user(id):
         email = request.form["email"]
         user_role = request.form["user_role"]
         if queries.update_user(id, username, user_role, password, name, email):
-            return redirect("/settings/users/modify/" + id)
+            flash("Käyttäjän " + name + " tiedot päivitetty onnistuneesti.",
+                  "success")
+            return redirect("/settings/users/modify/" + str(id))
         else:
-            return "error"
+            flash("Käyttäjän tietojen päivittämisessä tapahtui virhe.",
+                  "error")
+            return redirect("/settings/users/modify/" + str(id))
 
 
 @app.route("/settings/users/remove/<int:id>", methods=["POST"])
 def remote_user(id):
     if session["token"] != request.form["token"]:
         abort(403)
+    if id == None:
+        flash("Virhe poistettaessa käyttäjää.", "error")
+        return redirect("/settings/users")
     if queries.remove_user(id):
+        flash("Käyttäjä poistettu onnistuneesti.", "success")
         return redirect("/settings/users")
     else:
-        return "error"
+        flash("Virhe poistettaessa käyttäjää.", "error")
+        return redirect("/settings/users")
 
 
 @app.route("/settings/users/register", methods=["GET", "POST"])
@@ -135,6 +161,9 @@ def register():
         email = request.form["email"]
         user_role = int(request.form["user_role"])
         if queries.add_user(username, password, name, email, user_role):
+            flash("Uusi käyttäjä " + name + " lisätty onnistuneesti.",
+                  "success")
             return redirect("/settings/users")
         else:
-            return "error"
+            flash("Käyttäjää lisättäessä tapahtui virhe.", "error")
+            return redirect("/settings/users")
