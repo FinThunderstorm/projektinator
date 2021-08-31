@@ -8,7 +8,7 @@
 	"workspaceFolder": "/workspace",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash",
+		"terminal.integrated.shell.linux": "/bin/zsh",
 		"sqltools.connections": [
 			{
 				"name": "Container database",
@@ -39,7 +39,9 @@
 	"extensions": [
 		"ms-python.python",
 		"mtxr.sqltools",
-		"mtxr.sqltools-driver-pg"
+		"mtxr.sqltools-driver-pg",
+		"njpwerner.autodocstring",
+		"yutent.scss-to-css"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
@@ -47,7 +49,8 @@
 		5432
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install --user -r requirements.txt",
+	// "postCreateCommand": "pip install --user -r requirements.txt",
+	"postCreateCommand": "curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - && . $HOME/.poetry/env && poetry install",
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"
 }

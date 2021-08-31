@@ -1,6 +1,6 @@
 # [Choice] Python version: 3, 3.8, 3.7, 3.6
-ARG VARIANT=3
-FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
+ARG VARIANT=3.9
+FROM mcr.microsoft.com/vscode/devcontainers/python:${VARIANT}
 
 ENV PYTHONUNBUFFERED 1
 
@@ -24,6 +24,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
      && apt-get -y install --no-install-recommends postgresql
 
 RUN curl https://cli-assets.heroku.com/install.sh | sh
+
+# RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 
 

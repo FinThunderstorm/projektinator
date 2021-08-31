@@ -1,36 +1,39 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE Roles(
   id SERIAL PRIMARY KEY NOT NULL,
   name TEXT NOT NULL,
   description TEXT
 );
 CREATE TABLE Teams(
-  id SERIAL PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   name TEXT NOT NULL,
   description TEXT
 );
 CREATE TABLE Users(
-  id SERIAL PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   username TEXT NOT NULL,
   user_role SERIAL REFERENCES Roles NOT NULL,
   password_hash TEXT NOT NULL,
-  name TEXT NOT NULL,
+  firstname TEXT NOT NULL,
+  lastname TEXT NOT NULL,
   email TEXT,
-  profile_image TEXT
+  profile_image TEXT,
+  UNIQUE(username)
 );
 CREATE TABLE Permissions(
   task TEXT PRIMARY KEY NOT NULL,
   needed_role SERIAL REFERENCES Roles NOT NULL
 );
 CREATE TABLE Projects(
-  id SERIAL PRIMARY KEY NOT NULL,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
   added_on TIMESTAMP NOT NULL
 );
 CREATE TABLE Features(
-  id SERIAL PRIMARY KEY NOT NULL,
-  project_id SERIAL REFERENCES Projects NOT NULL,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  project_id uuid REFERENCES Projects NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
@@ -40,9 +43,9 @@ CREATE TABLE Features(
   ready TIMESTAMP
 );
 CREATE TABLE Tasks(
-  id SERIAL PRIMARY KEY NOT NULL,
-  feature_id SERIAL REFERENCES Features NOT NULL,
-  assignee SERIAL REFERENCES Users NOT NULL,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  feature_id uuid REFERENCES Features NOT NULL,
+  assignee uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
@@ -53,14 +56,14 @@ CREATE TABLE Tasks(
   ready TIMESTAMP
 );
 CREATE TABLE Comments(
-  id SERIAL PRIMARY KEY NOT NULL,
-  feature_id SERIAL REFERENCES Features,
-  task_id SERIAL REFERENCES Tasks,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  feature_id uuid REFERENCES Features,
+  task_id uuid REFERENCES Tasks,
   comment TEXT NOT NULL,
-  assignee SERIAL REFERENCES Users,
+  assignee uuid REFERENCES Users,
   added_on TIMESTAMP NOT NULL
 );
 CREATE TABLE Teamsusers(
-  user_id SERIAL NOT NULL,
-  team_id SERIAL NOT NULL
+  user_id uuid NOT NULL,
+  team_id uuid NOT NULL
 );

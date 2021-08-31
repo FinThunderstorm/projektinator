@@ -10,7 +10,7 @@ Tarkoitus on toteuttaa projektinhallintatyökalu, jolla voidaan seurata projekti
 Käyttäjätasoja on kolme:
 
 - admin = käyttöoikeus kaikkeen
-- leader = peruskäyttäjä, mutta pystyy hallitsemaan tiimejä
+- leader = peruskäyttäjä, joka pystyy hallinnoimaan projektien asetuksia
 - user = peruskäyttäjä
 
 Sovelluksella voi luoda projekteja. Projekti voi sisältää useita erilaisia ominaisuuksia. Ominaisuudet voi sisältää erilaisia tehtäviä. Tehtäville voidaan antaa kuvaus, mitä pitää tehdä ja merkitä kauan siihen on käytetty aikaa. Tehtäville, ominaisuuksille ja projekteille voi antaa erilaisia lippuja kuvaamaan niiden luonnetta ja tehtäviä sekä ominaisuuksia voi kommentoida = kerätä tietoa edistymisestä. Tehtäville ja ominaisuuksille voi antaa kiireellisyysluokituksen. Ominaisuuksia ja tehtäviä voidaan seurata ns. **dashboardin** avulla projektikohtaisesti.
@@ -67,6 +67,13 @@ Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 | Profiilikuvan lisäämismahdollisuus                                           | ❌      |
 | Ulkoasu                                                                      | ❌      |
 |                                                                              | ❌      |
+
+## Tyylittely
+
+- Logo: öljylamppu: <https://publicdomainvectors.org/en/free-clipart/Oil-lamp-image/71630.html>, fontti: <https://ianbarnard.co/products/montebello-cursive-script-typeface>
+- Taustakuva-kirjautuminen: <https://www.pexels.com/fi-fi/kuva/ihmiset-kuppi-muki-toissa-3183150>, Kuvaaja fauxels palvelusta Pexels
+- Taustaväri-tumma: #780252, korostusväri-kirkas: #FF0064
+- Käytetty kirjasto: Bulma & scss-installaatio
 
 ## Projektin aikana tapahtunutta tulevaisuuden varalle muistiin
 

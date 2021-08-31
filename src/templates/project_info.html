@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}Projekti {{ project[1]}} {% endblock %}
+{% block content %}
+  <h1>Projekti {{ project[1] }}</h1>
+  <form action="/projects/{{ project[0] }}" method="POST">
+    <input type="hidden" name="id" value="{{ project[0] }}" />
+    <div>Nimi: <input type="text" name="name" value="{{ project[1] }}" /></div>
+    <div>Kuvaus: <input type="text" name="description" value="{{ project[2] }}" /></div>
+    <div>Tunnisteet: <input type="text" name="flags" value="{{ project[3] }}" /></div>
+    <div>Lisätty: {{ project[4] }} <input type="hidden" name="added_on" value="{{ project[4] }}" /></div>
+    <input type="hidden" name="token" value="{{ session.token }}" />
+    <input type="submit" name="save" value="Tallenna" />
+  </form> 
+  <br>
+  <form action="/projects/remove/{{ project[0] }}" method="POST"><input type="hidden" name="token" value={{ session.token }} /><input type="submit" value="Poista projekti"/></form>
+
+  <div class="columns">
+    <div class="column is-one-quarter is-primary">is-one-quarter</div>
+    <div class="column is-success">Auto</div>
+    <div class="column is-danger">Auto</div>
+  </div>
+{% endblock %}
