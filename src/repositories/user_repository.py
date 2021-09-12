@@ -168,7 +168,6 @@ class UserRepository:
             db.session.execute(sql, {"id": uid})
             db.session.commit()
         except Exception as error:
-            print(error)
             raise DatabaseException('user remove') from error
 
 

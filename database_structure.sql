@@ -50,10 +50,10 @@ CREATE TABLE Tasks(
   description TEXT,
   flags TEXT,
   status TEXT,
-  added_on TIMESTAMP NOT NULL,
+  type TEXT,
   priority INTEGER,
-  time_spent FLOAT,
-  ready TIMESTAMP
+  created TIMESTAMP NOT NULL,
+  updated_on TIMESTAMP
 );
 CREATE TABLE Comments(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),

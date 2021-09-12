@@ -1,109 +1,123 @@
 <!DOCTYPE html>
 <html>
-  {% macro title() %}
-    {% block title %}{% endblock %}
-  {% endmacro %}
+{% macro title() %}
+{% block title %}{% endblock %}
+{% endmacro %}
 
-  <head>
-    <title>Projektinator - {{ title() }}</title>
-    <script src="{{ url_for('static', filename='notification.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body>
+<head>
+  <title>Projektinator - {{ title() }}</title>
+  <script src="{{ url_for('static', filename='notification.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 
-    
-    <!--Sivun sisöltö-->
-    {% if session.user %}
-    <!--Navigointi-->
-    <nav class="navbar is-large is-primary" role="navigation" aria-label="Päävalikko">
-      <div class="navbar-brand">
-        <a class="navbar-item is-large" href="/">
-          <img class="image" src="{{ url_for('static', filename='media/logo_valkoinen.svg') }}" width="100" height="50">
-        </a>
-    
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainmenu">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-      <div id="mainmenu" class="navbar-menu">
-        <div class="navbar-start">
-          <a class="navbar-link is-arrowless" href="/projects">Projektit</a>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">Asetukset</a>
-            <div class="navbar-dropdown is-white">
-              <a class="navbar-link is-arrowless is-white">Käyttäjähallinta</a>
-              <a class="navbar-link is-arrowless is-white">Projektien hallinta</a>
-              <a class="navbar-link is-arrowless is-white">Järjestelmäasetukset</a>
-            </div>
-          </div>
+<body>
 
-        </div>
-        <div class="navbar-end">
-          <div class="buttons">
-            <a class="button is-primary" href="/logout"><strong>Kirjaudu ulos</strong></a>
+
+  <!--Sivun sisöltö-->
+  {% if session.user %}
+  <!--Navigointi-->
+  <nav class="navbar is-large is-primary" role="navigation" aria-label="Päävalikko">
+    <div class="navbar-brand">
+      <a class="navbar-item is-large" href="/">
+        <img class="image" src="{{ url_for('static', filename='media/logo_valkoinen.svg') }}" width="100" height="50">
+      </a>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainmenu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="mainmenu" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-link is-arrowless" href="/projects">Projektit</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">Asetukset</a>
+          <div class="navbar-dropdown is-white">
+            <a class="navbar-link is-arrowless is-white">Käyttäjähallinta</a>
+            <a class="navbar-link is-arrowless is-white">Projektien hallinta</a>
+            <a class="navbar-link is-arrowless is-white">Järjestelmäasetukset</a>
           </div>
         </div>
-      </div>
 
-    </nav>
-    <section class="section">
-      <div class="container">
-        {% with notifications = get_flashed_messages(with_categories=true) %} 
-          {% if notifications %}
-            {% for type, notification in notifications %}
-              {% if notification != "" %}
-                <div class="notification {{ type }}" name="notification">
-                  <button class="delete"></button>
-                  <strong>HOX!</strong> {{ notification }}
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <nav class="level">
-          <div class="level-left">
-            <div class="level-item">
-              <h1 class="title">{{ title() }}</h1>
-            </div>
-          </div>
-          <div class="level-right">
-            {% block tools %}{% endblock %}
-          </div>
-        </nav>
-        
-        <hr />
-        {% block content %}{% endblock %}
       </div>
-    </section>
-    {% else %}
-    <section class="section">
-      <div class="container is-max-desktop">
-        <img class="image" src="{{ url_for('static', filename='media/logo_musta.svg') }}" width="100" height="50">
-        <h1 class="title">Kirjaudu sisään</h1>
-        <form action="/login" method="POST">
-          <div class="field">
-            <input class="input is-medium is-primary" type="text" name="username" placeholder="Käyttäjänimi"/>
-          </div>
-          <div class="field">
-            <input class="input is-medium is-primary" type="password" name="password" placeholder="Salasana"/>
-          </div>
-          <div class="field ">
-            <input class="button is-medium is-primary" type="submit" value="Kirjaudu" />
-          </div>
-          
-        </form>
+      <div class="navbar-end">
+        <div class="buttons">
+          <a class="button is-primary" href="/users/logout"><strong>Kirjaudu ulos</strong></a>
+        </div>
       </div>
-    </section>
-    {% endif %}
+    </div>
 
-    <!--Footer-->
-    <footer class="footer">
-      <div class="footer">
-        <p>Made by 🍐</p>
+  </nav>
+  <section class="section">
+    <div class="container">
+      {% with notifications = get_flashed_messages(with_categories=true) %}
+      {% if notifications %}
+      {% for type, notification in notifications %}
+      {% if notification != "" %}
+      <div class="notification {{ type }}" name="notification">
+        <button class="delete"></button>
+        <strong>HOX!</strong> {{ notification }}
       </div>
-    </footer>
-  </body>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <nav class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h1 class="title">{{ title() }}</h1>
+          </div>
+        </div>
+        <div class="level-right">
+          {% block tools %}{% endblock %}
+        </div>
+      </nav>
+
+      <hr />
+      {% block content %}{% endblock %}
+    </div>
+  </section>
+  {% else %}
+  <section class="section">
+    <div class="container is-max-desktop">
+      {% with notifications = get_flashed_messages(with_categories=true) %}
+      {% if notifications %}
+      {% for type, notification in notifications %}
+      {% if notification != "" %}
+      <div class="notification {{ type }}" name="notification">
+        <button class="delete"></button>
+        <strong>HOX!</strong> {{ notification }}
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <img class="image" src="{{ url_for('static', filename='media/logo_musta.svg') }}" width="100" height="50">
+      <h1 class="title">Kirjaudu sisään</h1>
+      <form action="/users/login" method="POST">
+        <div class="field">
+          <input class="input is-medium is-primary" type="text" name="username" placeholder="Käyttäjänimi" />
+        </div>
+        <div class="field">
+          <input class="input is-medium is-primary" type="password" name="password" placeholder="Salasana" />
+        </div>
+        <div class="field ">
+          <input class="button is-medium is-primary" type="submit" value="Kirjaudu" />
+        </div>
+
+      </form>
+    </div>
+  </section>
+  {% endif %}
+
+  <!--Footer-->
+  <footer class="footer">
+    <div class="footer">
+      <p>Made by 🍐</p>
+    </div>
+  </footer>
+</body>
+
 </html>

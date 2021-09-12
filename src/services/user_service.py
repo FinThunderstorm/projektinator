@@ -168,3 +168,6 @@ class UserService:
         if check_password_hash(user.password_hash, password):
             return user.uid
         raise LoginException()
+
+
+user_service = UserService()
