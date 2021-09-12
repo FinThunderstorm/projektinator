@@ -17,6 +17,13 @@ Sovelluksella voi luoda projekteja. Projekti voi sisältää useita erilaisia om
 
 Sivurakenne:
 
+- Dashboard
+- Login/register-form
+- Projektilistaus
+- Projektin sivu
+- Tehtävän sivu
+
+
 - Pääsivu / henkilökohtainen työpöytä
 - Kirjautumissivu + rekisteröitymislomake, jolla pääkäyttäjä voi luoda uusia käyttäjiä
 - Listaus projekteista
@@ -44,29 +51,7 @@ Pääkäyttäjä: admin/admin
 
 Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 
-| Ominaisuus                                                                   | Valmis? |
-| ---------------------------------------------------------------------------- | ------- |
-| Kehitysympäristö ja automatisoitu Herokuun vienti                            | ✅      |
-| Tietokannan suunnittelu / 1. versio                                          | ✅      |
-| Käyttäjänhallinnan vaatimat SQL-komennot Python-funktioihin käärittynä       | ✅      |
-| Projektin hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä      | ✅      |
-| Ominaisuuksien hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä | ❌      |
-| Tehtävien hallinnan vaatimat SQL-komennot Python-funktioihin käärittynä      | ❌      |
-| Pääsivu                                                                      | ❌      |
-| Kirjautumissivu & kirjautumisen vaatimat SQL-komennot käärittynä             | ✅      |
-| Kommentoinnin vaatimat SQL-komennot Python-funktioihin käärittyinä           | ❌      |
-| Pääsivu / henkilökohtainen työpöytä                                          | ❌      |
-| Kirjautumissivu + rekisteröitymislomake                                      | ❌      |
-| Listaus projekteista                                                         | 🏃      |
-| Projektin sivu                                                               | ✅      |
-| Ominaisuuden sivu                                                            | ❌      |
-| Tehtävän sivu                                                                | ❌      |
-| Tiimien hallinta                                                             | ❌      |
-| Hallintasivu                                                                 | ❌      |
-| Mahdollisuus heittää virheilmoituksia = better errors pls                    | 🏃      |
-| Profiilikuvan lisäämismahdollisuus                                           | ❌      |
-| Ulkoasu                                                                      | ❌      |
-|                                                                              | ❌      |
+
 
 ## Tyylittely
 

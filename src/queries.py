@@ -103,6 +103,7 @@ def find_user(id):
 
 def add_user(username, password, name, email, user_role):
     password_hash = generate_password_hash(password)
+    print()
     user_role = int(user_role)
     values = {
         "username": username.lower(),
@@ -111,6 +112,7 @@ def add_user(username, password, name, email, user_role):
         "name": name,
         "email": email
     }
+    print(values)
     try:
         # INSERT INTO Users (username, user_role, password_hash, name, email) VALUES ("tuki", 1, "pbkdf2:sha256:150000$5a5GwUss$8137fb4128bc8dddef9f51e97d22853ad82ccdc4f07960caafd1b137c2e08ac0", "Tuki", "tuki@paaryna.fi");
         sql = "INSERT INTO Users (username, user_role, password_hash, name, email) VALUES (:username, :user_role, :password_hash, :name, :email)"

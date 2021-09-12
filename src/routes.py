@@ -7,30 +7,31 @@ from repositories.user_repository import user_repository
 
 @app.route("/")
 def index():
-    #flash("Hello world!", "is-danger")
+    # flash("Hello world!", "is-danger")
     return render_template("index.html")
 
 
 @app.get("/users/<string:username>")
 def get_by_username(username):
-    user_repository.find_username(username)
+    user_repository.get_by_username(username)
     return render_template("index.html")
 
 
 @app.get("/users/new")
 def test_new():
-    user_repository.new('timothy', 1, "toot", "Timothy",
-                        "Tei", "timothy@tei.com", "defaultimage")
+    user_repository.new('toot1234567', 1, "toot123", "Timothy",
+                        "Tei", "timothy@tei.com")
+
     return render_template('index.html')
 
 
-@app.route("/projects")
+@ app.route("/projects")
 def list_projects():
     projects = queries.get_project()
     return render_template("projects.html", projects=projects)
 
 
-@app.route("/projects/new", methods=["GET", "POST"])
+@ app.route("/projects/new", methods=["GET", "POST"])
 def new_project():
     if request.method == "GET":
         return render_template("projects_new.html")
@@ -98,10 +99,12 @@ def login():
 
     result = queries.login(username, password)
     if result == None:
+        print('problem while logging in')
         flash("Annettu käyttäjätunnus tai salasana on virheellinen.",
               "is-danger")
         return redirect("/")
     else:
+        print('logged in')
         session["user"] = result
         session["token"] = os.urandom(16).hex()
         return redirect("/")
@@ -150,19 +153,22 @@ def modify_user(id):
             return redirect("/settings/users/modify/" + str(id))
 
 
-@app.route("/settings/users/remove/<int:id>", methods=["POST"])
-def remote_user(id):
-    if session["token"] != request.form["token"]:
-        abort(403)
-    if id == None:
-        flash("Virhe poistettaessa käyttäjää.", "is-danger")
-        return redirect("/settings/users")
-    if queries.remove_user(id):
-        flash("Käyttäjä poistettu onnistuneesti.", "is-success")
-        return redirect("/settings/users")
-    else:
-        flash("Virhe poistettaessa käyttäjää.", "is-danger")
-        return redirect("/settings/users")
+@app.route("/settings/users/remove/<string:uid>", methods=["GET"])
+def remote_user(uid):
+    print(uid)
+    user_repository.remove(uid)
+    return render_template('index.html')
+    # if session["token"] != request.form["token"]:
+    #     abort(403)
+    # if id == None:
+    #     flash("Virhe poistettaessa käyttäjää.", "is-danger")
+    #     return redirect("/settings/users")
+    # if queries.remove_user(id):
+    #     flash("Käyttäjä poistettu onnistuneesti.", "is-success")
+    #     return redirect("/settings/users")
+    # else:
+    #     flash("Virhe poistettaessa käyttäjää.", "is-danger")
+    #     return redirect("/settings/users")
 
 
 @app.route("/settings/users/register", methods=["GET", "POST"])
