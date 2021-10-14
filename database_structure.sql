@@ -26,10 +26,11 @@ CREATE TABLE Permissions(
 );
 CREATE TABLE Projects(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  project_owner uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
-  added_on TIMESTAMP NOT NULL
+  created TIMESTAMP NOT NULL
 );
 CREATE TABLE Features(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -38,9 +39,10 @@ CREATE TABLE Features(
   description TEXT,
   flags TEXT,
   status TEXT,
+  type TEXT,
   priority INTEGER,
-  added_on TIMESTAMP NOT NULL,
-  ready TIMESTAMP
+  created TIMESTAMP NOT NULL,
+  updated_on TIMESTAMP
 );
 CREATE TABLE Tasks(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
