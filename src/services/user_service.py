@@ -93,22 +93,6 @@ class UserService:
         user = self._user_repository.get_by_username(username)
         return user
 
-    def get_by_id(self, uid: str) -> User:
-        """get_by_id is used to find users from database by user id
-
-        Args:
-            uid (str): id of user to be found
-
-        Raises:
-            UserNotExistingException: raised if user not found with given user id
-            DatabaseException: if problem occurs while handling with database
-
-        Returns:
-            User: found user
-        """
-        user = self._user_repository.get_by_id(uid)
-        return user
-
     def get_all(self) -> list[User]:
         """get_all is used to get all users in the database
 
@@ -199,7 +183,7 @@ class UserService:
         except UserNotExistingException as usernotfound:
             raise LoginException() from usernotfound
         if check_password_hash(user.password_hash, password):
-            return user.uid
+            return user.user_id
         raise LoginException()
 
 
