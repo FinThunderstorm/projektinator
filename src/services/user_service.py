@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, UserNotExistingException
+from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, UserNotExistingException, UnvalidInputException
 from entities.user import User
 from utils.database import db
 from repositories.user_repository import user_repository, UserRepository
@@ -22,7 +22,7 @@ class UserService:
 
         Args:
             username (str): user's username, needs to be unique
-            user_role (str): user's user role
+            user_role (str): user's user role as integer format, inputted as string, 1 = lowest permission level
             password (str): user's password as not encrypted version, used to create encrypted hash
             firstname (str): user's firstname
             lastname (str): user's lastname
@@ -51,7 +51,11 @@ class UserService:
             raise EmptyValueException('name')
 
         username = username.lower()
-        user_role = int(user_role)
+        try:
+            user_role = int(user_role)
+        except Exception as error:
+            raise UnvalidInputException(
+                "Unvalid input", "unexpected value", "user role") from error
         password_hash = generate_password_hash(password)
 
         created_user = self._user_repository.new(
@@ -74,19 +78,48 @@ class UserService:
         return user
 
     def get_by_username(self, username: str) -> User:
-        """get_by_username is used to find user's from databse by username
+        """get_by_username is used to find users from database by username
 
         Args:
             username (str): username of user to be found
 
         Raises:
             UserNotExistingException: raised if user not found with given username
+            DatabaseException: if problem occurs while handling with database
 
         Returns:
             User: found user
         """
         user = self._user_repository.get_by_username(username)
         return user
+
+    def get_by_id(self, uid: str) -> User:
+        """get_by_id is used to find users from database by user id
+
+        Args:
+            uid (str): id of user to be found
+
+        Raises:
+            UserNotExistingException: raised if user not found with given user id
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            User: found user
+        """
+        user = self._user_repository.get_by_id(uid)
+        return user
+
+    def get_all(self) -> list[User]:
+        """get_all is used to get all users in the database
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[User]: list of all users in the database
+        """
+        users = self._user_repository.get_all()
+        return users
 
     def update(self, uid: str, username: str, user_role: str, password: str, firstname: str, lastname: str, email: str, profile_image: str) -> User:
         """update is used to update users

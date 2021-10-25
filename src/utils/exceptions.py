@@ -130,3 +130,28 @@ class UsernameDuplicateException(Exception):
             str: formatted exception message
         """
         return self.message
+
+
+class UnvalidInputException(Exception):
+    """Class for execption raised if unvalid input given
+    """
+
+    def __init__(self, message: str = "Unvalid input", reason: str = "unexpected value", source: str = "given source"):
+        """Initializes class with message, reason and source
+
+        Args:
+            message (str, optional): option to give custom exception message. Defaults to "Unvalid input".
+            reason (str, optional): option to give custom reason. Defaults to "unexpected value".
+            source (str, optional): option to give custon source where exception occured. Defaults to "given source".
+        """
+        self.message = message
+        self.source = source
+        self.reason = reason
+
+    def __str__(self) -> str:
+        """used to print exception message.
+
+        Returns:
+            str: formatted exception message
+        """
+        return f"Error: {self.message} caused by {self.reason} in {self.source}"

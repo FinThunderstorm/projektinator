@@ -16,9 +16,9 @@ CREATE TABLE Users(
   password_hash TEXT NOT NULL,
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
-  email TEXT,
+  email TEXT CHECK(email LIKE '%@%.%'),
   profile_image TEXT,
-  UNIQUE(username)
+  UNIQUE(username),
 );
 CREATE TABLE Permissions(
   task TEXT PRIMARY KEY NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE Projects(
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
-  created TIMESTAMP NOT NULL
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE Features(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -41,8 +41,8 @@ CREATE TABLE Features(
   status TEXT,
   type TEXT,
   priority INTEGER,
-  created TIMESTAMP NOT NULL,
-  updated_on TIMESTAMP
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 CREATE TABLE Tasks(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -54,8 +54,8 @@ CREATE TABLE Tasks(
   status TEXT,
   type TEXT,
   priority INTEGER,
-  created TIMESTAMP NOT NULL,
-  updated_on TIMESTAMP
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 CREATE TABLE Comments(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -63,7 +63,8 @@ CREATE TABLE Comments(
   task_id uuid REFERENCES Tasks,
   comment TEXT NOT NULL,
   assignee uuid REFERENCES Users,
-  added_on TIMESTAMP NOT NULL
+  added_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 CREATE TABLE Teamsusers(
   user_id uuid NOT NULL,

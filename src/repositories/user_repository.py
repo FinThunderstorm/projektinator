@@ -1,7 +1,7 @@
+import re
 from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import IntegrityError
-from uuid import uuid4
-from utils.exceptions import DatabaseException, UserNotExistingException, UsernameDuplicateException
+from utils.exceptions import DatabaseException, UnvalidInputException, UserNotExistingException, UsernameDuplicateException
 from entities.user import User
 from utils.database import db
 
@@ -23,6 +23,7 @@ class UserRepository:
 
         Raises:
             DatabaseException: raised if problems while saving into database.
+            UnvalidInputException: raised if email is given in unvalid format.
             UsernameDuplicateException: raised if given username is already in use.
 
         Returns:
@@ -47,9 +48,18 @@ class UserRepository:
             uid = db.session.execute(sql, values).fetchone()[0]
             db.session.commit()
         except IntegrityError as error:
-            raise UsernameDuplicateException() from error
+            unvalid_email = re.compile(r'.*"users_email_check".*')
+            duplicate_username = re.compile(
+                r'.*duplicate key value violates unique constraint "users_username_key".*')
+            if unvalid_email.match(str(error)):
+                raise UnvalidInputException(
+                    "Unvalid input", "unvalid formatting", "email") from error
+            elif duplicate_username.match(str(error)):
+                raise UsernameDuplicateException() from error
+            else:
+                raise DatabaseException(
+                    'While saving new user into database') from error
         except Exception as error:
-            print(error)
             raise DatabaseException(
                 'While saving new user into database') from error
         if not uid:
@@ -110,6 +120,24 @@ class UserRepository:
             raise UserNotExistingException()
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5], user[6], user[7])
+
+    def get_all(self) -> list[User]:
+        """get_all is used to get all users in the database
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[User]: list of all users
+        """
+        sql = "SELECT * FROM Users"
+        try:
+            result = db.session.execute(sql)
+            users = result.fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all users') from error
+
+        return [User(user[0], user[1], user[2], user[3], user[4], user[5], user[6], user[7]) for user in users]
 
     def update(self, uid: str, username: str, user_role: int, password_hash: str, firstname: str, lastname: str, email: str, profile_image: str) -> User:
         """update is used to change values of user into database
