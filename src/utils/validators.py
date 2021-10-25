@@ -21,3 +21,14 @@ def validate_uuid4(uuid: str) -> Union[str, None]:
     if pattern.match(uuid):
         return uuid
     return None
+
+
+def validate_flags(flags: str) -> bool:
+    pattern = re.compile(r'(.*;)*')
+    if not flags:
+        return False
+
+    check = pattern.match(flags)
+    if check:
+        return check.end(0) == len(flags)
+    return False
