@@ -25,5 +25,26 @@ class Project:
         self.name = name
         self.description = description
         self.created = created
-        self.flags = flags
+        self._flags = flags
+        self.flags = flags.split(';')
         self.features = features
+
+    def __str__(self) -> str:
+        """Method for generating formatted string from object to be mainly used in debugging matters.
+
+        Returns:
+            str: project object in formatted string
+        """
+        features = ""
+        if self.features:
+            for feature in self.features:
+                features += f'   › {feature.name} ({feature.feature_id})\n'
+        return (
+            f'Project ”{self.name}”: \n'
+            f' - id ”{self.project_id}”\n'
+            f' - product owner ”{self.project_owner_name} ({self.project_owner_id})”\n'
+            f' - description ”{self.description}”\n'
+            f' - created ”{self.created}”\n'
+            f' - flags ”{self._flags}”\n'
+            f' - features:\n{features}'
+        )

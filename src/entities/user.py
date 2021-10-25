@@ -15,7 +15,7 @@ class User:
             email (str): holds user's email
             profile_image (str): holds user's profile image as base64 encoded string or default value
         """
-        self.uid = uid
+        self.user_id = uid
         self.username = username
         self.user_role = user_role
         self.password_hash = password_hash
@@ -23,3 +23,25 @@ class User:
         self.lastname = lastname
         self.email = email
         self.profile_image = profile_image
+
+    def __str__(self) -> str:
+        """Method for generating formatted string from object to be mainly used in debugging matters.
+
+        Returns:
+            str: user object in formatted string
+        """
+
+        pw_hash_ok = True if self.password_hash[:len(
+            "pbkdf2:sha256:260000$")] == "pbkdf2:sha256:260000$" else False
+
+        return (
+            f'User ”{self.username}”\n'
+            f' - id ”{self.user_id}”\n'
+            f' - firstname ”{self.firstname}”\n'
+            f' - lastname ”{self.lastname}”\n'
+            f" - user's role ”{self.user_role}”\n"
+            f' - password_hash ok ”{pw_hash_ok}”\n'
+            f' - email ”{self.email}”\n'
+            f' - profile image ”{self.profile_image}”\n'
+
+        )
