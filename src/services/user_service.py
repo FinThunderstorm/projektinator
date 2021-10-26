@@ -142,8 +142,14 @@ class UserService:
         if firstname == "" or lastname == "":
             raise EmptyValueException('name')
 
+        if user_role != str(current_user.user_role):
+            try:
+                user_role = int(user_role)
+            except Exception as error:
+                raise UnvalidInputException(
+                    "Unvalid input", "unexpected value", "user role") from error
+
         username = current_user.username if username == current_user.username else username.lower()
-        user_role = int(user_role)
         password_hash = current_user.password_hash if password == "" else generate_password_hash(
             password)
         profile_image = profile_image if profile_image != "" else "default_image"
