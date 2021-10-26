@@ -29,7 +29,7 @@ CREATE TABLE Projects(
   project_owner uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT CHECK(flags LIKE '(%*;)*'),
+  flags TEXT,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -38,7 +38,7 @@ CREATE TABLE Features(
   project_id uuid REFERENCES Projects NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT CHECK(flags LIKE '(%*;)*'),
+  flags TEXT,
   status TEXT,
   type TEXT,
   priority INTEGER,
@@ -51,7 +51,7 @@ CREATE TABLE Tasks(
   assignee uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT CHECK(flags LIKE '(%*;)*'),
+  flags TEXT,
   status TEXT,
   type TEXT,
   priority INTEGER,
