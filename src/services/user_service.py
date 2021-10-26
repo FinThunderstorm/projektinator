@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, UserNotExistingException, UnvalidInputException
+from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, NotExistingException, UnvalidInputException
 from entities.user import User
 from utils.database import db
 from repositories.user_repository import user_repository, UserRepository

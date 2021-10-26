@@ -69,16 +69,18 @@ class DatabaseException(Exception):
         return f"{self.message} {self.source}"
 
 
-class UserNotExistingException(Exception):
-    """Class for exception raised if user is not found
+class NotExistingException(Exception):
+    """Class for exception raised if given object is not found
     """
 
-    def __init__(self, message: str = "User not found. Please check your input and try again."):
+    def __init__(self, eobject: str = "Object", message: str = "not found. Please check your input and try again."):
         """Intializes class with message
 
         Args:
-            message (str, optional): option to give custom exception message. Defaults to "User not found. Please check your input and try again.".
+            eobject (str, optional): option to give custom object name. Defaults to "Object".
+            message (str, optional): option to give custom exception message. Defaults to "not found. Please check your input and try again.".
         """
+        self.object = eobject
         self.message = message
 
     def __str__(self) -> str:
@@ -87,7 +89,7 @@ class UserNotExistingException(Exception):
         Returns:
             str: formatted exception message
         """
-        return f"Error: {self.message}"
+        return f"Error: {self.object} {self.message}"
 
 
 class LoginException(Exception):

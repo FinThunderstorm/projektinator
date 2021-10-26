@@ -1,7 +1,7 @@
 import re
 from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import IntegrityError
-from utils.exceptions import DatabaseException, UnvalidInputException, UserNotExistingException, UsernameDuplicateException
+from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException, UsernameDuplicateException
 from entities.user import User
 from utils.database import db
 
@@ -91,7 +91,7 @@ class UserRepository:
                 'while getting user by username') from error
 
         if not user:
-            raise UserNotExistingException()
+            raise NotExistingException('User')
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5], user[6], user[7])
 
@@ -102,7 +102,7 @@ class UserRepository:
             username (str): username of user in search
 
         Raises:
-            UserNotExistingException: raised if user not found with given username
+            NotExistingException: raised if user not found with given username
             DatabaseException: if problem occurs while handling with database
 
         Returns:
@@ -117,7 +117,7 @@ class UserRepository:
                 'while getting user by username') from error
 
         if not user:
-            raise UserNotExistingException()
+            raise NotExistingException('User')
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5], user[6], user[7])
 
@@ -190,7 +190,7 @@ class UserRepository:
             DatabaseException: raised if problems while interacting with database
         """
         if not self.get_by_id(uid):
-            raise UserNotExistingException()
+            raise NotExistingException('User')
         sql = "DELETE FROM Users WHERE id=:id"
         try:
             db.session.execute(sql, {"id": uid})
