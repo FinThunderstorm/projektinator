@@ -11,14 +11,14 @@ CREATE TABLE Teams(
 );
 CREATE TABLE Users(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  username TEXT NOT NULL,
+  username TEXT NOT NULL CHECK(LENGTH(username) >= 5),
   user_role SERIAL REFERENCES Roles NOT NULL,
   password_hash TEXT NOT NULL,
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT CHECK(email LIKE '%@%.%'),
   profile_image TEXT,
-  UNIQUE(username),
+  UNIQUE(username)
 );
 CREATE TABLE Permissions(
   task TEXT PRIMARY KEY NOT NULL,
@@ -29,20 +29,21 @@ CREATE TABLE Projects(
   project_owner uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  flags TEXT CHECK(flags LIKE '(%*;)*'),
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE Features(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   project_id uuid REFERENCES Projects NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT,
+  flags TEXT CHECK(flags LIKE '(%*;)*'),
   status TEXT,
   type TEXT,
   priority INTEGER,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE Tasks(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -50,12 +51,12 @@ CREATE TABLE Tasks(
   assignee uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
-  flags TEXT,
+  flags TEXT CHECK(flags LIKE '(%*;)*'),
   status TEXT,
   type TEXT,
   priority INTEGER,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE Comments(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -64,9 +65,21 @@ CREATE TABLE Comments(
   comment TEXT NOT NULL,
   assignee uuid REFERENCES Users,
   added_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE Teamsusers(
-  user_id uuid NOT NULL,
-  team_id uuid NOT NULL
+  user_id uuid NOT NULL PRIMARY KEY REFERENCES Users,
+  team_id uuid NOT NULL REFERENCES Teams
 );
+CREATE OR REPLACE FUNCTION updated_on() RETURNS trigger AS $$ BEGIN NEW.updated_on = now();
+RETURN NEW;
+END;
+$$ language 'plpgsql';
+CREATE TRIGGER updated_on BEFORE
+UPDATE ON Projects FOR EACH ROW EXECUTE PROCEDURE updated_on();
+CREATE TRIGGER updated_on BEFORE
+UPDATE ON Features FOR EACH ROW EXECUTE PROCEDURE updated_on();
+CREATE TRIGGER updated_on BEFORE
+UPDATE ON Tasks FOR EACH ROW EXECUTE PROCEDURE updated_on();
+CREATE TRIGGER updated_on BEFORE
+UPDATE ON Comments FOR EACH ROW EXECUTE PROCEDURE updated_on();

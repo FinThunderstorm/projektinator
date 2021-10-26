@@ -7,7 +7,7 @@ class Feature:
     """Class Feature resembles feature as a object from the database
     """
 
-    def __init__(self, fid: str, pid: str, pname: str, name: str, description: str, status: str, feature_type: str, priority: int, created: datetime, updated_on: datetime, flags: [str] = None, tasks: [Task] = None, comments: [Comment] = None):
+    def __init__(self, fid: str, pid: str, pname: str, name: str, description: str, status: str, feature_type: str, priority: int, created: datetime, updated_on: datetime, flags: str = "", tasks: [Task] = None, comments: [Comment] = None):
         """Initializes Feature object with given values
 
         Args:
@@ -35,8 +35,7 @@ class Feature:
         self.priority = priority
         self.created = created
         self.updated_on = updated_on
-        self._flags = flags
-        self.flags = flags.split(";")
+        self.flags = flags
         self.tasks = tasks
         self.comments = comments
 
@@ -64,7 +63,7 @@ class Feature:
             f' - priority ”{self.priority}”\n'
             f' - created on ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'
-            f' - flags ”{self._flags}”\n'
+            f' - flags ”{self.flags}”\n'
             f' - tasks\n”{tasks}”'
             f' - comments\n”{comments}”'
         )

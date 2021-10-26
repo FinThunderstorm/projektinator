@@ -6,7 +6,7 @@ class Task:
     """Class Task resembles tasks as a object from the database.
     """
 
-    def __init__(self, tid: str, fid: str, fname: str, assignee: str, assignee_name: str, name: str, description: str, status: str, task_type: str, priority: int, created: datetime, updated_on: datetime, flags: [str] = None, comments: [Comment] = None):
+    def __init__(self, tid: str, fid: str, fname: str, assignee: str, assignee_name: str, name: str, description: str, status: str, task_type: str, priority: int, created: datetime, updated_on: datetime, flags: str = "", comments: [Comment] = None):
         """Initializes Task object with given values
 
         Args:
@@ -36,8 +36,7 @@ class Task:
         self.priority = priority
         self.created = created
         self.updated_on = updated_on
-        self._flags = flags
-        self.flags = flags.split(";")
+        self.flags = flags
         self.comments = comments
 
     def __str__(self) -> str:
@@ -61,6 +60,6 @@ class Task:
             f' - priority ”{self.priority}”\n'
             f' - created on ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'
-            f' - flags ”{self._flags}”\n'
+            f' - flags ”{self.flags}”\n'
             f' - comments\n”{comments}”'
         )

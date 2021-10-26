@@ -6,8 +6,8 @@ class Project:
     """Class Project resembles project from the database as a object
     """
 
-    def __init__(self, pid: str, p_owner: str, p_owner_name: str, name: str, description: str, created: datetime, flags: [str] = None, features: [Feature] = None):
-        """[summary]
+    def __init__(self, pid: str, p_owner: str, p_owner_name: str, name: str, description: str, created: datetime, updated_on: datetime, flags: str = "", features: [Feature] = None):
+        """initializes Project object
 
         Args:
             pid (str): id of project
@@ -25,8 +25,8 @@ class Project:
         self.name = name
         self.description = description
         self.created = created
-        self._flags = flags
-        self.flags = flags.split(';')
+        self.updated_on = updated_on
+        self.flags = flags
         self.features = features
 
     def __str__(self) -> str:
@@ -45,6 +45,7 @@ class Project:
             f' - product owner ”{self.project_owner_name} ({self.project_owner_id})”\n'
             f' - description ”{self.description}”\n'
             f' - created ”{self.created}”\n'
-            f' - flags ”{self._flags}”\n'
+            f' - updated on ”{self.updated_on}”\n'
+            f' - flags ”{self.flags}”\n'
             f' - features:\n{features}'
         )
