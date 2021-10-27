@@ -1,9 +1,11 @@
 import re
+from sqlalchemy import exc
 from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import IntegrityError
 from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException, UsernameDuplicateException
 from entities.user import User
 from utils.database import db
+from utils.helpers import fullname
 
 
 class UserRepository:
@@ -121,6 +123,17 @@ class UserRepository:
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5], user[6], user[7])
 
+    def get_fullname(self, uid: str) -> str:
+        sql = "SELECT firstname, lastname FROM Users WHERE id=:id"
+        try:
+            firstname, lastname = db.session.execute(
+                sql, {"id": uid}).fetchone()
+        except Exception as error:
+            raise DatabaseException('while getting user´s fullname') from error
+        if not firstname or not lastname:
+            raise NotExistingException('User')
+        return fullname(firstname, lastname)
+
     def get_all(self) -> list[User]:
         """get_all is used to get all users in the database
 
@@ -186,7 +199,7 @@ class UserRepository:
             uid (str): id of user to be removed
 
         Raises:
-            UserNotExistingException: raised if user not found with given id
+            NotExistingException: raised if user not found with given id
             DatabaseException: raised if problems while interacting with database
         """
         if not self.get_by_id(uid):

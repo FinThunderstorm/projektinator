@@ -22,7 +22,7 @@ class UserService:
 
         Args:
             username (str): user's username, needs to be unique
-            user_role (str): user's user role as integer format, inputted as string, 1 = lowest permission level
+            user_role (str): user's user role as integer format, inputted as string, 1 = highest permission level
             password (str): user's password as not encrypted version, used to create encrypted hash
             firstname (str): user's firstname
             lastname (str): user's lastname
