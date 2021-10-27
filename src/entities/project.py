@@ -16,6 +16,7 @@ class Project:
             name (str): name of project
             description (str): description of project
             created (datetime): creation time of project
+            updated_on (datetime): last time updated
             flags ([str], optional): flags are used to filter projects. Defaults to None.
             features ([Feature], optional): list of features referencing to project. Defaults to None.
         """
@@ -49,3 +50,19 @@ class Project:
             f' - flags ”{self.flags}”\n'
             f' - features:\n{features}'
         )
+
+    def __eq__(self, o: object) -> bool:
+        """Method for comparing if two objects are the same
+
+        Args:
+            o (object): object in comparisation
+
+        Returns:
+            bool: result are the two objects the same
+        """
+        for field, value in self.__dict__.items():
+            if field not in o.__dict__.keys():
+                return False
+            if value != o.__dict__[field]:
+                return False
+        return True
