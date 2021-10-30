@@ -115,6 +115,20 @@ class ProjectService:
         projects = self._project_repository.get_all()
         return projects
 
+    def get_all_by_project_owner(self, poid: str) -> [Project]:
+        """get_all_by_project_owner is used to get list of all projects associated with given project owner in the database
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+            NotExistingException: raised if there is none projects associated with given project owner or not given project owner found
+        Returns:
+            [Project]: list of all projects as project objects
+        """
+        if not self._user_repository.get_by_id(poid):
+            raise NotExistingException('Project owner')
+        projects = self._project_repository.get_all_by_project_owner(poid)
+        return projects
+
     def get_by_id(self, pid: str) -> Project:
         """get_by_id is used to find exact project with given id from the database
 

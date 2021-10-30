@@ -77,6 +77,28 @@ class ProjectRepository:
         all_features = None
         return [Project(project[0], project[1], fullname(project[2], project[3]), project[4], project[5], project[6], project[7], project[8], all_features) for project in projects]
 
+    def get_all_by_project_owner(self, poid: str) -> [Project]:
+        """get_all_by_project_owner is used to get list of all projects associated with given project owner in the database
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+
+        Returns:
+            [Project]: list of all projects as project objects
+        """
+        sql = """
+        SELECT P.id, P.project_owner, U.firstname, U.lastname, P.name, P.description, P.created, P.updated_on, P.flags 
+        FROM Projects P 
+        JOIN Users U ON P.project_owner = U.id
+        WHERE P.project_owner=:id
+        """
+        try:
+            projects = db.session.execute(sql, {"id": poid}).fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all projects') from error
+        all_features = None
+        return [Project(project[0], project[1], fullname(project[2], project[3]), project[4], project[5], project[6], project[7], project[8], all_features) for project in projects]
+
     def get_by_id(self, pid: str) -> Project:
         """get_by_id is used to find exact project with given id from the database
 
