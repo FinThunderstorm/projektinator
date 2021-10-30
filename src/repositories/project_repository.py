@@ -122,6 +122,29 @@ class ProjectRepository:
         all_features = None
         return Project(project[0], project[1], fullname(project[2], project[3]), project[4], project[5], project[6], project[7], project[8], all_features)
 
+    def get_name(self, pid: str) -> str:
+        """get_name is used to find exact project with given id from the database
+
+        Args:
+            pid (str): id of project to be found
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+            NotExistingException: raised if there is none projects with given id
+
+        Returns:
+            Project: project with given id
+        """
+        sql = "SELECT name FROM Projects WHERE id=:id"
+        try:
+            name = db.session.execute(sql, {"id": pid}).fetchone()
+        except Exception as error:
+            raise DatabaseException('while getting project by id') from error
+        if not name:
+            raise NotExistingException('Project')
+
+        return name
+
     def update(self, pid: str, poid: str, poname: str, name: str, descrption: str, flags: str, created: datetime, features: [Feature]) -> Project:
         """update is used to update new values into database for specific Project.
 

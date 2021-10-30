@@ -145,6 +145,22 @@ class ProjectService:
         project = self._project_repository.get_by_id(pid)
         return project
 
+    def get_name(self, pid: str) -> str:
+        """get_by_id is used to find exact project with given id from the database
+
+        Args:
+            pid (str): id of project to be found
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+            NotExistingException: raised if there is none projects with given id
+
+        Returns:
+            Project: project with given id
+        """
+        name = self._project_repository.get_name(pid)
+        return name
+
     def remove(self, pid: str) -> None:
         """remove is used to remove project's from database
 

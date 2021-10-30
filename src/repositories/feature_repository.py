@@ -180,6 +180,31 @@ class FeatureRepository:
 
         return Feature(feature[0], feature[1], feature[2], feature[3], fullname(feature[4], feature[5]), feature[6], feature[7], feature[9], feature[10], feature[11], feature[12], feature[13], feature[8], all_tasks, all_comments)
 
+    def get_name(self, fid: str) -> str:
+        """get_name is used to get name of feature with given id
+
+        Args:
+            fid (str): id of feature to be found
+
+        Raises:
+            DatabaseException: raised if problems while interacting with the database
+
+        Returns:
+            Feature: found feature
+        """
+        sql = """
+        SELECT name
+        FROM Features
+        WHERE id=:id
+        """
+        try:
+            name = db.session.execute(sql, {"id": fid}).fetchone()
+        except Exception as error:
+            raise DatabaseException(
+                'while getting features with id') from error
+
+        return name
+
     def update(self, fid: str, pid: str, pname: str, foid: str, foname: str, name: str, description: str, flags: str, status: str, ftype: str, priority: int) -> Feature:
         """update is used to update feature with given values into the database
 

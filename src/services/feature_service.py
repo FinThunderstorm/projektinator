@@ -70,16 +70,16 @@ class FeatureService:
             raise UnvalidInputException(
                 reson="priority is not in scale 1-3", source="priority")
 
-        project = self._project_repository.get_by_id(pid)
+        pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
 
-        if not project:
+        if not pname:
             raise NotExistingException('Project')
         if not foname:
             raise NotExistingException('Feature owner')
 
         created_feature = self._feature_repository.new(
-            pid, project.name, foid, foname, name, description, flags, status, ftype, priority)
+            pid, pname, foid, foname, name, description, flags, status, ftype, priority)
         return created_feature
 
     def get_all(self) -> [Feature]:
@@ -158,6 +158,24 @@ class FeatureService:
             raise NotExistingException('Feature')
         return feature
 
+    def get_name(self, fid: str) -> str:
+        """get_name is used to get name of feature with given id
+
+        Args:
+            fid (str): id of feature
+
+        Raises:
+            DatabaseException: raised if problems while interacting with the database
+            NotExistingException: raised if feature not found with given id
+
+        Returns:
+            Feature: found feature
+        """
+        feature_name = self._feature_repository.get_name(fid)
+        if not feature_name:
+            raise NotExistingException('Feature')
+        return feature_name
+
     def update(self, fid: str, pid: str, foid: str, name: str, description: str, flags: str, status: str, ftype: str, priority: int) -> Project:
         """update is used to update feature with given values
 
@@ -209,16 +227,16 @@ class FeatureService:
             raise UnvalidInputException(
                 reson="priority is not in scale 1-3", source="priority")
 
-        project = self._project_repository.get_by_id(pid)
+        pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
 
-        if not project:
+        if not pname:
             raise NotExistingException('Project')
         if not foname:
             raise NotExistingException('Feature owner')
 
         updated_feature = self._feature_repository.update(
-            fid, pid, project.name, foid, foname, name, description, flags, status, ftype, priority)
+            fid, pid, pname, foid, foname, name, description, flags, status, ftype, priority)
         return updated_feature
 
     def remove(self, fid: str) -> None:
