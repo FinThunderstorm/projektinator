@@ -51,6 +51,9 @@ Pääkäyttäjä: admin/admin
 
 Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 
+- korjaa projektireposta ei olemassa olon tarkastus serviceen
+- korjaa kaikki repojen yksi alaviiva kahdeksi alaviivaksi
+- muuta repot palauttamaan arvot tuplessa tms ja luo objektiksi vasta servicessä
 
 
 ## Tyylittely
