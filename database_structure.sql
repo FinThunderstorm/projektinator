@@ -36,6 +36,7 @@ CREATE TABLE Projects(
 CREATE TABLE Features(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   project_id uuid REFERENCES Projects NOT NULL,
+  feature_owner uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,

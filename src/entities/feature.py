@@ -7,7 +7,7 @@ class Feature:
     """Class Feature resembles feature as a object from the database
     """
 
-    def __init__(self, fid: str, pid: str, pname: str, name: str, description: str, status: str, feature_type: str, priority: int, created: datetime, updated_on: datetime, flags: str = "", tasks: [Task] = None, comments: [Comment] = None):
+    def __init__(self, fid: str, pid: str, pname: str, foid: str, foname: str, name: str, description: str, status: str, feature_type: str, priority: int, created: datetime, updated_on: datetime, flags: str = "", tasks: [Task] = None, comments: [Comment] = None):
         """Initializes Feature object with given values
 
         Args:
@@ -18,7 +18,7 @@ class Feature:
             description (str): description of feature
             status (str): status of feature
             feature_type (str): type of feature, like "new feature" or "bug fix"
-            priority (int): priority of feature, in three stages: low, severe and high
+            priority (int): priority of feature, in three stages: low, severe and high (1 = low, 3 = high)
             created (datetime): creation time of feature
             updated_on (datetime): latest time feature were updated on
             flags ([str], optional): flags are used to filter features. Defaults to None.
@@ -28,6 +28,8 @@ class Feature:
         self.feature_id = fid
         self.project_id = pid
         self.project_name = pname
+        self.feature_owner = foid
+        self.feature_owner_name = foname
         self.name = name
         self.description = description
         self.status = status
@@ -64,6 +66,6 @@ class Feature:
             f' - created on ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'
             f' - flags ”{self.flags}”\n'
-            f' - tasks\n”{tasks}”'
-            f' - comments\n”{comments}”'
+            f' - tasks:\n{tasks}'
+            f' - comments:\n{comments}'
         )
