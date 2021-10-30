@@ -1,10 +1,8 @@
 from datetime import datetime
 from entities.project import Project
-from entities.user import User
 from repositories.user_repository import user_repository, UserRepository
 from repositories.project_repository import project_repository, ProjectRepository
 from utils.exceptions import EmptyValueException, UnvalidInputException, NotExistingException
-from utils.helpers import fullname
 from utils.validators import validate_flags, validate_uuid4
 
 

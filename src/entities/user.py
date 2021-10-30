@@ -1,3 +1,6 @@
+from utils.helpers import fullname
+
+
 class User:
     """Class User resembles user as a object from the database.
     """
@@ -21,6 +24,7 @@ class User:
         self.password_hash = password_hash
         self.firstname = firstname
         self.lastname = lastname
+        self.fullname = fullname(self.firstname, self.lastname)
         self.email = email
         self.profile_image = profile_image
 
@@ -35,7 +39,7 @@ class User:
             "pbkdf2:sha256:260000$")] == "pbkdf2:sha256:260000$" else False
 
         return (
-            f'User ”{self.username}”\n'
+            f'User ”{self.fullname} ({self.username})”\n'
             f' - id ”{self.user_id}”\n'
             f' - firstname ”{self.firstname}”\n'
             f' - lastname ”{self.lastname}”\n'

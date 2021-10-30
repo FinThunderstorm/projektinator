@@ -65,7 +65,11 @@ class ProjectRepository:
         Returns:
             [Project]: list of all projects as project objects
         """
-        sql = "SELECT P.id, P.project_owner, U.firstname, U.lastname, P.name, P.description, P.created, P.updated_on, P.flags FROM Projects P JOIN Users U ON P.project_owner = U.id"
+        sql = """
+        SELECT P.id, P.project_owner, U.firstname, U.lastname, P.name, P.description, P.created, P.updated_on, P.flags 
+        FROM Projects P 
+        JOIN Users U ON P.project_owner = U.id
+        """
         try:
             projects = db.session.execute(sql).fetchall()
         except Exception as error:
