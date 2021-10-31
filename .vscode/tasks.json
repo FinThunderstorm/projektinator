@@ -1,0 +1,77 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start development server",
+            "type": "shell",
+            "command": "docker-compose up",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": false
+            }
+        },
+        {
+            "label": "Remove containers and volumes",
+            "type": "shell",
+            "command": "docker-compose down",
+            "args": ["-v"]
+        },
+        {
+            "label": "Build containers",
+            "group": "build",
+            "type": "shell",
+            "command": "docker-compose build",
+        },
+        {
+            "label": "Reset containers",
+            "group": "build",
+            "dependsOn": ["Remove containers and volumes", "Build containers", "Start development server"]
+        },
+        {
+            "label": "Add package to pyproject.toml",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["run","--no-deps","--rm","app","add","${input:add-dev-dry-run}","${input:package}"]
+        },
+        {
+            "label": "Run tests using docker-compose.test.yml",
+            "group": "test",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["-f","docker-compose.test.yml","run","--rm","app","run","invoke","test"]
+        },
+        {
+            "label": "Run coverage (without report)",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["-f","docker-compose.test.yml","run","--rm","app","run","invoke","coverage"]
+        },
+        {
+            "label": "Run coverage and generate report",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["-f","docker-compose.test.yml","run","--rm","app","run","invoke","coverage-report"]
+        },
+        {
+            "label": "Run linter against src/",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["-f","docker-compose.test.yml","run","--rm","--no-deps","app","run","invoke","lint"]
+        }
+    ],
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "package",
+            "description": "Give package name that is going to be installed."
+        },
+        {
+            "type": "pickString",
+            "id": "add-dev-dry-run",
+            "options": ["","-D","--dry-run"],
+            "description": "Select optional arguments for add, -D = add only to dev dependencies, --dry-run does not actually install anything'"
+        }
+    ]
+}

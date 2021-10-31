@@ -19,6 +19,7 @@ services:
     container_name: projektinator-db
     volumes:
       - postgres-data:/var/lib/postgresql/data/
+      - ./database_structure.sql:/docker-entrypoint-initdb.d/database_structure.sql
     env_file:
       - ./.env
 
