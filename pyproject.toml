@@ -2,10 +2,10 @@
 name = "Projektinator"
 version = "0.1.0"
 description = "Course project for Tietokantasovellus-course."
-authors = ["Tuomas Alanen <tuomas@paaryna.fi>"]
+authors = ["Tuomas Alanen <tualanen@cs.helsinki.fi>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 Flask = "^2.0.0"
 Flask-SQLAlchemy = "^2.5.1"
 gunicorn = "^20.1.0"
