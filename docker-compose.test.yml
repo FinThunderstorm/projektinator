@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: ./dev.Dockerfile
+    image: projektinator-dev
+    container_name: projektinator-test
+    environment:
+      - TEST=1
+      - POSTGRES_HOSTNAME=projektinator-db-test
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
+    volumes:
+      - ./:/projektinator
+
+  db:
+    image: postgres:latest
+    container_name: projektinator-db-test
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+      - ./database_structure.sql:/docker-entrypoint-initdb.d/database_structure.sql
+    env_file:
+      - ./.env
+
+volumes:
+  postgres-data:
