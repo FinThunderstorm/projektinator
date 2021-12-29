@@ -1,0 +1,24 @@
+name: CI-pipe
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker development container
+        run: docker-compose -f docker-compose.test.yml build
+
+      - name: Run pylint on src
+        run: docker-compose -f docker-compose.test.yml run --no-deps --rm app poetry run invoke pylint
+
+      - name: Run unittests in Docker
+        run: docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from testapp
+
+      - name: Coverage report to Codecov
+        run: bash <(curl -s https://codecov.io/bash)

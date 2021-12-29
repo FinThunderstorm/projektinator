@@ -13,19 +13,19 @@
             }
         },
         {
-            "label": "Remove containers and volumes",
+            "label": "Remove dev containers and volumes",
             "type": "shell",
             "command": "docker-compose down",
             "args": ["-v"]
         },
         {
-            "label": "Build containers",
+            "label": "Build dev containers",
             "group": "build",
             "type": "shell",
             "command": "docker-compose build",
         },
         {
-            "label": "Reset containers",
+            "label": "Reset dev containers",
             "group": "build",
             "dependsOn": ["Remove containers and volumes", "Build containers", "Start development server"]
         },

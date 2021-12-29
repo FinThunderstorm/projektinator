@@ -1,32 +1,31 @@
 version: "3.8"
 
 services:
-  app:
+  testapp:
     build:
       context: ./
       dockerfile: ./dev.Dockerfile
-    image: projektinator-dev
-    container_name: projektinator-test
-    environment:
-      - TEST=1
-      - POSTGRES_HOSTNAME=projektinator-db-test
-    env_file:
-      - ./.env
+    image: projektinator-test-dev
+    container_name: lukuvinkkikirjasto-test-dev
+    command: poetry run invoke coverage-report
     depends_on:
-      - db
+      - testdb
     ports:
-      - 5000:5000
+      - 5005:5000
+    environment:
+      - MODE=test
+      - SECRET=test
+      - DATABASE_URI=postgresql://test:test@projektinator-test-db:5432/projektinator-test
     volumes:
       - ./:/projektinator
 
-  db:
+  testdb:
     image: postgres:latest
-    container_name: projektinator-db-test
+    container_name: lukuvinkkikirjasto-test-db
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_DB=lukuvinkkikirjasto-test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_PORT=5432
     volumes:
-      - postgres-data:/var/lib/postgresql/data/
-      - ./database_structure.sql:/docker-entrypoint-initdb.d/database_structure.sql
-    env_file:
-      - ./.env
-
-volumes:
-  postgres-data:
+      - ./database_structure.sql:/docker-entrypoint-initdb.d/02-database_structure.sql
