@@ -4,16 +4,15 @@ services:
   testapp:
     build:
       context: ./
-      dockerfile: ./dev.Dockerfile
+      dockerfile: ./Dockerfile
+      target: test
     image: projektinator-test-dev
-    container_name: lukuvinkkikirjasto-test-dev
-    command: poetry run invoke coverage-report
+    container_name: projektinator-test-dev
     depends_on:
       - testdb
     ports:
       - 5005:5000
     environment:
-      - MODE=test
       - SECRET=test
       - DATABASE_URI=postgresql://test:test@projektinator-test-db:5432/projektinator-test
     volumes:
@@ -21,10 +20,10 @@ services:
 
   testdb:
     image: postgres:latest
-    container_name: lukuvinkkikirjasto-test-db
+    container_name: projektinator-test-db
     environment:
       - POSTGRES_USER=test
-      - POSTGRES_DB=lukuvinkkikirjasto-test
+      - POSTGRES_DB=projektinator-test
       - POSTGRES_PASSWORD=test
       - POSTGRES_PORT=5432
     volumes:

@@ -3,7 +3,8 @@ from invoke import task
 
 @task
 def start(ctx):
-    ctx.run('flask run --host=0.0.0.0')
+    #ctx.run('flask run --host=0.0.0.0')
+    ctx.run('python3 src/index.py')
 
 
 @task

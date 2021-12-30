@@ -1,23 +1,25 @@
 version: "3.8"
 
 services:
-  app:
+  prodapp:
     build:
       context: ./
       dockerfile: ./Dockerfile
-      target: dev
-    image: projektinator-dev
-    container_name: projektinator-dev
+      target: production
+    image: projektinator-prod
+    container_name: projektinator-prod
     depends_on:
-      - db
+      - proddb
     ports:
       - 5000:5000
+    env_file:
+      - ./.env
     volumes:
       - ./:/projektinator
 
-  db:
+  proddb:
     image: postgres:latest
-    container_name: projektinator-db
+    container_name: projektinator-prod-db
     volumes:
       - postgres-data:/var/lib/postgresql/data/
       - ./database_structure.sql:/docker-entrypoint-initdb.d/database_structure.sql

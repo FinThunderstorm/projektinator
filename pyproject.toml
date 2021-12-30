@@ -9,10 +9,10 @@ python = "^3.10"
 Flask = "^2.0.0"
 Flask-SQLAlchemy = "^2.5.1"
 gunicorn = "^20.1.0"
-psycopg2 = "^2.8.6"
 python-dotenv = "^0.17.1"
 bcrypt = "^3.2.0"
 markdown2 = "^2.4.0"
+psycopg2-binary = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 invoke = "^1.5.0"
@@ -21,6 +21,12 @@ autopep8 = "^1.5.7"
 freezegun = "^1.1.0"
 pytest = "^6.2.4"
 coverage = "^5.5"
+
+[tool.yapf]
+based_on_style = "google"
+spaces_before_comment = 4
+split_before_logical_operator = true
+indent_width = 4
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
