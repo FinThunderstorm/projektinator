@@ -9,10 +9,14 @@ from utils.validators import validate_flags, validate_uuid4
 
 
 class FeatureService:
-    """Class used for handling projects in the application
-    """
+    """Class used for handling projects in the application"""
 
-    def __init__(self, default_feature_repository: FeatureRepository = feature_repository, default_project_repository: ProjectRepository = project_repository, default_user_repository: UserRepository = user_repository):
+    def __init__(
+        self,
+        default_feature_repository: FeatureRepository = feature_repository,
+        default_project_repository: ProjectRepository = project_repository,
+        default_user_repository: UserRepository = user_repository,
+    ):
         """Initializes FeatureService
 
         Args:
@@ -24,7 +28,17 @@ class FeatureService:
         self._project_repository = default_project_repository
         self._user_repository = default_user_repository
 
-    def new(self, pid: str, foid: str, name: str, description: str, status: str, ftype: str, priority: str, flags: str = "") -> Feature:
+    def new(
+        self,
+        pid: str,
+        foid: str,
+        name: str,
+        description: str,
+        status: str,
+        ftype: str,
+        priority: str,
+        flags: str = "",
+    ) -> Feature:
         """new is used to create new features
 
         Args:
@@ -46,40 +60,49 @@ class FeatureService:
         Returns:
             Feature: created feature as Feature object
         """
-        if not pid or not foid or not name or not description or not status or not ftype or not priority:
-            raise EmptyValueException(
-                'One of given values is empty, all values need to have value')
+        if (
+            not pid
+            or not foid
+            or not name
+            or not description
+            or not status
+            or not ftype
+            or not priority
+        ):
+            raise EmptyValueException("One of given values is empty, all values need to have value")
 
         if not validate_uuid4(pid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="project id")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4", source="project id")
         if not validate_uuid4(foid):
             raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="feature owner id")
+                reason="unvalid formatting of uuid4", source="feature owner id"
+            )
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags")
+                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags"
+            )
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer", source="priority") from error
+                reason="can not be converted into integer", source="priority"
+            ) from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(
-                reson="priority is not in scale 1-3", source="priority")
+            raise UnvalidInputException(reson="priority is not in scale 1-3", source="priority")
 
         pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
 
         if not pname:
-            raise NotExistingException('Project')
+            raise NotExistingException("Project")
         if not foname:
-            raise NotExistingException('Feature owner')
+            raise NotExistingException("Feature owner")
 
         created_feature = self._feature_repository.new(
-            pid, pname, foid, foname, name, description, flags, status, ftype, priority)
+            pid, pname, foid, foname, name, description, flags, status, ftype, priority
+        )
         return created_feature
 
     def get_all(self) -> [Feature]:
@@ -95,7 +118,7 @@ class FeatureService:
 
         features = self._feature_repository.get_all()
         if not features:
-            raise NotExistingException('Features', "not found.")
+            raise NotExistingException("Features", "not found.")
         return features
 
     def get_all_by_project_id(self, pid: str) -> [Feature]:
@@ -112,11 +135,11 @@ class FeatureService:
             [Feature]: list of found features
         """
         if not self._project_repository.get_by_id(pid):
-            raise NotExistingException('Project')
+            raise NotExistingException("Project")
 
         features = self._feature_repository.get_all_by_project_id()
         if not features:
-            raise NotExistingException('Features')
+            raise NotExistingException("Features")
         return features
 
     def get_all_by_feature_owner(self, foid: str) -> [Feature]:
@@ -133,11 +156,11 @@ class FeatureService:
             [Feature]: list of found features
         """
         if not self._project_repository.get_by_id(foid):
-            raise NotExistingException('Feature owner')
+            raise NotExistingException("Feature owner")
 
         features = self._feature_repository.get_all_by_feature_owner()
         if not features:
-            raise NotExistingException('Features')
+            raise NotExistingException("Features")
         return features
 
     def get_by_id(self, fid: str) -> Feature:
@@ -155,7 +178,7 @@ class FeatureService:
         """
         feature = self._feature_repository.get_by_id(fid)
         if not feature:
-            raise NotExistingException('Feature')
+            raise NotExistingException("Feature")
         return feature
 
     def get_name(self, fid: str) -> str:
@@ -173,10 +196,21 @@ class FeatureService:
         """
         feature_name = self._feature_repository.get_name(fid)
         if not feature_name:
-            raise NotExistingException('Feature')
+            raise NotExistingException("Feature")
         return feature_name
 
-    def update(self, fid: str, pid: str, foid: str, name: str, description: str, flags: str, status: str, ftype: str, priority: int) -> Project:
+    def update(
+        self,
+        fid: str,
+        pid: str,
+        foid: str,
+        name: str,
+        description: str,
+        flags: str,
+        status: str,
+        ftype: str,
+        priority: int,
+    ) -> Project:
         """update is used to update feature with given values
 
         Args:
@@ -199,44 +233,54 @@ class FeatureService:
         Returns:
             Project: updated feature as Feature object
         """
-        if not fid or not pid or not foid or not name or not description or not status or not ftype or not priority:
-            raise EmptyValueException(
-                'One of given values is empty, all values need to have value')
+        if (
+            not fid
+            or not pid
+            or not foid
+            or not name
+            or not description
+            or not status
+            or not ftype
+            or not priority
+        ):
+            raise EmptyValueException("One of given values is empty, all values need to have value")
 
         feature = self._feature_repository.get_by_id(fid)
         if not feature:
-            raise NotExistingException('Feature')
+            raise NotExistingException("Feature")
 
         if not validate_uuid4(pid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="project id")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4", source="project id")
         if not validate_uuid4(foid):
             raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="feature owner id")
+                reason="unvalid formatting of uuid4", source="feature owner id"
+            )
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags")
+                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags"
+            )
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer", source="priority") from error
+                reason="can not be converted into integer", source="priority"
+            ) from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(
-                reson="priority is not in scale 1-3", source="priority")
+            raise UnvalidInputException(reson="priority is not in scale 1-3", source="priority")
 
         pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
 
         if not pname:
-            raise NotExistingException('Project')
+            raise NotExistingException("Project")
         if not foname:
-            raise NotExistingException('Feature owner')
+            raise NotExistingException("Feature owner")
 
         updated_feature = self._feature_repository.update(
-            fid, pid, pname, foid, foname, name, description, flags, status, ftype, priority)
+            fid, pid, pname, foid, foname, name, description, flags, status, ftype, priority
+        )
         return updated_feature
 
     def remove(self, fid: str) -> None:
@@ -250,7 +294,7 @@ class FeatureService:
             NotExistingException: raised if feature not found with given id
         """
         if not self._feature_repository.get_by_id(fid):
-            raise NotExistingException('Feature')
+            raise NotExistingException("Feature")
         self._feature_repository.remove(fid)
 
 

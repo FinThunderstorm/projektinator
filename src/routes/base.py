@@ -10,7 +10,6 @@ from random import randint
 from utils.exceptions import LoginException
 from repositories.feature_repository import feature_repository
 from utils.helpers import fullname
-from queries import add_role
 
 
 @app.route("/")
@@ -18,49 +17,6 @@ def index():
     # flash("Hello world!", "is-danger")
     return render_template("index.html")
 
-# /users
-
-
-@app.route("/testing")
-def testing():
-    # add_role('admin')
-    # user = user_service.new('teppo', 1, 'teppo', 'Teppo',
-    #                        'Tulppu', 'teppo@tulppu.fi')
-    user = user_service.get_all()[0]
-    print('>', user)
-    # project = project_service.new(
-    #    user.user_id, "Testing "+str(randint(1, 10**5)), "Cool new testing project", "test;my;csv;skills;")
-    # print(project)
-    project2 = project_service.get_all()[0]
-    print('>', project2)
-    # feature = feature_repository.new(project.project_id, project.name, user.user_id, user.fullname, "Testing "+str(randint(
-    #    1, 10**5)), "Cool new testing feature", "test;my;csv;skills;", "started", "new feature", 1)
-    # print(feature)
-    feature2 = feature_repository.get_all()[0]
-    print('>', feature2)
-    return render_template("index.html")
-
-
-@ app.route("/users/login", methods=["POST"])
-def login():
-    username = request.form["username"]
-    password = request.form["password"]
-    try:
-        uid = user_service.login(username, password)
-        session["user"] = uid
-        session["token"] = os.urandom(16).hex()
-    except LoginException as error:
-        print('failed')
-        flash(error.message, "is-danger")
-
-    return redirect("/")
-
-
-@ app.route("/users/logout", methods=["GET"])
-def logout():
-    del session["user"]
-    del session["token"]
-    return redirect("/")
 
 # @app.get("/users/<string:username>")
 # def get_by_username(username):
