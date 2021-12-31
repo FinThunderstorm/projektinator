@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+            <tr>
+                <th class="mdl-data-table__cell--non-numeric">User ID</th>
+                <th class="mdl-data-table__cell--non-numeric">Name</th>
+                <th class="mdl-data-table__cell--non-numeric">Username</th>
+                <th class="mdl-data-table__cell--non-numeric">User role</th>
+                <th class="mdl-data-table__cell--non-numeric">Email</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric">{{ user.user_id }}</td>
+                    <td class="mdl-data-table__cell--non-numeric">{{ user.fullname }}</td>
+                    <td class="mdl-data-table__cell--non-numeric">{{ user.username }}</td>
+                    <td>{{ user.user_role }}</td>
+                    <td class="mdl-data-table__cell--non-numeric">{{ user.email }}</td>
+                    <td>
+                        <form action="/users/{{ user.user_id }}">
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="edit{{ user.user_id }}">edit</i>
+                                <div class="mdl-tooltip" data-mdl-for="edit{{ user.user_id }}">
+                                    Edit
+                                </div>
+                            </button>
+                        </form>     
+                    </td>
+                    <td>
+                        <form action="/users/remove" method="post">
+                            <input type="hidden" name="user_id" value="{{ user.user_id }}" />
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="remove{{ user.user_id }}">delete</i>
+                                <div class="mdl-tooltip" data-mdl-for="remove{{ user.user_id }}">
+                                    Remove
+                                </div>
+                            </button>
+                        </form>
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

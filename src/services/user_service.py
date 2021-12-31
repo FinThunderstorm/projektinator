@@ -9,7 +9,8 @@ class UserService:
     """Class used for handling users in the application
     """
 
-    def __init__(self, default_user_repository: UserRepository = user_repository):
+    def __init__(self,
+                 default_user_repository: UserRepository = user_repository):
         """Initializes UserService with default user repository
 
         Args:
@@ -17,7 +18,8 @@ class UserService:
         """
         self._user_repository = default_user_repository
 
-    def new(self, username: str, user_role: str, password: str, firstname: str, lastname: str, email: str) -> User:
+    def new(self, username: str, user_role: str, password: str, firstname: str,
+            lastname: str, email: str) -> User:
         """new is used to create new users
 
         Args:
@@ -54,12 +56,13 @@ class UserService:
         try:
             user_role = int(user_role)
         except Exception as error:
-            raise UnvalidInputException(
-                "Unvalid input", "unexpected value", "user role") from error
+            raise UnvalidInputException("Unvalid input", "unexpected value",
+                                        "user role") from error
         password_hash = generate_password_hash(password)
 
-        created_user = self._user_repository.new(
-            username, user_role, password_hash, firstname, lastname, email)
+        created_user = self._user_repository.new(username, user_role,
+                                                 password_hash, firstname,
+                                                 lastname, email)
         return created_user
 
     def get_by_id(self, uid: str) -> User:
@@ -105,7 +108,9 @@ class UserService:
         users = self._user_repository.get_all()
         return users
 
-    def update(self, uid: str, username: str, user_role: str, password: str, firstname: str, lastname: str, email: str, profile_image: str) -> User:
+    def update(self, uid: str, username: str, user_role: str, password: str,
+               firstname: str, lastname: str, email: str,
+               profile_image: str) -> User:
         """update is used to update users
 
         Args:
@@ -134,10 +139,12 @@ class UserService:
         elif len(username) < 5:
             raise ValueShorterThanException('username', 5)
 
-        if password == "":
-            raise EmptyValueException('password')
-        elif len(password) < 5:
-            raise ValueShorterThanException('password', 5)
+        if password != "":
+            if len(password) < 5:
+                raise ValueShorterThanException('password', 5)
+            password_hash = generate_password_hash(password)
+        else:
+            password_hash = current_user.password_hash
 
         if firstname == "" or lastname == "":
             raise EmptyValueException('name')
@@ -146,16 +153,16 @@ class UserService:
             try:
                 user_role = int(user_role)
             except Exception as error:
-                raise UnvalidInputException(
-                    "Unvalid input", "unexpected value", "user role") from error
+                raise UnvalidInputException("Unvalid input", "unexpected value",
+                                            "user role") from error
 
-        username = current_user.username if username == current_user.username else username.lower()
-        password_hash = current_user.password_hash if password == "" else generate_password_hash(
-            password)
+        username = current_user.username if username == current_user.username else username.lower(
+        )
         profile_image = profile_image if profile_image != "" else "default_image"
 
-        user = self._user_repository.update(
-            uid, username, user_role, password_hash, firstname, lastname, email, profile_image)
+        user = self._user_repository.update(uid, username, user_role,
+                                            password_hash, firstname, lastname,
+                                            email, profile_image)
 
         return user
 

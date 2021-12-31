@@ -2,7 +2,9 @@ class EmptyValueException(Exception):
     """Class for exception raised if given value is empty.
     """
 
-    def __init__(self, source: str, message: str = "Given value can not be empty"):
+    def __init__(self,
+                 source: str,
+                 message: str = "Given value can not be empty"):
         """Initializes class with error source and message
 
         Args:
@@ -25,7 +27,10 @@ class ValueShorterThanException(Exception):
     """Class for exception raised if given value is shorter than asked
     """
 
-    def __init__(self, source: str, length: int, message: str = "Given value can not be shorter than"):
+    def __init__(self,
+                 source: str,
+                 length: int,
+                 message: str = "Given value can not be shorter than"):
         """Initializes class with error source, asked length and message
 
         Args:
@@ -50,7 +55,10 @@ class DatabaseException(Exception):
     """Class for exception raised if error given while operating with database
     """
 
-    def __init__(self, source: str, message: str = "Something went wrong while saving into database:"):
+    def __init__(
+            self,
+            source: str,
+            message: str = "Something went wrong while saving into database:"):
         """Initializes class with given source and message.
 
         Args:
@@ -73,7 +81,10 @@ class NotExistingException(Exception):
     """Class for exception raised if given object is not found
     """
 
-    def __init__(self, eobject: str = "Object", message: str = "not found. Please check your input and try again."):
+    def __init__(
+            self,
+            eobject: str = "Object",
+            message: str = "not found. Please check your input and try again."):
         """Intializes class with message
 
         Args:
@@ -138,7 +149,10 @@ class UnvalidInputException(Exception):
     """Class for execption raised if unvalid input given
     """
 
-    def __init__(self, message: str = "Unvalid input", reason: str = "unexpected value", source: str = "given source"):
+    def __init__(self,
+                 message: str = "Unvalid input",
+                 reason: str = "unexpected value",
+                 source: str = "given source"):
         """Initializes class with message, reason and source
 
         Args:

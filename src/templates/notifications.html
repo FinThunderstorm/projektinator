@@ -1,0 +1,12 @@
+{% with notifications = get_flashed_messages(with_categories=true) %}
+    {% if notifications %}
+        {% for type, notification in notifications %}
+            {% if notification != "" %}
+                <div class="notification {{ type }}" name="notification">
+                    <button class="delete"></button>
+                    <strong>HOX!</strong> {{ notification }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %}

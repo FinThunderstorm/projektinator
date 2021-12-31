@@ -1,0 +1,14 @@
+<header class="mdl-layout__header mdl-layout__header">
+    <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <div class="mdl-layout-spacer"></div>
+        {% if session.user %}
+            <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" href="/projects">Projects</a>
+                <a class="mdl-navigation__link" href="/features">Features</a>
+                <a class="mdl-navigation__link" href="/tasks">Tasks</a>
+                <a class="mdl-navigation__link" href="/users">Users</a>
+            </nav>
+        {% endif %}
+    </div>
+</header>

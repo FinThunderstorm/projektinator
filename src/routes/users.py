@@ -2,7 +2,7 @@ import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.user_service import user_service
-from utils.exceptions import LoginException
+from utils.exceptions import LoginException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException
 
 baseUrl = "/users"
 
@@ -29,29 +29,81 @@ def logout():
 
 
 @app.route(f"{baseUrl}", methods=["GET"])
-def users_management():
-    return redirect("/")
+def users():
+    users = user_service.get_all()
+    return render_template('users/users.html', users=users)
 
 
 @app.route(f"{baseUrl}/<uuid:user_id>", methods=["GET", "POST"])
-def show_user():
+def user(user_id):
     # GET shows profile
     if request.method == "GET":
-        return redirect("/")
+        user = user_service.get_by_id(user_id)
+        return render_template('users/users_user.html', user=user)
 
     # POST updates profile
     if request.method == "POST":
-        return redirect("/")
+        print(request.form)
+        user = user_service.get_by_id(request.form['user_id'])
+        try:
+            user_service.update(request.form['user_id'],
+                                request.form['username'],
+                                int(request.form['user_role']),
+                                request.form['password'],
+                                request.form['firstname'],
+                                request.form['lastname'], request.form['email'],
+                                request.form['profile_image'])
+            flash(f'Saved user {user.user_id} successfully', 'is-success')
+            return redirect(baseUrl)
+        except ValueShorterThanException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except EmptyValueException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except DatabaseException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except UsernameDuplicateException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
 
 
-@app.route(f"{baseUrl}/create", methods=["GET", "POST"])
+@app.route(f"{baseUrl}/add", methods=["GET", "POST"])
 def create_user():
     # GET shows creation page
     if request.method == "GET":
-        user_service.new("teppo", 1, "teppo", "Teppo", "Matti",
-                         "teppo@mattiteppo.fi")
-        return redirect("/")
+        return render_template("users/users_add.html")
 
     # POST creates new user
     if request.method == "POST":
-        return redirect("/")
+        try:
+            user_service.new(request.form["username"], 1,
+                             request.form["password"],
+                             request.form["firstname"],
+                             request.form["lastname"], request.form["email"])
+            return redirect(baseUrl)
+        except ValueShorterThanException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except EmptyValueException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except DatabaseException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except UsernameDuplicateException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+
+
+@app.route(f"{baseUrl}/remove", methods=["POST"])
+def remove_user():
+    try:
+        user_service.remove(request.form["user_id"])
+        flash(f"User with id {request.form['user_id']} removed successfully",
+              "is-success")
+        return redirect(baseUrl)
+    except Exception as error:
+        flash(error.message, 'is-danger')
+        return redirect(baseUrl)
