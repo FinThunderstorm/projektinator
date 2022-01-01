@@ -11,7 +11,9 @@ class TaskRepository:
     """Class used for handling tasks in the database
     """
 
-    def new(self, fid: str, fname: str, aid: str, aname: str, name: str, description: str, status: str, ttype: str, priority: int, flags: str) -> Task:
+    def new(self, fid: str, fname: str, aid: str, aname: str, name: str,
+            description: str, status: str, ttype: str, priority: int,
+            flags: str) -> Task:
         """new is used to create new tasks into the database
 
         Args:
@@ -49,8 +51,8 @@ class TaskRepository:
         RETURNING id, created, updated_on
         """
         try:
-            tid, created, updated_on = db.session.execute(
-                sql, values).fetchone()
+            tid, created, updated_on = db.session.execute(sql,
+                                                          values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
@@ -85,7 +87,11 @@ class TaskRepository:
 
         all_comments = None
 
-        return [Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]), task[6], task[7], task[9], task[10], task[11], task[12], task[13], task[8], all_comments) for task in tasks]
+        return [
+            Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
+                 task[6], task[7], task[9], task[10], task[11], task[12],
+                 task[13], task[8], all_comments) for task in tasks
+        ]
 
     def get_all_by_feature_id(self, fid: str) -> [Task]:
         """get_all_by_feature_id is used to find all tasks associated with given feature
@@ -113,7 +119,11 @@ class TaskRepository:
 
         all_comments = None
 
-        return [Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]), task[6], task[7], task[9], task[10], task[11], task[12], task[13], task[8], all_comments) for task in tasks]
+        return [
+            Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
+                 task[6], task[7], task[9], task[10], task[11], task[12],
+                 task[13], task[8], all_comments) for task in tasks
+        ]
 
     def get_all_by_assignee(self, aid: str) -> [Task]:
         """get_all_by_assignee is used to find all tasks associated with given assignee
@@ -141,7 +151,11 @@ class TaskRepository:
 
         all_comments = None
 
-        return [Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]), task[6], task[7], task[9], task[10], task[11], task[12], task[13], task[8], all_comments) for task in tasks]
+        return [
+            Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
+                 task[6], task[7], task[9], task[10], task[11], task[12],
+                 task[13], task[8], all_comments) for task in tasks
+        ]
 
     def get_by_id(self, tid: str) -> Task:
         """get_by_id is used to find specific task
@@ -169,7 +183,10 @@ class TaskRepository:
 
         all_comments = None
 
-        return Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]), task[6], task[7], task[9], task[10], task[11], task[12], task[13], task[8], all_comments)
+        return Task(task[0], task[1], task[2], task[3],
+                    fullname(task[4],
+                             task[5]), task[6], task[7], task[9], task[10],
+                    task[11], task[12], task[13], task[8], all_comments)
 
     def get_name(self, tid: str) -> str:
         """get_name is used to get name of specific task
@@ -195,7 +212,9 @@ class TaskRepository:
 
         return name
 
-    def update(self, tid: str, fid: str, fname: str, aid: str, aname: str, name: str, description: str, status: str, ttype: str, priority: int, flags: str) -> Task:
+    def update(self, tid: str, fid: str, fname: str, aid: str, aname: str,
+               name: str, description: str, status: str, ttype: str,
+               priority: int, flags: str) -> Task:
         """update is used to update task in the database
 
         Args:
@@ -225,6 +244,7 @@ class TaskRepository:
         RETURNING created, updated_on
         """
         values = {
+            "id": tid,
             "feature_id": fid,
             "assignee": aid,
             "name": name,
@@ -235,12 +255,11 @@ class TaskRepository:
             "priority": priority
         }
         try:
-            created, updated_on = db.session.execute(
-                sql, values).fetchone()
+            created, updated_on = db.session.execute(sql, values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
-                'While ssaving new task into database') from error
+                'While saving new task into database') from error
 
         if not tid:
             raise DatabaseException('While saving updated task into database')
@@ -248,7 +267,8 @@ class TaskRepository:
         all_comments = None
 
         updated_task = Task(tid, fid, fname, aid, aname, name, description,
-                            status, ttype, priority, created, updated_on, flags, all_comments)
+                            status, ttype, priority, created, updated_on, flags,
+                            all_comments)
         return updated_task
 
     def remove(self, tid: str) -> None:

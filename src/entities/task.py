@@ -6,7 +6,21 @@ class Task:
     """Class Task resembles tasks as a object from the database.
     """
 
-    def __init__(self, tid: str, fid: str, fname: str, assignee: str, assignee_name: str, name: str, description: str, status: str, task_type: str, priority: int, created: datetime, updated_on: datetime, flags: str = "", comments: [Comment] = None):
+    def __init__(self,
+                 tid: str,
+                 fid: str,
+                 fname: str,
+                 assignee: str,
+                 assignee_name: str,
+                 name: str,
+                 description: str,
+                 status: str,
+                 task_type: str,
+                 priority: int,
+                 created: datetime,
+                 updated_on: datetime,
+                 flags: str = "",
+                 comments: [Comment] = None):
         """Initializes Task object with given values
 
         Args:
@@ -21,7 +35,7 @@ class Task:
             priority (int): priority in three stages: low, severate and high
             created (datetime): creation time of task
             updated_on (datetime): latest time task is updated on
-            flags ([str], optional): flags are used to filter tasks. Defaults to None.
+            flags (str, optional): flags are used to filter tasks. Defaults to None.
             comments ([Comment], optional): list of activity related to comment. Defaults to None.
         """
         self.task_id = tid
@@ -61,5 +75,4 @@ class Task:
             f' - created on ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'
             f' - flags ”{self.flags}”\n'
-            f' - comments\n”{comments}”'
-        )
+            f' - comments\n”{comments}”')

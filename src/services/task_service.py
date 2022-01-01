@@ -12,7 +12,11 @@ class TaskService:
     """Class used for handling users in the application
     """
 
-    def __init__(self, default_task_repository: TaskRepository = task_repository, default_feature_repository: FeatureRepository = feature_repository, default_user_repository: UserRepository = user_repository):
+    def __init__(
+            self,
+            default_task_repository: TaskRepository = task_repository,
+            default_feature_repository: FeatureRepository = feature_repository,
+            default_user_repository: UserRepository = user_repository):
         """Initializes TaskService with default task repository
 
         Args:
@@ -22,7 +26,15 @@ class TaskService:
         self._feature_repository = default_feature_repository
         self._user_repository = default_user_repository
 
-    def new(self, fid: str, aid: str, name: str, description: str, status: str, ttype: str, priority: int, flags: str = "") -> Task:
+    def new(self,
+            fid: str,
+            aid: str,
+            name: str,
+            description: str,
+            status: str,
+            ttype: str,
+            priority: int,
+            flags: str = "") -> Task:
         """new is used to create new tasks
 
         Args:
@@ -49,26 +61,28 @@ class TaskService:
                 'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(fid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="feature id")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="feature id")
 
         if not validate_uuid4(aid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="assignee")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="assignee")
 
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags")
+                "Unvalid formatting",
+                "not being in 'one;two;three;flags;' format", "flags")
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer", source="priority") from error
+                reason="can not be converted into integer",
+                source="priority") from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(
-                reson="priority is not in scale 1-3", source="priority")
+            raise UnvalidInputException(reson="priority is not in scale 1-3",
+                                        source="priority")
 
         fname = self._feature_repository.get_name(fid)
         aname = self._user_repository.get_fullname(aid)
@@ -78,8 +92,9 @@ class TaskService:
         if not aname:
             raise NotExistingException('Assignee')
 
-        created_task = self._task_repository.new(
-            fid, fname, aid, aname, name, description, status, ttype, priority, flags)
+        created_task = self._task_repository.new(fid, fname, aid, aname, name,
+                                                 description, status, ttype,
+                                                 priority, flags)
         return created_task
 
     def get_all(self) -> [Task]:
@@ -182,7 +197,8 @@ class TaskService:
 
         return name
 
-    def update(self, tid: str, fid: str, aid: str, name: str, description: str, status: str, ttype: str, priority: int, flags: str) -> Task:
+    def update(self, tid: str, fid: str, aid: str, name: str, description: str,
+               status: str, ttype: str, priority: int, flags: str) -> Task:
         """update is used to update tasks
 
         Args:
@@ -214,26 +230,28 @@ class TaskService:
             raise NotExistingException('Task')
 
         if not validate_uuid4(fid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="feature id")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="feature id")
 
         if not validate_uuid4(aid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="assignee")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="assignee")
 
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags")
+                "Unvalid formatting",
+                "not being in 'one;two;three;flags;' format", "flags")
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer", source="priority") from error
+                reason="can not be converted into integer",
+                source="priority") from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(
-                reson="priority is not in scale 1-3", source="priority")
+            raise UnvalidInputException(reson="priority is not in scale 1-3",
+                                        source="priority")
 
         fname = self._feature_repository.get_name(fid)
         aname = self._user_repository.get_fullname(aid)
@@ -243,8 +261,9 @@ class TaskService:
         if not aname:
             raise NotExistingException('Assignee')
 
-        updated_task = self._task_repository.update(
-            tid, fid, fname, aid, aname, name, description, status, ttype, priority, flags)
+        updated_task = self._task_repository.update(tid, fid, fname, aid, aname,
+                                                    name, description, status,
+                                                    ttype, priority, flags)
         return updated_task
 
     def remove(self, tid: str) -> None:
