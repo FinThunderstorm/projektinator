@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}User ”{{ user.fullname}}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/users">List</a>
+            <a class="mdl-navigation__link" href="/users/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
 {% block content %}
 <form action="/users/{{ user.user_id }}" method="POST">
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -44,6 +53,12 @@
 
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
         Save
+    </button>
+</form>
+
+<form action="/users/logout">
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit">
+        Log out
     </button>
 </form>
 {% endblock %}

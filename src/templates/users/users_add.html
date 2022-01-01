@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}Add user{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/users">List</a>
+            <a class="mdl-navigation__link" href="/users/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
 {% block content %}
     <form action="/users/add" method="POST">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
