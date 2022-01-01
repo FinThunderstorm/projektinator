@@ -2,10 +2,27 @@
     {% if notifications %}
         {% for type, notification in notifications %}
             {% if notification != "" %}
-                <div class="notification {{ type }}" name="notification">
-                    <button class="delete"></button>
-                    <strong>HOX!</strong> {{ notification }}
+                {% if type == "is-success" %}
+                    {% set notification = '✅ '+notification%}
+                {% endif %}
+                {% if type == "is-danger" %}
+                    {% set notification = '❌ '+notification%}
+                {% endif %}
+
+                <div id="notification" class="mdl-js-snackbar mdl-snackbar">
+                    <div class="mdl-snackbar__text"><i class="material-icons">delete</i></div>
+                    <button class="mdl-snackbar__action" type="button"></button>
                 </div>
+                <script>
+                    const handleNotification = () => {
+                        const notificationContainer = document.querySelector('#notification')
+                        const data = {message: '{{ notification }}'}
+                        notificationContainer.MaterialSnackbar.showSnackbar(data)
+                    }
+                    document.querySelector('#notification').addEventListener('mdl-componentupgraded', () => {
+                        handleNotification()
+                    })
+                </script>
             {% endif %}
         {% endfor %}
     {% endif %}

@@ -16,15 +16,14 @@
 <body>
     <div class="demo-layout-transparent mdl-layout mdl-js-layout">
         {% include 'navigation.html' %}
-        
-    
+        {% block drawer %}{% endblock %}
         <main class="mdl-layout__content">
             <!-- Error messages -->
             {% include 'notifications.html' %}
 
             <!--Sivun sisöltö-->
             {% if session.user %}
-                <div class="container">
+                <div class="page-content">
                     <!-- Page content -->
                     {% block content %}{% endblock %}
                 </div>
