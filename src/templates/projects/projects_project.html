@@ -1,46 +1,83 @@
 {% extends "layout.html" %}
 {% block title %}Project ”{{ project.name }}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/projects">List</a>
+            <a class="mdl-navigation__link" href="/projects/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
 {% block content %}
 <form action="/projects/{{ project.project_id }}" method="POST">
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="project_id" name="project_id" value="{{ project.project_id }}">
-        <label class="mdl-textfield__label" for="project_id">Project ID</label>
-    </div>
+    <div class="mdl-grid">
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="project_id" name="project_id" value="{{ project.project_id }}">
+            <label class="mdl-textfield__label" for="project_id">Project ID</label>
+        </div>
 
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ project.name }}">
-        <label class="mdl-textfield__label" for="name">Name</label>
-    </div>
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ project.name }}">
+            <label class="mdl-textfield__label" for="name">Name</label>
+        </div>
 
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{ project.description }}">
-        <label class="mdl-textfield__label" for="description">Description</label>
-    </div>
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{ project.description }}">
+            <label class="mdl-textfield__label" for="description">Description</label>
+        </div>
 
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="product_owner" name="product_owner" value="{{ project.project_owner_name }}">
-        <label class="mdl-textfield__label" for="product_owner">Project owner</label>
-    </div>
-    
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="created" name="created" value="{{ project.created }}">
-        <label class="mdl-textfield__label" for="created">Created</label>
-    </div>
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="product_owner" name="product_owner" value="{{ project.project_owner_name }}">
+            <label class="mdl-textfield__label" for="product_owner">Project owner</label>
+        </div>
+        
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="created" name="created" value="{{ project.created }}">
+            <label class="mdl-textfield__label" for="created">Created</label>
+        </div>
 
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="updated_on" name="updated_on" value="{{ project.updated_on }}">
-        <label class="mdl-textfield__label" for="updated_on">Updated on</label>
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="updated_on" name="updated_on" value="{{ project.updated_on }}">
+            <label class="mdl-textfield__label" for="updated_on">Updated on</label>
+        </div>
+
+        <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="flags" name="flags" value="{{ project.flags }}">
+            <label class="mdl-textfield__label" for="flags">Flags</label>
+        </div>
+
+        <input type="hidden" name="project_owner_id" value="{{ project.project_owner_id }}" />
+
+        <div class="mdl-cell--12-col">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Save
+            </button>
+        </div>
     </div>
-
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="flags" name="flags" value="{{ project.flags }}">
-        <label class="mdl-textfield__label" for="flags">Flags</label>
-    </div>
-
-    <input type="hidden" name="project_owner_id" value="{{ project.project_owner_id }}" />
-
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-        Save
-    </button>
 </form>
+
+<h4>Features:</h2>
+<ul class="mdl-list">
+    {% for feature in project.features %}
+        <li class="mdl-list__item mdl-list__item--three-line">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons mdl-list__item-avatar">description</i>
+                <span>{{ feature.name }}</span>
+                <span class="mdl-list__item-text-body">
+                    <b>Feature type:</b> {{ feature.feature_type }}<br />
+                    <b>Status:</b> {{ feature.status }}
+                </span>
+            </span>
+            <span class="mdl-list__item-secondary-content">
+                <form action="/features/{{ feature.feature_id }}">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-list__item-secondary-action" type="submit">View</button>
+                </form>
+            </span>
+        </li>
+    {% endfor %}
+</ul>
+
+
+
 {% endblock %}

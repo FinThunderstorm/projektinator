@@ -10,62 +10,75 @@
     </div>
 {% endblock %}
 {% block content %}
-    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-        <thead>
-            <tr>
-                <th class="mdl-data-table__cell--non-numeric">Feature ID</th>
-                <th class="mdl-data-table__cell--non-numeric">Name</th>
-                <th class="mdl-data-table__cell--non-numeric">Description</th>
-                <th class="mdl-data-table__cell--non-numeric">Project</th>
-                <th class="mdl-data-table__cell--non-numeric">Feature owner</th>
-                <th class="mdl-data-table__cell--non-numeric">Status</th>
-                <th class="mdl-data-table__cell--non-numeric">Feature type</th>
-                <th class="mdl-data-table__cell--non-numeric">Priority</th>
-                <th class="mdl-data-table__cell--non-numeric">Created</th>
-                <th class="mdl-data-table__cell--non-numeric">Updated on</th>
-                <th class="mdl-data-table__cell--non-numeric">Flags</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for feature in features %}
+<div class="mdl-grid">
+    <div class="mdl-cell--12-col" style="width: 100%;">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
+            <thead>
                 <tr>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.feature_id }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.name }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.description }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.project_name }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.feature_owner_name }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.status }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.feature_type }}</th>
-                    <th>{{ feature.priority }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.created }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.updated_on }}</th>
-                    <th class="mdl-data-table__cell--non-numeric">{{ feature.flags }}</th>
-                    <td>
-                        <form action="/features/{{ feature.feature_id }}">
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                <i class="material-icons" id="edit{{ feature.feature_id }}">edit</i>
-                                <div class="mdl-tooltip" data-mdl-for="edit{{ feature.feature_id }}">
-                                    Edit
-                                </div>
-                            </button>
-                        </form>     
-                    </td>
-                    <td>
-                        <form action="/features/remove" method="post">
-                            <input type="hidden" name="feature_id" value="{{ feature.feature_id }}" />
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                <i class="material-icons" id="remove{{ feature.feature_id }}">delete</i>
-                                <div class="mdl-tooltip" data-mdl-for="remove{{ feature.feature_id }}">
-                                    Remove
-                                </div>
-                            </button>
-                        </form>
-                        
-                    </td>
+                    <th class="mdl-data-table__cell--non-numeric">Name</th>
+                    <th class="mdl-data-table__cell--non-numeric">Description</th>
+                    <th class="mdl-data-table__cell--non-numeric">Project</th>
+                    <th class="mdl-data-table__cell--non-numeric">Feature owner</th>
+                    <th class="mdl-data-table__cell--non-numeric">Status</th>
+                    <th class="mdl-data-table__cell--non-numeric">Feature type</th>
+                    <th class="mdl-data-table__cell--non-numeric">Priority</th>
+                    <th class="mdl-data-table__cell--non-numeric">Created</th>
+                    <th class="mdl-data-table__cell--non-numeric">Updated on</th>
+                    <th class="mdl-data-table__cell--non-numeric">Flags</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for feature in features %}
+                    {% set flags = feature.flags.split(';') %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.description }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.project_name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.feature_owner_name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.status }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.feature_type }}</td>
+                        <td>{{ feature.priority }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.created.strftime("%d.%m.%Y %H:%M") }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ feature.updated_on.strftime("%d.%m.%Y %H:%M") }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            {% for flag in flags %}
+                                {% if flag != "" %}
+                                    <span class="mdl-chip">
+                                        <span class="mdl-chip__text">
+                                            {{ flag.strip() }}
+                                        </span>
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <form action="/features/{{ feature.feature_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="edit{{ feature.feature_id }}">edit</i>
+                                    <div class="mdl-tooltip" data-mdl-for="edit{{ feature.feature_id }}">
+                                        Edit
+                                    </div>
+                                </button>
+                            </form>     
+                        </td>
+                        <td>
+                            <form action="/features/remove" method="post">
+                                <input type="hidden" name="feature_id" value="{{ feature.feature_id }}" />
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="remove{{ feature.feature_id }}">delete</i>
+                                    <div class="mdl-tooltip" data-mdl-for="remove{{ feature.feature_id }}">
+                                        Remove
+                                    </div>
+                                </button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

@@ -159,6 +159,23 @@ class UserRepository:
                  user[7]) for user in users
         ]
 
+    def get_users(self) -> list[tuple]:
+        """get_users is used to get all users for selecting users in the frontend
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[tuple]: list of users id and fullname
+        """
+        sql = "SELECT id, firstname, lastname FROM Users"
+        try:
+            users = db.session.execute(sql).fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all users') from error
+
+        return [(user[0], fullname(user[1], user[2])) for user in users]
+
     def update(self, uid: str, username: str, user_role: int,
                password_hash: str, firstname: str, lastname: str, email: str,
                profile_image: str) -> User:

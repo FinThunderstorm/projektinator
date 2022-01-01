@@ -12,8 +12,9 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     try:
-        uid = user_service.login(username, password)
+        uid, fullname = user_service.login(username, password)
         session["user"] = uid
+        session["username"] = fullname
         session["token"] = os.urandom(16).hex()
     except LoginException as error:
         flash(error.message, "is-danger")

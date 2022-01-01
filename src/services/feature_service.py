@@ -101,7 +101,7 @@ class FeatureService:
         return created_feature
 
     def get_all(self) -> [Feature]:
-        """get_all is used to list of all projects
+        """get_all is used to list of all features
 
         Raises:
             DatabaseException: raised if problems occur while interacting with the database
@@ -114,6 +114,19 @@ class FeatureService:
         features = self._feature_repository.get_all()
         if not features:
             raise NotExistingException("Features", "not found.")
+        return features
+
+    def get_features(self) -> list[tuple]:
+        """get_features is used to get all features for selecting features in the frontend
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+
+        Returns:
+            list[tuple]: list of feature id and name
+        """
+
+        features = self._feature_repository.get_features()
         return features
 
     def get_all_by_project_id(self, pid: str) -> [Feature]:

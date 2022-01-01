@@ -108,6 +108,18 @@ class UserService:
         users = self._user_repository.get_all()
         return users
 
+    def get_users(self) -> list[tuple]:
+        """get_users is used to get all users for selecting users in the frontend
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[tuple]: list of all users in the database
+        """
+        users = self._user_repository.get_users()
+        return users
+
     def update(self, uid: str, username: str, user_role: str, password: str,
                firstname: str, lastname: str, email: str,
                profile_image: str) -> User:
@@ -196,7 +208,7 @@ class UserService:
         except UserNotExistingException as usernotfound:
             raise LoginException() from usernotfound
         if check_password_hash(user.password_hash, password):
-            return user.user_id
+            return (user.user_id, user.fullname)
         raise LoginException()
 
 

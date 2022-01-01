@@ -1,54 +1,76 @@
 {% extends "layout.html" %}
 {% block title %}Projects{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/projects">List</a>
+            <a class="mdl-navigation__link" href="/projects/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
 {% block content %}
-    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-        <thead>
-            <tr>
-                <th class="mdl-data-table__cell--non-numeric">Project ID</th>
-                <th class="mdl-data-table__cell--non-numeric">Name</th>
-                <th class="mdl-data-table__cell--non-numeric">Description</th>
-                <th class="mdl-data-table__cell--non-numeric">Project owner</th>
-                <th class="mdl-data-table__cell--non-numeric">Created</th>
-                <th class="mdl-data-table__cell--non-numeric">Updated on</th>
-                <th class="mdl-data-table__cell--non-numeric">Flags</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for project in projects %}
+<div class="mdl-grid">
+    <div class="mdl-cell--12-col" style="width: 100%;">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
+            <thead>
                 <tr>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.project_id }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.name }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.description }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.project_owner_name }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.created }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.updated_on }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ project.flags }}</td>
-                    <td>
-                        <form action="/projects/{{ project.project_id }}">
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                <i class="material-icons" id="edit{{ project.project_id }}">edit</i>
-                                <div class="mdl-tooltip" data-mdl-for="edit{{ project.project_id }}">
-                                    Edit
-                                </div>
-                            </button>
-                        </form>     
-                    </td>
-                    <td>
-                        <form action="/projects/remove" method="post">
-                            <input type="hidden" name="project_id" value="{{ project.project_id }}" />
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                <i class="material-icons" id="remove{{ project.project_id }}">delete</i>
-                                <div class="mdl-tooltip" data-mdl-for="remove{{ project.project_id }}">
-                                    Remove
-                                </div>
-                            </button>
-                        </form>
-                        
-                    </td>
+                    <th class="mdl-data-table__cell--non-numeric">Name</th>
+                    <th class="mdl-data-table__cell--non-numeric">Description</th>
+                    <th class="mdl-data-table__cell--non-numeric">Project owner</th>
+                    <th class="mdl-data-table__cell--non-numeric">Created</th>
+                    <th class="mdl-data-table__cell--non-numeric">Updated on</th>
+                    <th class="mdl-data-table__cell--non-numeric">Flags</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                    {% set flags = project.flags.split(';') %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">{{ project.name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ project.description }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ project.project_owner_name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ project.created.strftime("%d.%m.%Y %H:%M") }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ project.updated_on.strftime("%d.%m.%Y %H:%M") }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            {% for flag in flags %}
+                                {% if flag != "" %}
+                                    <span class="mdl-chip">
+                                        <span class="mdl-chip__text">
+                                            {{ flag.strip() }}
+                                        </span>
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <form action="/projects/{{ project.project_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="edit{{ project.project_id }}">edit</i>
+                                    <div class="mdl-tooltip" data-mdl-for="edit{{ project.project_id }}">
+                                        Edit
+                                    </div>
+                                </button>
+                            </form>     
+                        </td>
+                        <td>
+                            <form action="/projects/remove" method="post">
+                                <input type="hidden" name="project_id" value="{{ project.project_id }}" />
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="remove{{ project.project_id }}">delete</i>
+                                    <div class="mdl-tooltip" data-mdl-for="remove{{ project.project_id }}">
+                                        Remove
+                                    </div>
+                                </button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

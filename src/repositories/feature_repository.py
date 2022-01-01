@@ -5,13 +5,16 @@ from utils.exceptions import DatabaseException, NotExistingException
 from entities.feature import Feature
 from entities.task import Task
 from utils.helpers import fullname
+from repositories.task_repository import task_repository
 
 
 class FeatureRepository:
     """Class for handling Features in the database
     """
 
-    def new(self, pid: str, pname: str, foid: str, foname: str, name: str, description: str, flags: str, status: str, ftype: str, priority: int) -> Feature:
+    def new(self, pid: str, pname: str, foid: str, foname: str, name: str,
+            description: str, flags: str, status: str, ftype: str,
+            priority: int) -> Feature:
         """new is used to create new features into the database
 
         Args:
@@ -50,8 +53,8 @@ class FeatureRepository:
         """
 
         try:
-            fid, created, updated_on = db.session.execute(
-                sql, values).fetchone()
+            fid, created, updated_on = db.session.execute(sql,
+                                                          values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
@@ -60,8 +63,9 @@ class FeatureRepository:
         if not fid:
             raise DatabaseException('While saving new feature into database')
 
-        created_feature = Feature(fid, pid, pname, foid, foname, name, description,
-                                  status, ftype, priority, created, updated_on, flags)
+        created_feature = Feature(fid, pid, pname, foid, foname, name,
+                                  description, status, ftype, priority, created,
+                                  updated_on, flags)
 
         return created_feature
 
@@ -85,10 +89,33 @@ class FeatureRepository:
         except Exception as error:
             raise DatabaseException('while getting all features') from error
 
-        all_tasks = None
         all_comments = None
 
-        return [Feature(feature[0], feature[1], feature[2], feature[3], fullname(feature[4], feature[5]), feature[6], feature[7], feature[9], feature[10], feature[11], feature[12], feature[13], feature[8], all_tasks, all_comments) for feature in features]
+        return [
+            Feature(feature[0], feature[1], feature[2], feature[3],
+                    fullname(feature[4], feature[5]), feature[6], feature[7],
+                    feature[9], feature[10], feature[11], feature[12],
+                    feature[13], feature[8],
+                    task_repository.get_all_by_feature_id(feature[0]),
+                    all_comments) for feature in features
+        ]
+
+    def get_features(self) -> list[tuple]:
+        """get_features is used to get all features for selecting features in the frontend
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+
+        Returns:
+            list[tuple]: list of feature id and name
+        """
+        sql = "SELECT id, name FROM Features"
+        try:
+            features = db.session.execute(sql).fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all features') from error
+
+        return [(feature[0], feature[1]) for feature in features]
 
     def get_all_by_project_id(self, pid: str) -> [Feature]:
         """get_all_by_project_id is used to get all features associated with given project
@@ -112,13 +139,18 @@ class FeatureRepository:
         try:
             features = db.session.execute(sql, {"id": pid}).fetchall()
         except Exception as error:
-            raise DatabaseException(
-                'while getting features with id') from error
+            raise DatabaseException('while getting features with id') from error
 
-        all_tasks = None
         all_comments = None
 
-        return [Feature(feature[0], feature[1], feature[2], feature[3], fullname(feature[4], feature[5]), feature[6], feature[7], feature[9], feature[10], feature[11], feature[12], feature[13], feature[8], all_tasks, all_comments) for feature in features]
+        return [
+            Feature(feature[0], feature[1], feature[2], feature[3],
+                    fullname(feature[4], feature[5]), feature[6], feature[7],
+                    feature[9], feature[10], feature[11], feature[12],
+                    feature[13], feature[8],
+                    task_repository.get_all_by_feature_id(feature[0]),
+                    all_comments) for feature in features
+        ]
 
     def get_all_by_feature_owner(self, foid: str) -> [Feature]:
         """get_all_by_feature_owner is used get all features associated with given feature owner
@@ -142,13 +174,18 @@ class FeatureRepository:
         try:
             features = db.session.execute(sql, {"id": foid}).fetchall()
         except Exception as error:
-            raise DatabaseException(
-                'while getting features with id') from error
+            raise DatabaseException('while getting features with id') from error
 
-        all_tasks = None
         all_comments = None
 
-        return [Feature(feature[0], feature[1], feature[2], feature[3], fullname(feature[4], feature[5]), feature[6], feature[7], feature[9], feature[10], feature[11], feature[12], feature[13], feature[8], all_tasks, all_comments) for feature in features]
+        return [
+            Feature(feature[0], feature[1], feature[2], feature[3],
+                    fullname(feature[4], feature[5]), feature[6], feature[7],
+                    feature[9], feature[10], feature[11], feature[12],
+                    feature[13], feature[8],
+                    task_repository.get_all_by_feature_id(feature[0]),
+                    all_comments) for feature in features
+        ]
 
     def get_by_id(self, fid: str) -> Feature:
         """get_by_id is used to found feature with given id
@@ -172,13 +209,16 @@ class FeatureRepository:
         try:
             feature = db.session.execute(sql, {"id": fid}).fetchone()
         except Exception as error:
-            raise DatabaseException(
-                'while getting features with id') from error
+            raise DatabaseException('while getting features with id') from error
 
-        all_tasks = None
         all_comments = None
 
-        return Feature(feature[0], feature[1], feature[2], feature[3], fullname(feature[4], feature[5]), feature[6], feature[7], feature[9], feature[10], feature[11], feature[12], feature[13], feature[8], all_tasks, all_comments)
+        return Feature(feature[0], feature[1], feature[2], feature[3],
+                       fullname(feature[4], feature[5]), feature[6], feature[7],
+                       feature[9], feature[10], feature[11], feature[12],
+                       feature[13], feature[8],
+                       task_repository.get_all_by_feature_id(feature[0]),
+                       all_comments)
 
     def get_name(self, fid: str) -> str:
         """get_name is used to get name of feature with given id
@@ -200,12 +240,13 @@ class FeatureRepository:
         try:
             name = db.session.execute(sql, {"id": fid}).fetchone()
         except Exception as error:
-            raise DatabaseException(
-                'while getting features with id') from error
+            raise DatabaseException('while getting features with id') from error
 
         return name
 
-    def update(self, fid: str, pid: str, pname: str, foid: str, foname: str, name: str, description: str, flags: str, status: str, ftype: str, priority: int) -> Feature:
+    def update(self, fid: str, pid: str, pname: str, foid: str, foname: str,
+               name: str, description: str, flags: str, status: str, ftype: str,
+               priority: int) -> Feature:
         """update is used to update feature with given values into the database
 
         Args:
@@ -251,8 +292,9 @@ class FeatureRepository:
         all_tasks = None
         all_comments = None
 
-        updated_feature = Feature(fid, pid, pname, foid, foname, name, description,
-                                  status, ftype, priority, created, updated_on, flags, all_tasks, all_comments)
+        updated_feature = Feature(fid, pid, pname, foid, foname, name,
+                                  description, status, ftype, priority, created,
+                                  updated_on, flags, all_tasks, all_comments)
         return updated_feature
 
     def remove(self, fid: str) -> None:

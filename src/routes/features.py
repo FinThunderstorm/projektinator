@@ -2,6 +2,8 @@ import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.feature_service import feature_service
+from services.project_service import project_service
+from services.user_service import user_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
 baseUrl = "/features"
@@ -58,7 +60,11 @@ def feature(feature_id):
 def create_feature():
     # GET shows creation page
     if request.method == "GET":
-        return render_template('features/features_add.html')
+        users = user_service.get_users()
+        projects = project_service.get_projects()
+        return render_template('features/features_add.html',
+                               users=users,
+                               projects=projects)
 
     # POST creates new feature
     if request.method == "POST":
@@ -67,7 +73,7 @@ def create_feature():
                 request.form['project'], request.form['feature_owner'],
                 request.form['name'], request.form['description'],
                 request.form['status'], request.form['feature_type'],
-                request.form['priority'])
+                request.form['priority'], request.form['flags'])
             flash(f'New feature {new_feature.feature_id} created successfully',
                   'is-success')
             return redirect(baseUrl)

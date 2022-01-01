@@ -5,6 +5,7 @@ from utils.database import db
 from utils.exceptions import DatabaseException, NotExistingException
 from entities.feature import Feature
 from utils.helpers import fullname
+from repositories.feature_repository import feature_repository
 
 
 class ProjectRepository:
@@ -74,12 +75,31 @@ class ProjectRepository:
             projects = db.session.execute(sql).fetchall()
         except Exception as error:
             raise DatabaseException('while getting all projects') from error
-        all_features = None
+
         return [
             Project(project[0], project[1], fullname(project[2], project[3]),
                     project[4], project[5], project[6], project[7], project[8],
-                    all_features) for project in projects
+                    feature_repository.get_all_by_project_id(project[0]))
+            for project in projects
         ]
+
+    def get_projects(self) -> list[tuple]:
+        """get_projects is used to get all projects for selecting projects in the frontend
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+
+        Returns:
+            list[tuple]: list of projects id and name
+        """
+
+        sql = "SELECT id, name FROM Projects"
+        try:
+            projects = db.session.execute(sql).fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all projects') from error
+
+        return [(project[0], project[1]) for project in projects]
 
     def get_all_by_project_owner(self, poid: str) -> [Project]:
         """get_all_by_project_owner is used to get list of all projects associated with given project owner in the database
@@ -100,11 +120,12 @@ class ProjectRepository:
             projects = db.session.execute(sql, {"id": poid}).fetchall()
         except Exception as error:
             raise DatabaseException('while getting all projects') from error
-        all_features = None
+
         return [
             Project(project[0], project[1], fullname(project[2], project[3]),
                     project[4], project[5], project[6], project[7], project[8],
-                    all_features) for project in projects
+                    feature_repository.get_all_by_project_id(project[0]))
+            for project in projects
         ]
 
     def get_by_id(self, pid: str) -> Project:
@@ -127,10 +148,11 @@ class ProjectRepository:
             raise DatabaseException('while getting project by id') from error
         if not project:
             raise NotExistingException('Project')
-        all_features = None
-        return Project(project[0], project[1], fullname(project[2], project[3]),
-                       project[4], project[5], project[6], project[7],
-                       project[8], all_features)
+
+        return Project(project[0], project[1], fullname(project[2],
+                                                        project[3]), project[4],
+                       project[5], project[6], project[7], project[8],
+                       feature_repository.get_all_by_project_id(project[0]))
 
     def get_name(self, pid: str) -> str:
         """get_name is used to find exact project with given id from the database

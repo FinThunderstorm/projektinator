@@ -127,6 +127,18 @@ class ProjectService:
         projects = self._project_repository.get_all()
         return projects
 
+    def get_projects(self) -> list[tuple]:
+        """get_projects is used to get all projects for selecting projects in the frontend
+
+        Raises:
+            DatabaseException: raised if problems occur while interacting with the database
+
+        Returns:
+            list[tuple]: list of projects id and name
+        """
+        projects = self._project_repository.get_projects()
+        return projects
+
     def get_all_by_project_owner(self, poid: str) -> [Project]:
         """get_all_by_project_owner is used to get list of all projects associated with given project owner in the database
 

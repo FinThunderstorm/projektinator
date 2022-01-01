@@ -2,6 +2,7 @@ import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.project_service import project_service
+from services.user_service import user_service
 from utils.exceptions import UnvalidInputException, NotExistingException, EmptyValueException, DatabaseException
 
 baseUrl = "/projects"
@@ -51,14 +52,16 @@ def project(project_id):
 def create_project():
     # GET shows creation page
     if request.method == "GET":
-        return render_template("projects/projects_add.html")
+        users = user_service.get_users()
+        return render_template("projects/projects_add.html", users=users)
 
     # POST creates new project
     if request.method == "POST":
         try:
             new_project = project_service.new(request.form['project_owner'],
                                               request.form['name'],
-                                              request.form['description'])
+                                              request.form['description'],
+                                              request.form["flags"])
             flash(f'New project {new_project.project_id} created successfully',
                   'is-success')
             return redirect(baseUrl)
