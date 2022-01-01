@@ -4,10 +4,12 @@
         <div class="mdl-layout-spacer"></div>
         {% if session.user %}
             <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" href="/">Home</a>
                 <a class="mdl-navigation__link" href="/projects">Projects</a>
                 <a class="mdl-navigation__link" href="/features">Features</a>
                 <a class="mdl-navigation__link" href="/tasks">Tasks</a>
                 <a class="mdl-navigation__link" href="/users">Users</a>
+                <a class="mdl-navigation__link" href="/users/{{ session.user }}"><i class="material-icons">account_circle</i>{{ session.username }}</a>
             </nav>
         {% endif %}
     </div>

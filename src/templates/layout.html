@@ -6,7 +6,6 @@
 
 <head>
     <title>Projektinator - {{ title() }}</title>
-    <script src="{{ url_for('static', filename='notification.js') }}"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
@@ -34,11 +33,7 @@
         </main>
 
         <!--Footer-->
-        <footer class="footer">
-            <div class="footer">
-                <p>Made by 🍐</p>
-            </div>
-        </footer>
+        {% include 'footer.html' %}
     </div>
 </body>
 
