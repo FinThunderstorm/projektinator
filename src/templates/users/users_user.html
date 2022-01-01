@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}User{% endblock %}
+{% block title %}User ”{{ user.fullname}}”{% endblock %}
 {% block content %}
 <form action="/users/{{ user.user_id }}" method="POST">
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">

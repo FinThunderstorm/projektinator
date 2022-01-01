@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
-{% block title %}Project {{ project.name }}{% endblock %}
+{% block title %}Project ”{{ project.name }}”{% endblock %}
 {% block content %}
 <form action="/projects/{{ project.project_id }}" method="POST">
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
         <input class="mdl-textfield__input" type="text" id="project_id" name="project_id" value="{{ project.project_id }}">
-        <label class="mdl-textfield__label" for="user_id">Project ID</label>
+        <label class="mdl-textfield__label" for="project_id">Project ID</label>
     </div>
 
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">

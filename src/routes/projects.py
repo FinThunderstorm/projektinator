@@ -53,12 +53,14 @@ def create_project():
     if request.method == "GET":
         return render_template("projects/projects_add.html")
 
-    # POST creates new user
+    # POST creates new project
     if request.method == "POST":
         try:
-            project_service.new(request.form['project_owner'],
-                                request.form['name'],
-                                request.form['description'])
+            new_project = project_service.new(request.form['project_owner'],
+                                              request.form['name'],
+                                              request.form['description'])
+            flash(f'New project {new_project.project_id} created successfully',
+                  'is-success')
             return redirect(baseUrl)
         except NotExistingException as error:
             flash(error.message, 'is-danger')

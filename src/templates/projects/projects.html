@@ -37,7 +37,7 @@
                     </td>
                     <td>
                         <form action="/projects/remove" method="post">
-                            <input type="hidden" name="user_id" value="{{ project.project_id }}" />
+                            <input type="hidden" name="project_id" value="{{ project.project_id }}" />
                             <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
                                 <i class="material-icons" id="remove{{ project.project_id }}">delete</i>
                                 <div class="mdl-tooltip" data-mdl-for="remove{{ project.project_id }}">

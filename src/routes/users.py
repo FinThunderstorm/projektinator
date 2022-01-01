@@ -43,7 +43,6 @@ def user(user_id):
 
     # POST updates profile
     if request.method == "POST":
-        print(request.form)
         user = user_service.get_by_id(request.form['user_id'])
         try:
             user_service.update(request.form['user_id'],
