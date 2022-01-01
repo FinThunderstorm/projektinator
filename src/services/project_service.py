@@ -10,7 +10,10 @@ class ProjectService:
     """Class used for handling projects in the application
     """
 
-    def __init__(self, default_project_repository: ProjectRepository = project_repository, default_user_repository: UserRepository = user_repository):
+    def __init__(
+            self,
+            default_project_repository: ProjectRepository = project_repository,
+            default_user_repository: UserRepository = user_repository):
         """Initializes Project Service
 
         Args:
@@ -20,7 +23,11 @@ class ProjectService:
         self._project_repository = default_project_repository
         self._user_repository = default_user_repository
 
-    def new(self, poid: str, name: str, descrption: str, flags: str = "") -> Project:
+    def new(self,
+            poid: str,
+            name: str,
+            descrption: str,
+            flags: str = "") -> Project:
         """new is used to create new projects into the database
 
         Args:
@@ -46,18 +53,21 @@ class ProjectService:
                 'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(poid):
-            raise UnvalidInputException(
-                'Unvalid formatting', "not being in correct format of uuid4", "project owner id")
+            raise UnvalidInputException('Unvalid formatting',
+                                        "not being in correct format of uuid4",
+                                        "project owner id")
 
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags")
+                "Unvalid formatting",
+                "not being in 'one;two;three;flags;' format", "flags")
 
-        created_project = self._project_repository.new(
-            poid, poname, name, descrption, flags)
+        created_project = self._project_repository.new(poid, poname, name,
+                                                       descrption, flags)
         return created_project
 
-    def update(self, pid: str, poid: str, name: str, descrption: str, flags: str, created: datetime) -> Project:
+    def update(self, pid: str, poid: str, name: str, descrption: str,
+               flags: str) -> Project:
         """update is used to update project in the database
 
         Args:
@@ -66,7 +76,6 @@ class ProjectService:
             name (str): name of project
             descrption (str): description of project
             flags (str): flags used to filter and label projects.
-            created (datetime): creation time of project
 
         Raises:
             NotExistingException: raised if project not existing
@@ -82,24 +91,27 @@ class ProjectService:
             raise NotExistingException('Project')
 
         poname = self._user_repository.get_fullname(poid)
-        if not poid or not poname or not name or not descrption or not flags or not created:
+        if not poid or not poname or not name or not descrption or not flags:
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(pid):
-            raise UnvalidInputException(
-                'Unvalid formatting', 'not being in correct format of uuid4', "project id")
+            raise UnvalidInputException('Unvalid formatting',
+                                        'not being in correct format of uuid4',
+                                        "project id")
 
         if not validate_uuid4(poid):
-            raise UnvalidInputException(
-                'Unvalid formatting', "not being in correct format of uuid4", "project owner id")
+            raise UnvalidInputException('Unvalid formatting',
+                                        "not being in correct format of uuid4",
+                                        "project owner id")
 
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags")
+                "Unvalid formatting",
+                "not being in 'one;two;three;flags;' format", "flags")
 
         updated_project = self._project_repository.update(
-            pid, poid, poname, name, descrption, flags, created)
+            pid, poid, poname, name, descrption, flags)
 
         return updated_project
 

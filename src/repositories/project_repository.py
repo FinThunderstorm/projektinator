@@ -11,7 +11,8 @@ class ProjectRepository:
     """Class used for handling projects in the database
     """
 
-    def new(self, poid: str, poname: str, name: str, descrption: str, flags: str) -> Project:
+    def new(self, poid: str, poname: str, name: str, descrption: str,
+            flags: str) -> Project:
         """new is used to create new projects into the database
 
         Args:
@@ -42,17 +43,16 @@ class ProjectRepository:
         """
 
         try:
-            pid, created, updated_on = db.session.execute(
-                sql, values).fetchone()
+            pid, created, updated_on = db.session.execute(sql,
+                                                          values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
                 'While saving new project into database') from error
         if not pid:
-            raise DatabaseException(
-                'While saving new project into database')
-        created_project = Project(
-            pid, poid, poname, name, descrption, created, updated_on, flags)
+            raise DatabaseException('While saving new project into database')
+        created_project = Project(pid, poid, poname, name, descrption, created,
+                                  updated_on, flags)
 
         return created_project
 
@@ -75,7 +75,11 @@ class ProjectRepository:
         except Exception as error:
             raise DatabaseException('while getting all projects') from error
         all_features = None
-        return [Project(project[0], project[1], fullname(project[2], project[3]), project[4], project[5], project[6], project[7], project[8], all_features) for project in projects]
+        return [
+            Project(project[0], project[1], fullname(project[2], project[3]),
+                    project[4], project[5], project[6], project[7], project[8],
+                    all_features) for project in projects
+        ]
 
     def get_all_by_project_owner(self, poid: str) -> [Project]:
         """get_all_by_project_owner is used to get list of all projects associated with given project owner in the database
@@ -97,7 +101,11 @@ class ProjectRepository:
         except Exception as error:
             raise DatabaseException('while getting all projects') from error
         all_features = None
-        return [Project(project[0], project[1], fullname(project[2], project[3]), project[4], project[5], project[6], project[7], project[8], all_features) for project in projects]
+        return [
+            Project(project[0], project[1], fullname(project[2], project[3]),
+                    project[4], project[5], project[6], project[7], project[8],
+                    all_features) for project in projects
+        ]
 
     def get_by_id(self, pid: str) -> Project:
         """get_by_id is used to find exact project with given id from the database
@@ -120,7 +128,9 @@ class ProjectRepository:
         if not project:
             raise NotExistingException('Project')
         all_features = None
-        return Project(project[0], project[1], fullname(project[2], project[3]), project[4], project[5], project[6], project[7], project[8], all_features)
+        return Project(project[0], project[1], fullname(project[2], project[3]),
+                       project[4], project[5], project[6], project[7],
+                       project[8], all_features)
 
     def get_name(self, pid: str) -> str:
         """get_name is used to find exact project with given id from the database
@@ -145,7 +155,8 @@ class ProjectRepository:
 
         return name
 
-    def update(self, pid: str, poid: str, poname: str, name: str, descrption: str, flags: str, created: datetime, features: [Feature]) -> Project:
+    def update(self, pid: str, poid: str, poname: str, name: str,
+               descrption: str, flags: str) -> Project:
         """update is used to update new values into database for specific Project.
 
         Args:
@@ -155,7 +166,6 @@ class ProjectRepository:
             name (str): name of the project
             descrption (str): description of the project
             flags (str): flags used to identify projects, given in string, example = "one;two;three;flags;"
-            created (datetime): datetime when project were originally created, given by db in creation
             features ([Feature]): list of Features that are linked to this Project.
 
         Raises:
@@ -171,18 +181,19 @@ class ProjectRepository:
             "description": descrption,
             "flags": flags
         }
-        sql = "UPDATE Projects SET project_owner=:project_owner, name=:name, description=:description, flags=:flags WHERE id=:id RETURNING id, updated_on"
+        sql = "UPDATE Projects SET project_owner=:project_owner, name=:name, description=:description, flags=:flags WHERE id=:id RETURNING id, created, updated_on"
         try:
-            project_id, updated_on = db.session.execute(sql, values).fetchone()
+            project_id, created, updated_on = db.session.execute(
+                sql, values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
                 'While saving updated project into database') from error
-        if pid != project_id:
+        if str(pid) != str(project_id):
             raise DatabaseException(
                 'While saving updated project into database')
-        updated_project = Project(
-            pid, poid, poname, name, descrption, created, updated_on, flags, features)
+        updated_project = Project(pid, poid, poname, name, descrption, created,
+                                  updated_on, flags)
         return updated_project
 
     def remove(self, pid: str):

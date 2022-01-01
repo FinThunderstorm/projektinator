@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Add project{% endblock %}
+{% block content %}
+    <form action="/projects/add" method="POST">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="name" name="name">
+            <label class="mdl-textfield__label" for="name">Name</label>
+        </div>
+    
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="description" name="description">
+            <label class="mdl-textfield__label" for="description">Description</label>
+        </div>
+    
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="project_owner" name="project_owner" value="{{ session.user }}">
+            <label class="mdl-textfield__label" for="project_owner">Project owner</label>
+        </div>
+    
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="flags" name="flags">
+            <label class="mdl-textfield__label" for="flags">Flags</label>
+        </div>
+
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Add
+        </button>
+    </form>
+{% endblock %}
