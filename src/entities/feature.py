@@ -7,13 +7,30 @@ class Feature:
     """Class Feature resembles feature as a object from the database
     """
 
-    def __init__(self, fid: str, pid: str, pname: str, foid: str, foname: str, name: str, description: str, status: str, feature_type: str, priority: int, created: datetime, updated_on: datetime, flags: str = "", tasks: [Task] = None, comments: [Comment] = None):
+    def __init__(self,
+                 fid: str,
+                 pid: str,
+                 pname: str,
+                 foid: str,
+                 foname: str,
+                 name: str,
+                 description: str,
+                 status: str,
+                 feature_type: str,
+                 priority: int,
+                 created: datetime,
+                 updated_on: datetime,
+                 flags: str = "",
+                 tasks: [Task] = None,
+                 comments: [Comment] = None):
         """Initializes Feature object with given values
 
         Args:
             fid (str): id of feature
             pid (str): id of project in which references
             pname (str): name of project in which references
+            foid (str): id of the feature owner
+            foname (str):name of the feature owner
             name (str): name of feature
             description (str): description of feature
             status (str): status of feature
@@ -67,5 +84,4 @@ class Feature:
             f' - updated on ”{self.updated_on}”\n'
             f' - flags ”{self.flags}”\n'
             f' - tasks:\n{tasks}'
-            f' - comments:\n{comments}'
-        )
+            f' - comments:\n{comments}')

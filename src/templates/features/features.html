@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block title %}Features{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/features">List</a>
+            <a class="mdl-navigation__link" href="/features/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+            <tr>
+                <th class="mdl-data-table__cell--non-numeric">Feature ID</th>
+                <th class="mdl-data-table__cell--non-numeric">Name</th>
+                <th class="mdl-data-table__cell--non-numeric">Description</th>
+                <th class="mdl-data-table__cell--non-numeric">Project</th>
+                <th class="mdl-data-table__cell--non-numeric">Feature owner</th>
+                <th class="mdl-data-table__cell--non-numeric">Status</th>
+                <th class="mdl-data-table__cell--non-numeric">Feature type</th>
+                <th class="mdl-data-table__cell--non-numeric">Priority</th>
+                <th class="mdl-data-table__cell--non-numeric">Created</th>
+                <th class="mdl-data-table__cell--non-numeric">Updated on</th>
+                <th class="mdl-data-table__cell--non-numeric">Flags</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feature in features %}
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.feature_id }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.name }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.description }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.project_name }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.feature_owner_name }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.status }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.feature_type }}</th>
+                    <th>{{ feature.priority }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.created }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.updated_on }}</th>
+                    <th class="mdl-data-table__cell--non-numeric">{{ feature.flags }}</th>
+                    <td>
+                        <form action="/features/{{ feature.feature_id }}">
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="edit{{ feature.feature_id }}">edit</i>
+                                <div class="mdl-tooltip" data-mdl-for="edit{{ feature.feature_id }}">
+                                    Edit
+                                </div>
+                            </button>
+                        </form>     
+                    </td>
+                    <td>
+                        <form action="/features/remove" method="post">
+                            <input type="hidden" name="feature_id" value="{{ feature.feature_id }}" />
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="remove{{ feature.feature_id }}">delete</i>
+                                <div class="mdl-tooltip" data-mdl-for="remove{{ feature.feature_id }}">
+                                    Remove
+                                </div>
+                            </button>
+                        </form>
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}Add feature{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/features">List</a>
+            <a class="mdl-navigation__link" href="/features/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+    <form action="/features/add" method="POST">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="name" name="name">
+            <label class="mdl-textfield__label" for="name">Name</label>
+        </div>
+    
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="description" name="description">
+            <label class="mdl-textfield__label" for="description">Description</label>
+        </div>
+    
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="feature_owner" name="feature_owner" value="{{ session.user }}">
+            <label class="mdl-textfield__label" for="feature_owner">Feature owner</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="project" name="project">
+            <label class="mdl-textfield__label" for="project">Project</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="status" name="status">
+            <label class="mdl-textfield__label" for="status">Status</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="feature_type" name="feature_type">
+            <label class="mdl-textfield__label" for="feature_type">Feature type</label>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="priority" name="priority">
+            <label class="mdl-textfield__label" for="priority">Priority</label>
+        </div>
+    
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="flags" name="flags">
+            <label class="mdl-textfield__label" for="flags">Flags</label>
+        </div>
+
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Add
+        </button>
+    </form>
+{% endblock %}

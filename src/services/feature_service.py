@@ -60,37 +60,32 @@ class FeatureService:
         Returns:
             Feature: created feature as Feature object
         """
-        if (
-            not pid
-            or not foid
-            or not name
-            or not description
-            or not status
-            or not ftype
-            or not priority
-        ):
-            raise EmptyValueException("One of given values is empty, all values need to have value")
+        if (not pid or not foid or not name or not description or not status
+                or not ftype or not priority):
+            raise EmptyValueException(
+                "One of given values is empty, all values need to have value")
 
         if not validate_uuid4(pid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4", source="project id")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="project id")
         if not validate_uuid4(foid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="feature owner id"
-            )
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="feature owner id")
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags"
-            )
+                "Unvalid formatting",
+                "not being in 'one;two;three;flags;' format", "flags")
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer", source="priority"
-            ) from error
+                reason="can not be converted into integer",
+                source="priority") from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(reson="priority is not in scale 1-3", source="priority")
+            raise UnvalidInputException(reson="priority is not in scale 1-3",
+                                        source="priority")
 
         pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
@@ -100,9 +95,9 @@ class FeatureService:
         if not foname:
             raise NotExistingException("Feature owner")
 
-        created_feature = self._feature_repository.new(
-            pid, pname, foid, foname, name, description, flags, status, ftype, priority
-        )
+        created_feature = self._feature_repository.new(pid, pname, foid, foname,
+                                                       name, description, flags,
+                                                       status, ftype, priority)
         return created_feature
 
     def get_all(self) -> [Feature]:
@@ -209,7 +204,7 @@ class FeatureService:
         flags: str,
         status: str,
         ftype: str,
-        priority: int,
+        priority: str,
     ) -> Project:
         """update is used to update feature with given values
 
@@ -222,53 +217,48 @@ class FeatureService:
             flags (str): flags used to identify features, given in string, example = "one;two;flags;"
             status (str): status of feature, for example "in progress", "waiting", "ready", "postponed"
             ftype (str): type of feature, for example "new feature", "bug fixes"
-            priority (int): priority of feature, in three stages: low, severe and high (1 = low, 3 = high)
+            priority (str): priority of feature, in three stages: low, severe and high (1 = low, 3 = high)
 
         Raises:
             EmptyValueException: raised if any given values is empty
             UnvalidInputException: raised if formatting of given input value is incorrect
             NotExistingException: raised if feature owner or project with given id is not found
+            DatabaseException: raised if problems occurs while saving into the database.
 
 
         Returns:
             Project: updated feature as Feature object
         """
-        if (
-            not fid
-            or not pid
-            or not foid
-            or not name
-            or not description
-            or not status
-            or not ftype
-            or not priority
-        ):
-            raise EmptyValueException("One of given values is empty, all values need to have value")
+        if (not fid or not pid or not foid or not name or not description
+                or not status or not ftype or not priority):
+            raise EmptyValueException(
+                "One of given values is empty, all values need to have value")
 
         feature = self._feature_repository.get_by_id(fid)
         if not feature:
             raise NotExistingException("Feature")
 
         if not validate_uuid4(pid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4", source="project id")
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="project id")
         if not validate_uuid4(foid):
-            raise UnvalidInputException(
-                reason="unvalid formatting of uuid4", source="feature owner id"
-            )
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="feature owner id")
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting", "not being in 'one;two;three;flags;' format", "flags"
-            )
+                "Unvalid formatting",
+                "not being in 'one;two;three;flags;' format", "flags")
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer", source="priority"
-            ) from error
+                reason="can not be converted into integer",
+                source="priority") from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(reson="priority is not in scale 1-3", source="priority")
+            raise UnvalidInputException(reson="priority is not in scale 1-3",
+                                        source="priority")
 
         pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
@@ -279,8 +269,8 @@ class FeatureService:
             raise NotExistingException("Feature owner")
 
         updated_feature = self._feature_repository.update(
-            fid, pid, pname, foid, foname, name, description, flags, status, ftype, priority
-        )
+            fid, pid, pname, foid, foname, name, description, flags, status,
+            ftype, priority)
         return updated_feature
 
     def remove(self, fid: str) -> None:
