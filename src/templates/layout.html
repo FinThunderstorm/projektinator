@@ -21,7 +21,7 @@
             {% include 'notifications.html' %}
 
             <!--Sivun sisöltö-->
-            {% if session.user %}
+            {% if session.user or url_for(request.endpoint) == "/users/register" %}
                 <div class="page-content">
                     <!-- Page content -->
                     {% block content %}{% endblock %}
@@ -29,6 +29,7 @@
             {% else %}
                 <!-- Login form-->
                 {% include 'login.html' %}
+                
             {% endif %}
         </main>
 

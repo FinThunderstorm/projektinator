@@ -78,6 +78,35 @@ def create_user():
     # POST creates new user
     if request.method == "POST":
         try:
+            user_service.new(request.form["username"],
+                             request.form["user_role"],
+                             request.form["password"],
+                             request.form["firstname"],
+                             request.form["lastname"], request.form["email"])
+            return redirect(baseUrl)
+        except ValueShorterThanException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except EmptyValueException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except DatabaseException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+        except UsernameDuplicateException as error:
+            flash(error.message, 'is-danger')
+            return redirect("/")
+
+
+@app.route(f"{baseUrl}/register", methods=["GET", "POST"])
+def register_user():
+    # GET shows creation page
+    if request.method == "GET":
+        return render_template("users/users_add.html")
+
+    # POST creates new user
+    if request.method == "POST":
+        try:
             user_service.new(request.form["username"], 1,
                              request.form["password"],
                              request.form["firstname"],
