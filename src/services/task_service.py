@@ -190,7 +190,7 @@ class TaskService:
         Returns:
             str: found name
         """
-        name = self._task_repository.get_name()
+        name = self._task_repository.get_name(tid)
 
         if not name:
             raise NotExistingException('Task')

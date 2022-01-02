@@ -5,6 +5,7 @@ from utils.database import db
 from datetime import datetime
 from utils.exceptions import DatabaseException
 from utils.helpers import fullname
+from repositories.comment_repository import comment_repository
 
 
 class TaskRepository:
@@ -85,12 +86,11 @@ class TaskRepository:
         except Exception as error:
             raise DatabaseException('while getting all tasks') from error
 
-        all_comments = None
-
         return [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
-                 task[6], task[7], task[9], task[10], task[11], task[12],
-                 task[13], task[8], all_comments) for task in tasks
+                 task[6], task[7], task[9], task[10], task[11],
+                 task[12], task[13], task[8],
+                 comment_repository.get_by_task_id(task[0])) for task in tasks
         ]
 
     def get_all_by_feature_id(self, fid: str) -> [Task]:
@@ -117,12 +117,11 @@ class TaskRepository:
         except Exception as error:
             raise DatabaseException('while getting all tasks') from error
 
-        all_comments = None
-
         return [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
-                 task[6], task[7], task[9], task[10], task[11], task[12],
-                 task[13], task[8], all_comments) for task in tasks
+                 task[6], task[7], task[9], task[10], task[11],
+                 task[12], task[13], task[8],
+                 comment_repository.get_by_task_id(task[0])) for task in tasks
         ]
 
     def get_all_by_assignee(self, aid: str) -> [Task]:
@@ -149,12 +148,11 @@ class TaskRepository:
         except Exception as error:
             raise DatabaseException('while getting all tasks') from error
 
-        all_comments = None
-
         return [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
-                 task[6], task[7], task[9], task[10], task[11], task[12],
-                 task[13], task[8], all_comments) for task in tasks
+                 task[6], task[7], task[9], task[10], task[11],
+                 task[12], task[13], task[8],
+                 comment_repository.get_by_task_id(task[0])) for task in tasks
         ]
 
     def get_by_id(self, tid: str) -> Task:
@@ -181,12 +179,10 @@ class TaskRepository:
         except Exception as error:
             raise DatabaseException('while getting all tasks') from error
 
-        all_comments = None
-
         return Task(task[0], task[1], task[2], task[3],
-                    fullname(task[4],
-                             task[5]), task[6], task[7], task[9], task[10],
-                    task[11], task[12], task[13], task[8], all_comments)
+                    fullname(task[4], task[5]), task[6], task[7], task[9],
+                    task[10], task[11], task[12], task[13], task[8],
+                    comment_repository.get_by_task_id(task[0]))
 
     def get_name(self, tid: str) -> str:
         """get_name is used to get name of specific task
@@ -264,11 +260,9 @@ class TaskRepository:
         if not tid:
             raise DatabaseException('While saving updated task into database')
 
-        all_comments = None
-
         updated_task = Task(tid, fid, fname, aid, aname, name, description,
                             status, ttype, priority, created, updated_on, flags,
-                            all_comments)
+                            comment_repository.get_by_task_id(tid))
         return updated_task
 
     def remove(self, tid: str) -> None:

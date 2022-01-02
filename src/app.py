@@ -10,3 +10,4 @@ if configs.mode != 'TEST':
     import routes.tasks    # noqa
     import routes.projects    # noqa
     import routes.features    # noqa
+    import routes.comments    # noqa

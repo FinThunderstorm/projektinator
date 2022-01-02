@@ -6,6 +6,7 @@ from entities.feature import Feature
 from entities.task import Task
 from utils.helpers import fullname
 from repositories.task_repository import task_repository
+from repositories.comment_repository import comment_repository
 
 
 class FeatureRepository:
@@ -89,15 +90,14 @@ class FeatureRepository:
         except Exception as error:
             raise DatabaseException('while getting all features') from error
 
-        all_comments = None
-
         return [
             Feature(feature[0], feature[1], feature[2], feature[3],
                     fullname(feature[4], feature[5]), feature[6], feature[7],
                     feature[9], feature[10], feature[11], feature[12],
                     feature[13], feature[8],
                     task_repository.get_all_by_feature_id(feature[0]),
-                    all_comments) for feature in features
+                    comment_repository.get_by_feature_id(feature[0]))
+            for feature in features
         ]
 
     def get_features(self) -> list[tuple]:
@@ -141,15 +141,14 @@ class FeatureRepository:
         except Exception as error:
             raise DatabaseException('while getting features with id') from error
 
-        all_comments = None
-
         return [
             Feature(feature[0], feature[1], feature[2], feature[3],
                     fullname(feature[4], feature[5]), feature[6], feature[7],
                     feature[9], feature[10], feature[11], feature[12],
                     feature[13], feature[8],
                     task_repository.get_all_by_feature_id(feature[0]),
-                    all_comments) for feature in features
+                    comment_repository.get_by_feature_id(feature[0]))
+            for feature in features
         ]
 
     def get_all_by_feature_owner(self, foid: str) -> [Feature]:
@@ -176,15 +175,14 @@ class FeatureRepository:
         except Exception as error:
             raise DatabaseException('while getting features with id') from error
 
-        all_comments = None
-
         return [
             Feature(feature[0], feature[1], feature[2], feature[3],
                     fullname(feature[4], feature[5]), feature[6], feature[7],
                     feature[9], feature[10], feature[11], feature[12],
                     feature[13], feature[8],
                     task_repository.get_all_by_feature_id(feature[0]),
-                    all_comments) for feature in features
+                    comment_repository.get_by_feature_id(feature[0]))
+            for feature in features
         ]
 
     def get_by_id(self, fid: str) -> Feature:
@@ -211,14 +209,12 @@ class FeatureRepository:
         except Exception as error:
             raise DatabaseException('while getting features with id') from error
 
-        all_comments = None
-
         return Feature(feature[0], feature[1], feature[2], feature[3],
                        fullname(feature[4], feature[5]), feature[6], feature[7],
                        feature[9], feature[10], feature[11], feature[12],
                        feature[13], feature[8],
                        task_repository.get_all_by_feature_id(feature[0]),
-                       all_comments)
+                       comment_repository.get_by_feature_id(feature[0]))
 
     def get_name(self, fid: str) -> str:
         """get_name is used to get name of feature with given id
@@ -289,12 +285,11 @@ class FeatureRepository:
         except Exception as error:
             raise DatabaseException('feature update') from error
 
-        all_tasks = None
-        all_comments = None
-
         updated_feature = Feature(fid, pid, pname, foid, foname, name,
                                   description, status, ftype, priority, created,
-                                  updated_on, flags, all_tasks, all_comments)
+                                  updated_on, flags,
+                                  task_repository.get_all_by_feature_id(fid),
+                                  comment_repository.get_by_feature_id(fid))
         return updated_feature
 
     def remove(self, fid: str) -> None:
