@@ -15,20 +15,37 @@ baseUrl = "/tasks"
 def tasks():
     try:
         tasks = task_service.get_all()
+        for task in tasks:
+            print(task)
     except NotExistingException as error:
         tasks = []
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect("/")
     return render_template('tasks/tasks.html', tasks=tasks)
 
 
 @app.route(f"{baseUrl}/<uuid:task_id>", methods=["GET", "POST"])
-def task(task_id):
+def view_task(task_id):
+    task = task_service.get_by_id(task_id)
+    return render_template('tasks/tasks_view.html', task=task)
+
+
+@app.route(f"{baseUrl}/edit/<uuid:task_id>", methods=["GET", "POST"])
+def edit_task(task_id):
     # GET shows task
     if request.method == "GET":
         task = task_service.get_by_id(task_id)
-        return render_template('tasks/tasks_task.html', task=task)
+        users = user_service.get_users()
+        features = feature_service.get_features()
+        statuses = status_service.get_all()
+        types = type_service.get_all()
+        return render_template('tasks/tasks_edit.html',
+                               task=task,
+                               users=users,
+                               features=features,
+                               statuses=statuses,
+                               types=types)
 
     # POST updates task
     if request.method == "POST":
@@ -78,34 +95,33 @@ def create_task():
                 request.form['feature_id'], request.form['assignee_id'],
                 request.form['name'], request.form['description'],
                 request.form['status'], request.form['task_type'],
-                request.form['priority'])
-            flash(f'New feature {new_task.task_id} created successfully',
+                request.form['priority'], request.form['flags'])
+            flash(f'New tasks {new_task.task_id} created successfully',
                   'is-success')
             return redirect(baseUrl)
         except NotExistingException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except UnvalidInputException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
 
 
-@app.route(f"{baseUrl}/remove", methods=["POST"])
-def remove_task():
+@app.route(f"{baseUrl}/remove/<uuid:task_id>", methods=["POST"])
+def remove_task(task_id):
     try:
-        task_service.remove(request.form['task_id'])
-        flash(f'Task with id {request.form["task_id"]} removed successfully',
-              'is-success')
+        task_service.remove(task_id)
+        flash(f'Task with id {task_id} removed successfully', 'is-success')
         return redirect(baseUrl)
     except NotExistingException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)

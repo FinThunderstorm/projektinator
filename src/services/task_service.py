@@ -99,6 +99,10 @@ class TaskService:
             raise NotExistingException('Feature')
         if not aname:
             raise NotExistingException('Assignee')
+        if not sname:
+            raise NotExistingException('Status')
+        if not ttname:
+            raise NotExistingException('Type')
 
         created_task = self._task_repository.new(fid, fname, aid, aname, name,
                                                  description, status, sname,

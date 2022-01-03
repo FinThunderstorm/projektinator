@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+{% block title %}View task ”{{ task.name}}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/tasks">List tasks</a>
+            <a class="mdl-navigation__link" href="/tasks/add">Add new task</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/tasks/edit/{{ task.task_id }}">Edit current task</a>
+            <a class="mdl-navigation__link" href="/tasks/remove/{{ task.task_id }}">Remove current task</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/comments/add?mode=tasks&id={{ task.task_id }}">Add new comment</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+{% set flags = task.flags.split(';') %}
+<div class="mdl-grid">
+    <div class="mdl-cell--12-col">
+            <div class="mdl-grid">
+                <div class="mdl-cell--6-col">
+                    <p>Task ID:</p>
+                    <p id="task_id">{{ task.task_id }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Name:</p>
+                    <p id="name">{{ task.name }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Description:</p>
+                    <p id="description">{{ task.description }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Status:</p>
+                    <p id="status">{{ task.status_name }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Feature:</p>
+                    <a href="/users/{{ task.feature_id }}" id="feature_name">{{ task.feature_name }}</a>
+                    
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Assignee:</p>
+                    <a href="/users/{{ task.assignee_id }}" id="assignee_id">{{ task.assignee_name }}</a>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Task type:</p>
+                    <p id="task_type">{{ task.task_type_name }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Priority:</p>
+                    <p id="priority">{{ task.priority }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Created:</p>
+                    <p id="created">{{ task.created.strftime("%d.%m.%Y %H:%M") }}</p>
+                </div>
+
+                <div class="mdl-cell--6-col">
+                    <p>Updated on:</p>
+                    <p id="updated_on">{{ task.updated_on.strftime("%d.%m.%Y %H:%M") }}</p>
+                </div>
+                
+                <div class="mdl-cell--6-col">
+                    <p>Flags:</p>
+                    {% for flag in flags %}
+                        {% if flag != "" %}
+                            <span class="mdl-chip">
+                                <span class="mdl-chip__text">
+                                    {{ flag.strip() }}
+                                </span>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+ 
+            </div>
+        
+    </div>
+    <div class="mdl-cell--12-col" style="width: 100%;">
+        <h4>Comments:</h2>
+        <table class="mdl-data-table mdl-js-data-table" style="width: 100%;">
+            <thead>
+                <th class="mdl-data-table__cell--non-numeric">Comment</th>
+                <th>Time spent</th>
+                <th></th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for comment in task.comments %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
+                    <td>{{ comment.time_spent }}</td>
+                    <td>
+                        <form action="/comments/edit">
+                            <input type="hidden" name="id" value="{{ comment.comment_id }}" />
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="edit{{ comment.comment_id }}">edit</i>
+                                <div class="mdl-tooltip" data-mdl-for="edit{{ comment.comment_id }}">
+                                    Edit
+                                </div>
+                            </button>
+                        </form>  
+                    </td>
+                    <td>
+                        <form action="/comments/remove/{{ comment.comment_id }}">
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <input type="hidden" name="came_from" value="/tasks/{{ task.task_id }}" >
+                                <i class="material-icons" id="remove{{ comment.comment_id }}">delete</i>
+                                <div class="mdl-tooltip" data-mdl-for="remove{{ comment.comment_id }}">
+                                    Remove
+                                </div>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

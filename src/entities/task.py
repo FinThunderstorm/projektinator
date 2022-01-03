@@ -48,7 +48,7 @@ class Task:
         self.name = name
         self.description = description
         self.status = status
-        self.status_name = status
+        self.status_name = status_name
         self.task_type = task_type
         self.task_type_name = task_type_name
         self.priority = priority

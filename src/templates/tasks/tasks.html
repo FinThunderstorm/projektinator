@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
-{% block title %}Tasks{% endblock %}
+{% block title %}All tasks{% endblock %}
 {% block drawer %}
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="/tasks">List</a>
-            <a class="mdl-navigation__link" href="/tasks/add">Add</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/tasks">List tasks</a>
+            <a class="mdl-navigation__link" href="/tasks/add">Add new task</a>
         </nav>
     </div>
 {% endblock %}
@@ -15,10 +16,10 @@
         <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
             <thead>
                 <tr>
-                    <th class="mdl-data-table__cell--non-numeric">Feature</th>
-                    <th class="mdl-data-table__cell--non-numeric">Assignee</th>
                     <th class="mdl-data-table__cell--non-numeric">Name</th>
                     <th class="mdl-data-table__cell--non-numeric">Description</th>
+                    <th class="mdl-data-table__cell--non-numeric">Feature</th>
+                    <th class="mdl-data-table__cell--non-numeric">Assignee</th>
                     <th class="mdl-data-table__cell--non-numeric">Status</th>
                     <th class="mdl-data-table__cell--non-numeric">Task type</th>
                     <th class="mdl-data-table__cell--non-numeric">Priority</th>
@@ -27,16 +28,17 @@
                     <th class="mdl-data-table__cell--non-numeric">Flags</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for task in tasks %}
                     {% set flags = task.flags.split(';') %}
                     <tr>
-                        <td class="mdl-data-table__cell--non-numeric">{{ task.feature_name }}</td>
-                        <td class="mdl-data-table__cell--non-numeric">{{ task.assignee_name }}</td>
                         <td class="mdl-data-table__cell--non-numeric">{{ task.name }}</td>
                         <td class="mdl-data-table__cell--non-numeric">{{ task.description }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ task.feature_name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ task.assignee_name }}</td>
                         <td class="mdl-data-table__cell--non-numeric">{{ task.status_name }}</td>
                         <td class="mdl-data-table__cell--non-numeric">{{ task.task_type_name }}</td>
                         <td>{{ task.priority }}</td>
@@ -56,6 +58,16 @@
                         <td>
                             <form action="/tasks/{{ task.task_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="view{{ task.task_id }}">read_more</i>
+                                    <div class="mdl-tooltip" data-mdl-for="view{{ task.task_id }}">
+                                        View
+                                    </div>
+                                </button>
+                            </form>     
+                        </td>
+                        <td>
+                            <form action="/tasks/edit/{{ task.task_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
                                     <i class="material-icons" id="edit{{ task.task_id }}">edit</i>
                                     <div class="mdl-tooltip" data-mdl-for="edit{{ task.task_id }}">
                                         Edit
@@ -64,8 +76,7 @@
                             </form>     
                         </td>
                         <td>
-                            <form action="/tasks/remove" method="post">
-                                <input type="hidden" name="user_id" value="{{ task.task_id }}" />
+                            <form action="/tasks/remove/{{ task.task_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
                                     <i class="material-icons" id="remove{{ task.task_id }}">delete</i>
                                     <div class="mdl-tooltip" data-mdl-for="remove{{ task.task_id }}">
@@ -73,7 +84,6 @@
                                     </div>
                                 </button>
                             </form>
-                            
                         </td>
                     </tr>
                 {% endfor %}
