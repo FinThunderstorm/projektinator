@@ -10,6 +10,8 @@
             <hr />
             <a class="mdl-navigation__link" href="/features/edit/{{ feature.feature_id }}">Edit current feature</a>
             <a class="mdl-navigation__link" href="/features/remove/{{ feature.feature_id }}">Remove current feature</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/comments/add?mode=features&id={{ feature.feature_id }}">Add new comment</a>
         </nav>
     </div>
 {% endblock %}
@@ -35,7 +37,7 @@
 
             <div class="mdl-cell--6-col">
                 <p>Project:</p>
-                <a href="/users/{{ feature.project_id }}" id="project_name">{{ feature.project_name }}</a>
+                <a href="/projects/{{ feature.project_id }}" id="project_name">{{ feature.project_name }}</a>
             </div>
 
             <div class="mdl-cell--6-col">
@@ -121,7 +123,8 @@
                     <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
                     <td>{{ comment.time_spent }}</td>
                     <td>
-                        <form action="/comments/{{ comment.comment_id }}">
+                        <form action="/comments/edit">
+                            <input type="hidden" name="id" value="{{ comment.comment_id }}" />
                             <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
                                 <i class="material-icons" id="edit{{ comment.comment_id }}">edit</i>
                                 <div class="mdl-tooltip" data-mdl-for="edit{{ comment.comment_id }}">
@@ -131,8 +134,8 @@
                         </form>  
                     </td>
                     <td>
-                        <form action="/comments/remove" method="post">
-                            <input type="hidden" name="comment_id" value="{{ comment.comment_id }}" />
+                        <form action="/comments/remove/{{ comment.comment_id }}">
+                            <input type="hidden" name="came_from" value="/features/{{ feature.feature_id }}" />
                             <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
                                 <i class="material-icons" id="remove{{ comment.comment_id }}">delete</i>
                                 <div class="mdl-tooltip" data-mdl-for="remove{{ comment.comment_id }}">
