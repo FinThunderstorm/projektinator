@@ -54,7 +54,7 @@ class Feature:
         self.status = status
         self.status_name = sname
         self.feature_type = feature_type
-        self_feature_type_name = ftname
+        self.feature_type_name = ftname
         self.priority = priority
         self.created = created
         self.updated_on = updated_on

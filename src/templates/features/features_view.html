@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block title %}View feature ”{{ feature.name }}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/features">List features</a>
+            <a class="mdl-navigation__link" href="/features/add">Add new feature</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/features/edit/{{ feature.feature_id }}">Edit current feature</a>
+            <a class="mdl-navigation__link" href="/features/remove/{{ feature.feature_id }}">Remove current feature</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+{% set flags = feature.flags.split(';') %}
+<div class="mdl-grid">
+    <div class="mdl-cell--12-col">
+        <div class="mdl-grid">
+            <div class="mdl-cell--6-col">
+                <p>Feature ID:</p>
+                <p id="feature_id">{{ feature.feature_id }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Feature ID:</p>
+                <p id="name">{{ feature.name }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Feature ID:</p>
+                <p id="description">{{ feature.description }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Project:</p>
+                <a href="/users/{{ feature.project_id }}" id="project_name">{{ feature.project_name }}</a>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Feature Owner:</p>
+                <a href="/users/{{ feature.feature_owner_id }}" id="feature_owner">{{ feature.feature_owner_name }}</a>
+            </div>
+            
+            <div class="mdl-cell--6-col">
+                <p>Status:</p>
+                <p id="status">{{ feature.status_name }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Feature type:</p>
+                <p id="feature_type">{{ feature.feature_type_name }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Priority:</p>
+                <p id="priority">{{ feature.priority }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Created:</p>
+                <p id="created">{{ feature.created.strftime("%d.%m.%Y %H:%M") }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Updated on:</p>
+                <p id="updated_on">{{ feature.created.strftime("%d.%m.%Y %H:%M") }}</p>
+            </div>
+
+            <div class="mdl-cell--6-col">
+                <p>Flags:</p>
+                {% for flag in flags %}
+                    {% if flag != "" %}
+                        <span class="mdl-chip">
+                            <span class="mdl-chip__text">
+                                {{ flag.strip() }}
+                            </span>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <h4>Tasks:</h2>
+        <ul class="mdl-list" style="width: 100%;">
+            {% for task in feature.tasks %}
+                <li class="mdl-list__item mdl-list__item--three-line">
+                    <span class="mdl-list__item-primary-content">
+                        <i class="material-icons mdl-list__item-avatar">assignment</i>
+                        <span>{{ task.name }}</span>
+                        <span class="mdl-list__item-text-body">
+                            <b>Task type:</b> {{ task.task_type_name }}<br />
+                            <b>Status:</b> {{ feature.status_name }}
+                        </span>
+                    </span>
+                    <span class="mdl-list__item-secondary-content">
+                        <form action="/tasks/{{ task.task_id }}">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-list__item-secondary-action" type="submit">View</button>
+                        </form>
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <h4>Comments:</h2>
+        <table class="mdl-data-table mdl-js-data-table" style="width: 100%;">
+            <thead>
+                <th class="mdl-data-table__cell--non-numeric">Comment</th>
+                <th>Time spent</th>
+                <th></th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for comment in feature.comments %}
+                <tr>
+                    <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
+                    <td>{{ comment.time_spent }}</td>
+                    <td>
+                        <form action="/comments/{{ comment.comment_id }}">
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="edit{{ comment.comment_id }}">edit</i>
+                                <div class="mdl-tooltip" data-mdl-for="edit{{ comment.comment_id }}">
+                                    Edit
+                                </div>
+                            </button>
+                        </form>  
+                    </td>
+                    <td>
+                        <form action="/comments/remove" method="post">
+                            <input type="hidden" name="comment_id" value="{{ comment.comment_id }}" />
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                <i class="material-icons" id="remove{{ comment.comment_id }}">delete</i>
+                                <div class="mdl-tooltip" data-mdl-for="remove{{ comment.comment_id }}">
+                                    Remove
+                                </div>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

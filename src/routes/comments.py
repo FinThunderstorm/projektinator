@@ -17,7 +17,7 @@ def comments():
     except NotExistingException as error:
         features = []
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect("/")
     return render_template('comments/comments.html', features=features)
 
@@ -81,16 +81,16 @@ def create_feature_comment(feature_id):
                   'is-success')
             return redirect(f'/features/{request.form["feature_id"]}')
         except NotExistingException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/features/{request.form["feature_id"]}')
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/features/{request.form["feature_id"]}')
         except UnvalidInputException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/features/{request.form["feature_id"]}')
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/features/{request.form["feature_id"]}')
 
 
@@ -116,16 +116,16 @@ def create_task_comment(task_id):
                   'is-success')
             return redirect(f'/tasks/{request.form["task_id"]}')
         except NotExistingException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/tasks/{request.form["task_id"]}')
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/tasks/{request.form["task_id"]}')
         except UnvalidInputException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/tasks/{request.form["task_id"]}')
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(f'/tasks/{request.form["task_id"]}')
 
 
@@ -138,8 +138,8 @@ def remove_comment():
             'is-success')
         return redirect(request.form['came_from'])
     except NotExistingException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(request.form['came_from'])
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(request.form['came_from'])

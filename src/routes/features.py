@@ -18,18 +18,32 @@ def features():
     except NotExistingException as error:
         features = []
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect("/")
     return render_template('features/features.html', features=features)
 
 
-@app.route(f"{baseUrl}/<uuid:feature_id>", methods=["GET", "POST"])
-def feature(feature_id):
+@app.route(f"{baseUrl}/<uuid:feature_id>", methods=["GET"])
+def view_feature(feature_id):
+    feature = feature_service.get_by_id(feature_id)
+    return render_template('features/features_view.html', feature=feature)
+
+
+@app.route(f"{baseUrl}/edit/<uuid:feature_id>", methods=["GET", "POST"])
+def edit_feature(feature_id):
     # GET shows feature
     if request.method == "GET":
         feature = feature_service.get_by_id(feature_id)
-        return render_template('features/features_feature.html',
-                               feature=feature)
+        users = user_service.get_users()
+        projects = project_service.get_projects()
+        statuses = status_service.get_all()
+        types = type_service.get_all()
+        return render_template('features/features_edit.html',
+                               feature=feature,
+                               users=users,
+                               projects=projects,
+                               statuses=statuses,
+                               types=types)
 
     # POST updates feature
     if request.method == "POST":
@@ -84,30 +98,29 @@ def create_feature():
                   'is-success')
             return redirect(baseUrl)
         except NotExistingException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except UnvalidInputException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
 
 
-@app.route(f"{baseUrl}/remove", methods=["POST"])
-def remove_feature():
+@app.route(f"{baseUrl}/remove/<uuid:feature_id>", methods=["GET"])
+def remove_feature(feature_id):
     try:
-        feature_service.remove(request.form['feature_id'])
-        flash(
-            f'Feature with id {request.form["feature_id"]} removed successfully',
-            'is-success')
+        feature_service.remove(feature_id)
+        flash(f'Feature with id {feature_id} removed successfully',
+              'is-success')
         return redirect(baseUrl)
     except NotExistingException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)
