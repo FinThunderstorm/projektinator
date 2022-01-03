@@ -16,7 +16,9 @@ class Feature:
                  name: str,
                  description: str,
                  status: str,
+                 sname: str,
                  feature_type: str,
+                 ftname: str,
                  priority: int,
                  created: datetime,
                  updated_on: datetime,
@@ -50,7 +52,9 @@ class Feature:
         self.name = name
         self.description = description
         self.status = status
+        self.status_name = sname
         self.feature_type = feature_type
+        self_feature_type_name = ftname
         self.priority = priority
         self.created = created
         self.updated_on = updated_on
@@ -77,8 +81,8 @@ class Feature:
             f' - id ”{self.feature_id}”\n'
             f' - is related to project ”{self.project_name} ({self.project_id})”\n'
             f' - description ”{self.description}”\n'
-            f' - status ”{self.status}”\n'
-            f" - feature's type ”{self.feature_type}”\n"
+            f' - status ”{self.status_name}”\n'
+            f" - feature's type ”{self.feature_type_name}”\n"
             f' - priority ”{self.priority}”\n'
             f' - created on ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'

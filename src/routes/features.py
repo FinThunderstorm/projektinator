@@ -3,6 +3,8 @@ from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.feature_service import feature_service
 from services.project_service import project_service
+from services.status_service import status_service
+from services.type_service import type_service
 from services.user_service import user_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
@@ -62,9 +64,13 @@ def create_feature():
     if request.method == "GET":
         users = user_service.get_users()
         projects = project_service.get_projects()
+        statuses = status_service.get_all()
+        types = type_service.get_all()
         return render_template('features/features_add.html',
                                users=users,
-                               projects=projects)
+                               projects=projects,
+                               statuses=statuses,
+                               types=types)
 
     # POST creates new feature
     if request.method == "POST":

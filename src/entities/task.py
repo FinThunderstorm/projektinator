@@ -15,7 +15,9 @@ class Task:
                  name: str,
                  description: str,
                  status: str,
+                 status_name: str,
                  task_type: str,
+                 task_type_name: str,
                  priority: int,
                  created: datetime,
                  updated_on: datetime,
@@ -46,7 +48,9 @@ class Task:
         self.name = name
         self.description = description
         self.status = status
+        self.status_name = status
         self.task_type = task_type
+        self.task_type_name = task_type_name
         self.priority = priority
         self.created = created
         self.updated_on = updated_on
@@ -69,8 +73,8 @@ class Task:
             f' - is related to feature ”{self.feature_name} ({self.feature_id})”\n'
             f' - assignee ”{self.assignee_name} ({self.assignee_id})”\n'
             f' - description ”{self.description}”\n'
-            f' - status ”{self.status}”\n'
-            f" - task's type ”{self.task_type}”\n"
+            f' - status ”{self.status_name}”\n'
+            f" - task's type ”{self.task_type_name}”\n"
             f' - priority ”{self.priority}”\n'
             f' - created on ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'

@@ -4,6 +4,8 @@ from entities.task import Task
 from repositories.user_repository import UserRepository, user_repository
 from repositories.task_repository import TaskRepository, task_repository
 from repositories.feature_repository import FeatureRepository, feature_repository
+from repositories.type_repository import TypeRepository, type_repository
+from repositories.status_repository import StatusRepository, status_repository
 from utils.exceptions import EmptyValueException, NotExistingException, UnvalidInputException
 from utils.validators import validate_flags, validate_uuid4
 
@@ -16,7 +18,9 @@ class TaskService:
             self,
             default_task_repository: TaskRepository = task_repository,
             default_feature_repository: FeatureRepository = feature_repository,
-            default_user_repository: UserRepository = user_repository):
+            default_user_repository: UserRepository = user_repository,
+            default_status_repository: StatusRepository = status_repository,
+            default_type_repository: TypeRepository = type_repository):
         """Initializes TaskService with default task repository
 
         Args:
@@ -25,6 +29,8 @@ class TaskService:
         self._task_repository = default_task_repository
         self._feature_repository = default_feature_repository
         self._user_repository = default_user_repository
+        self._status_repository = default_status_repository
+        self._type_repository = default_type_repository
 
     def new(self,
             fid: str,
@@ -86,6 +92,8 @@ class TaskService:
 
         fname = self._feature_repository.get_name(fid)
         aname = self._user_repository.get_fullname(aid)
+        sname = self._status_repository.get_name(status)
+        ttname = self._type_repository.get_name(ttype)
 
         if not fname:
             raise NotExistingException('Feature')
@@ -93,8 +101,8 @@ class TaskService:
             raise NotExistingException('Assignee')
 
         created_task = self._task_repository.new(fid, fname, aid, aname, name,
-                                                 description, status, ttype,
-                                                 priority, flags)
+                                                 description, status, sname,
+                                                 ttype, ttname, priority, flags)
         return created_task
 
     def get_all(self) -> [Task]:
@@ -255,6 +263,8 @@ class TaskService:
 
         fname = self._feature_repository.get_name(fid)
         aname = self._user_repository.get_fullname(aid)
+        sname = self._status_repository.get_name(status)
+        ttname = self._type_repository.get_name(ttype)
 
         if not fname:
             raise NotExistingException('Feature')
@@ -263,7 +273,8 @@ class TaskService:
 
         updated_task = self._task_repository.update(tid, fid, fname, aid, aname,
                                                     name, description, status,
-                                                    ttype, priority, flags)
+                                                    sname, ttype, ttname,
+                                                    priority, flags)
         return updated_task
 
     def remove(self, tid: str) -> None:

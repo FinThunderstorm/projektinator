@@ -4,6 +4,8 @@ from app import app
 from services.feature_service import feature_service
 from services.user_service import user_service
 from services.task_service import task_service
+from services.type_service import type_service
+from services.status_service import status_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
 baseUrl = "/tasks"
@@ -61,9 +63,13 @@ def create_task():
     if request.method == "GET":
         users = user_service.get_users()
         features = feature_service.get_features()
+        statuses = status_service.get_all()
+        types = type_service.get_all()
         return render_template('tasks/tasks_add.html',
                                users=users,
-                               features=features)
+                               features=features,
+                               statuses=statuses,
+                               types=types)
 
     # POST creates new task
     if request.method == "POST":

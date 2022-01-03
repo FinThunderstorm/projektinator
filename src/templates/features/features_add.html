@@ -23,16 +23,6 @@
             </div>
 
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="status" name="status">
-                <label class="mdl-textfield__label" for="status">Status</label>
-            </div>
-
-            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="feature_type" name="feature_type">
-                <label class="mdl-textfield__label" for="feature_type">Feature type</label>
-            </div>
-
-            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="priority" name="priority">
                 <label class="mdl-textfield__label" for="priority">Priority</label>
             </div>
@@ -40,6 +30,26 @@
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="flags" name="flags">
                 <label class="mdl-textfield__label" for="flags">Flags</label>
+            </div>
+
+            <div class="mdl-cell--12-col">
+                <p>Status:</p>
+                {% for id, name in statuses %}
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="status" value="{{ id }}">
+                        <span class="mdl-radio__label">{{ name }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <p>Feature type:</p>
+                {% for id, name in types %}
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="feature_type" value="{{ id }}">
+                        <span class="mdl-radio__label">{{ name }}</span>
+                    </label>
+                {% endfor %}
             </div>
 
             <div class="mdl-cell--6-col">

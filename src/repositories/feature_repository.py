@@ -14,8 +14,8 @@ class FeatureRepository:
     """
 
     def new(self, pid: str, pname: str, foid: str, foname: str, name: str,
-            description: str, flags: str, status: str, ftype: str,
-            priority: int) -> Feature:
+            description: str, flags: str, status: str, sname: str, ftype: str,
+            ftname: str, priority: int) -> Feature:
         """new is used to create new features into the database
 
         Args:
@@ -65,8 +65,8 @@ class FeatureRepository:
             raise DatabaseException('While saving new feature into database')
 
         created_feature = Feature(fid, pid, pname, foid, foname, name,
-                                  description, status, ftype, priority, created,
-                                  updated_on, flags)
+                                  description, status, sname, ftype, ftname,
+                                  priority, created, updated_on, flags)
 
         return created_feature
 
@@ -80,21 +80,24 @@ class FeatureRepository:
             [Feature]: list of all features as Feature object
         """
         sql = """
-        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, F.type, F.priority, F.created, F.updated_on  
+        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, S.name, F.type, T.name, F.priority, F.created, F.updated_on  
         FROM Features F
         JOIN Projects P ON F.project_id = P.id
         JOIN Users U ON F.feature_owner = U.id
+        JOIN Types T ON T.id = F.type
+        JOIN Statuses S ON S.id = F.status
         """
         try:
             features = db.session.execute(sql).fetchall()
         except Exception as error:
+            print(error)
             raise DatabaseException('while getting all features') from error
 
         return [
             Feature(feature[0], feature[1], feature[2], feature[3],
                     fullname(feature[4], feature[5]), feature[6], feature[7],
                     feature[9], feature[10], feature[11], feature[12],
-                    feature[13], feature[8],
+                    feature[13], feature[14], feature[15], feature[8],
                     task_repository.get_all_by_feature_id(feature[0]),
                     comment_repository.get_by_feature_id(feature[0]))
             for feature in features
@@ -130,10 +133,12 @@ class FeatureRepository:
             [Feature]: list of found features
         """
         sql = """
-        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, F.type, F.priority, F.created, F.updated_on  
+        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, S.name, F.type, T.name, F.priority, F.created, F.updated_on  
         FROM Features F
         JOIN Projects P ON F.project_id = P.id
         JOIN Users U ON F.feature_owner = U.id
+        JOIN Types T ON T.id = F.type
+        JOIN Statuses S ON S.id = F.status
         WHERE P.id=:id
         """
         try:
@@ -145,7 +150,7 @@ class FeatureRepository:
             Feature(feature[0], feature[1], feature[2], feature[3],
                     fullname(feature[4], feature[5]), feature[6], feature[7],
                     feature[9], feature[10], feature[11], feature[12],
-                    feature[13], feature[8],
+                    feature[13], feature[14], feature[15], feature[8],
                     task_repository.get_all_by_feature_id(feature[0]),
                     comment_repository.get_by_feature_id(feature[0]))
             for feature in features
@@ -164,10 +169,12 @@ class FeatureRepository:
             [Feature]: list of found features
         """
         sql = """
-        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, F.type, F.priority, F.created, F.updated_on  
+        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, S.name, F.type, T.name, F.priority, F.created, F.updated_on  
         FROM Features F
         JOIN Projects P ON F.project_id = P.id
         JOIN Users U ON F.feature_owner = U.id
+        JOIN Types T ON T.id = F.type
+        JOIN Statuses S ON S.id = F.status
         WHERE F.feature_owner=:id
         """
         try:
@@ -179,7 +186,7 @@ class FeatureRepository:
             Feature(feature[0], feature[1], feature[2], feature[3],
                     fullname(feature[4], feature[5]), feature[6], feature[7],
                     feature[9], feature[10], feature[11], feature[12],
-                    feature[13], feature[8],
+                    feature[13], feature[14], feature[15], feature[8],
                     task_repository.get_all_by_feature_id(feature[0]),
                     comment_repository.get_by_feature_id(feature[0]))
             for feature in features
@@ -198,10 +205,12 @@ class FeatureRepository:
             Feature: found feature
         """
         sql = """
-        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, F.type, F.priority, F.created, F.updated_on  
+        SELECT F.id, F.project_id, P.name, F.feature_owner, U.firstname, U.lastname, F.name, F.description, F.flags, F.status, S.name, F.type, T.name, F.priority, F.created, F.updated_on  
         FROM Features F
         JOIN Projects P ON F.project_id = P.id
         JOIN Users U ON F.feature_owner = U.id
+        JOIN Types T ON T.id = F.type
+        JOIN Statuses S ON S.id = F.status
         WHERE F.id=:id
         """
         try:
@@ -212,7 +221,7 @@ class FeatureRepository:
         return Feature(feature[0], feature[1], feature[2], feature[3],
                        fullname(feature[4], feature[5]), feature[6], feature[7],
                        feature[9], feature[10], feature[11], feature[12],
-                       feature[13], feature[8],
+                       feature[13], feature[14], feature[15], feature[8],
                        task_repository.get_all_by_feature_id(feature[0]),
                        comment_repository.get_by_feature_id(feature[0]))
 
@@ -241,8 +250,8 @@ class FeatureRepository:
         return name
 
     def update(self, fid: str, pid: str, pname: str, foid: str, foname: str,
-               name: str, description: str, flags: str, status: str, ftype: str,
-               priority: int) -> Feature:
+               name: str, description: str, flags: str, status: str, sname: str,
+               ftype: str, ftname: str, priority: int) -> Feature:
         """update is used to update feature with given values into the database
 
         Args:
@@ -286,8 +295,8 @@ class FeatureRepository:
             raise DatabaseException('feature update') from error
 
         updated_feature = Feature(fid, pid, pname, foid, foname, name,
-                                  description, status, ftype, priority, created,
-                                  updated_on, flags,
+                                  description, status, sname, ftype, ftname,
+                                  priority, created, updated_on, flags,
                                   task_repository.get_all_by_feature_id(fid),
                                   comment_repository.get_by_feature_id(fid))
         return updated_feature

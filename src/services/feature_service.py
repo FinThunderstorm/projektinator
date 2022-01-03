@@ -4,6 +4,8 @@ from entities.project import Project
 from repositories.user_repository import user_repository, UserRepository
 from repositories.project_repository import project_repository, ProjectRepository
 from repositories.feature_repository import feature_repository, FeatureRepository
+from repositories.type_repository import TypeRepository, type_repository
+from repositories.status_repository import StatusRepository, status_repository
 from utils.exceptions import EmptyValueException, UnvalidInputException, NotExistingException
 from utils.validators import validate_flags, validate_uuid4
 
@@ -12,11 +14,12 @@ class FeatureService:
     """Class used for handling projects in the application"""
 
     def __init__(
-        self,
-        default_feature_repository: FeatureRepository = feature_repository,
-        default_project_repository: ProjectRepository = project_repository,
-        default_user_repository: UserRepository = user_repository,
-    ):
+            self,
+            default_feature_repository: FeatureRepository = feature_repository,
+            default_project_repository: ProjectRepository = project_repository,
+            default_user_repository: UserRepository = user_repository,
+            default_status_repository: StatusRepository = status_repository,
+            default_type_repository: TypeRepository = type_repository):
         """Initializes FeatureService
 
         Args:
@@ -27,6 +30,8 @@ class FeatureService:
         self._feature_repository = default_feature_repository
         self._project_repository = default_project_repository
         self._user_repository = default_user_repository
+        self._status_repository = default_status_repository
+        self._type_repository = default_type_repository
 
     def new(
         self,
@@ -89,6 +94,8 @@ class FeatureService:
 
         pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
+        sname = self._status_repository.get_name(status)
+        ftname = self._type_repository.get_name(ftype)
 
         if not pname:
             raise NotExistingException("Project")
@@ -97,7 +104,8 @@ class FeatureService:
 
         created_feature = self._feature_repository.new(pid, pname, foid, foname,
                                                        name, description, flags,
-                                                       status, ftype, priority)
+                                                       status, sname, ftype,
+                                                       ftname, priority)
         return created_feature
 
     def get_all(self) -> [Feature]:
@@ -275,6 +283,8 @@ class FeatureService:
 
         pname = self._project_repository.get_name(pid)
         foname = self._user_repository.get_fullname(foid)
+        sname = self._status_repository.get_name(status)
+        ftname = self._type_repository.get_name(ftype)
 
         if not pname:
             raise NotExistingException("Project")
@@ -283,7 +293,7 @@ class FeatureService:
 
         updated_feature = self._feature_repository.update(
             fid, pid, pname, foid, foname, name, description, flags, status,
-            ftype, priority)
+            sname, ftype, ftname, priority)
         return updated_feature
 
     def remove(self, fid: str) -> None:

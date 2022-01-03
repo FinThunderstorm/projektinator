@@ -13,8 +13,8 @@ class TaskRepository:
     """
 
     def new(self, fid: str, fname: str, aid: str, aname: str, name: str,
-            description: str, status: str, ttype: str, priority: int,
-            flags: str) -> Task:
+            description: str, status: str, sname: str, ttype: str, ttname: str,
+            priority: int, flags: str) -> Task:
         """new is used to create new tasks into the database
 
         Args:
@@ -63,7 +63,8 @@ class TaskRepository:
             raise DatabaseException('While saving new task into database')
 
         created_task = Task(tid, fid, fname, aid, aname, name, description,
-                            status, ttype, priority, created, updated_on, flags)
+                            status, sname, ttype, ttname, priority, created,
+                            updated_on, flags)
         return created_task
 
     def get_all(self) -> [Task]:
@@ -76,10 +77,12 @@ class TaskRepository:
             [Task]: list of all found tasks
         """
         sql = """
-        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, T.type, T.priority, T.created, T.updated_on
+        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, S.name, T.type, Ty.name, T.priority, T.created, T.updated_on
         FROM Tasks T
         JOIN Features F ON F.id = T.feature_id
         JOIN Users U ON U.id = T.assignee
+        JOIN Types Ty ON Ty.id = T.type
+        JOIN Statuses S ON S.id = T.status
         """
         try:
             tasks = db.session.execute(sql).fetchall()
@@ -88,8 +91,8 @@ class TaskRepository:
 
         return [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
-                 task[6], task[7], task[9], task[10], task[11],
-                 task[12], task[13], task[8],
+                 task[6], task[7], task[9], task[10], task[11], task[12],
+                 task[13], task[14], task[15], task[8],
                  comment_repository.get_by_task_id(task[0])) for task in tasks
         ]
 
@@ -106,10 +109,12 @@ class TaskRepository:
             [Task]: list of all found tasks
         """
         sql = """
-        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, T.type, T.priority, T.created, T.updated_on
+        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, S.name, T.type, Ty.name, T.priority, T.created, T.updated_on
         FROM Tasks T
         JOIN Features F ON F.id = T.feature_id
         JOIN Users U ON U.id = T.assignee
+        JOIN Types Ty ON Ty.id = T.type
+        JOIN Statuses S ON S.id = T.status
         WHERE T.feature_id=:id
         """
         try:
@@ -119,8 +124,8 @@ class TaskRepository:
 
         return [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
-                 task[6], task[7], task[9], task[10], task[11],
-                 task[12], task[13], task[8],
+                 task[6], task[7], task[9], task[10], task[11], task[12],
+                 task[13], task[14], task[15], task[8],
                  comment_repository.get_by_task_id(task[0])) for task in tasks
         ]
 
@@ -137,10 +142,12 @@ class TaskRepository:
             [Task]: list of all found tasks
         """
         sql = """
-        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, T.type, T.priority, T.created, T.updated_on
+        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, S.name, T.type, Ty.name, T.priority, T.created, T.updated_on
         FROM Tasks T
         JOIN Features F ON F.id = T.feature_id
         JOIN Users U ON U.id = T.assignee
+        JOIN Types Ty ON Ty.id = T.type
+        JOIN Statuses S ON S.id = T.status
         WHERE T.assignee=:id
         """
         try:
@@ -150,8 +157,8 @@ class TaskRepository:
 
         return [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
-                 task[6], task[7], task[9], task[10], task[11],
-                 task[12], task[13], task[8],
+                 task[6], task[7], task[9], task[10], task[11], task[12],
+                 task[13], task[14], task[15], task[8],
                  comment_repository.get_by_task_id(task[0])) for task in tasks
         ]
 
@@ -168,10 +175,12 @@ class TaskRepository:
             Task: found task
         """
         sql = """
-        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, T.type, T.priority, T.created, T.updated_on
+        SELECT T.id, T.feature_id, F.name, T.assignee, U.firstname, U.lastname, T.name, T.description, T.flags, T.status, S.name, T.type, Ty.name, T.priority, T.created, T.updated_on
         FROM Tasks T
         JOIN Features F ON F.id = T.feature_id
         JOIN Users U ON U.id = T.assignee
+        JOIN Types Ty ON Ty.id = T.type
+        JOIN Statuses S ON S.id = T.status
         WHERE T.id=:id
         """
         try:
@@ -180,8 +189,9 @@ class TaskRepository:
             raise DatabaseException('while getting all tasks') from error
 
         return Task(task[0], task[1], task[2], task[3],
-                    fullname(task[4], task[5]), task[6], task[7], task[9],
-                    task[10], task[11], task[12], task[13], task[8],
+                    fullname(task[4],
+                             task[5]), task[6], task[7], task[9], task[10],
+                    task[11], task[12], task[13], task[14], task[15], task[8],
                     comment_repository.get_by_task_id(task[0]))
 
     def get_name(self, tid: str) -> str:
@@ -209,8 +219,8 @@ class TaskRepository:
         return name
 
     def update(self, tid: str, fid: str, fname: str, aid: str, aname: str,
-               name: str, description: str, status: str, ttype: str,
-               priority: int, flags: str) -> Task:
+               name: str, description: str, status: str, sname: str, ttype: str,
+               ttname: str, priority: int, flags: str) -> Task:
         """update is used to update task in the database
 
         Args:
@@ -261,7 +271,8 @@ class TaskRepository:
             raise DatabaseException('While saving updated task into database')
 
         updated_task = Task(tid, fid, fname, aid, aname, name, description,
-                            status, ttype, priority, created, updated_on, flags,
+                            status, sname, ttype, ttname, priority, created,
+                            updated_on, flags,
                             comment_repository.get_by_task_id(tid))
         return updated_task
 
