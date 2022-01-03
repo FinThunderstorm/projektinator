@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block title %}Add team{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/teams">List</a>
+            <a class="mdl-navigation__link" href="/teams/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+    <form action="/teams/add" method="POST">
+        <div class="mdl-grid">
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="name" name="name">
+                <label class="mdl-textfield__label" for="name">Name</label>
+            </div>
+        
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="description" name="description">
+                <label class="mdl-textfield__label" for="description">Description</label>
+            </div>
+
+
+            <div class="mdl-cell--12-col">
+                <p>Team leader</p>
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="mdl-data-table__cell--non-numeric">Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for id, fullname in users %}
+                            <tr>
+                                <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
+                                <td>
+                                    <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}-tl">
+                                        <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}">
+                                        <span class="mdl-radio__label"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mdl-cell--12-col">
+                <p>Members</p>
+                <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th class="mdl-data-table__cell--non-numeric">Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for id, fullname in users %}
+                            <tr>
+                                <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
+                                <td>
+                                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="{{ id }}-m">
+                                        <input type="checkbox" id="{{ id }}-m" class="mdl-checkbox__input" name="members" value="{{ id }}">
+                                    </label>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mdl-cell--12-col">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Add
+                </button>
+            </div>
+            
+        </div>
+    </form>
+{% endblock %}

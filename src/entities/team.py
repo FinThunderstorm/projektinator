@@ -11,7 +11,7 @@ class Team:
                  description: str,
                  tlid: str,
                  tlname: str,
-                 members: [User] = None):
+                 members: [User] = []):
         self.team_id = teid
         self.name = name
         self.description = description

@@ -12,7 +12,8 @@ class TeamService:
         self._team_repository = default_team_repository
         self._user_repository = default_user_repository
 
-    def new(self, name: str, description: str, tlid: str, tlname: str):
+    def new(self, name: str, description: str, tlid: str):
+        tlname = self._user_repository.get_fullname(tlid)
         new_team = self._team_repository.new(name, description, tlid, tlname)
         return new_team
 

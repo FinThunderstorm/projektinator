@@ -205,8 +205,8 @@ class UserService:
         """
         try:
             user = self.get_by_username(username)
-        except UserNotExistingException as usernotfound:
-            raise LoginException() from usernotfound
+        except NotExistingException as error:
+            raise LoginException() from error
         if check_password_hash(user.password_hash, password):
             return (user.user_id, user.fullname)
         raise LoginException()

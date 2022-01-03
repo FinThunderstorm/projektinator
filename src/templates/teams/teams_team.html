@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}Team ”{{ team.name }}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/teams">List</a>
+            <a class="mdl-navigation__link" href="/teams/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+<form action="/teams/{{ team.team_id }}" method="POST">
+    <div class="mdl-grid">
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="team_id" name="team_id" value="{{ team.team_id }}">
+            <label class="mdl-textfield__label" for="team_id">Project ID</label>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ team.name }}">
+            <label class="mdl-textfield__label" for="name">Name</label>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{ team.description }}">
+            <label class="mdl-textfield__label" for="description">Description</label>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="team_leader" name="team_leader" value="{{ team.team_leader_name }}">
+            <label class="mdl-textfield__label" for="team_leader">Team leader</label>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Members:</p>
+            <ul class="demo-list-icon mdl-list">
+                {% for member in team.members %}
+                    <li class="mdl-list__item">
+                        <span class="mdl-list__item-primary-content">
+                            <i class="material-icons mdl-list__item-icon">person</i>
+                            {{ member.fullname }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+        <input type="hidden" name="team_leader_id" value="{{ team.team_leader_id }}" />
+
+        <div class="mdl-cell--12-col">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Save
+            </button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

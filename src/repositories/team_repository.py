@@ -18,7 +18,7 @@ class TeamRepository:
         values = {"name": name, "description": description, "team_leader": tlid}
 
         try:
-            teid = db.session.execute(sql, values).fetchone()
+            teid = db.session.execute(sql, values).fetchone()[0]
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
@@ -35,7 +35,7 @@ class TeamRepository:
     def get_all(self):
         sql = """
             SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname
-            FROM Teams
+            FROM Teams T
             JOIN Users U ON T.team_leader = U.id
         """
         try:
@@ -44,14 +44,14 @@ class TeamRepository:
             raise DatabaseException('while getting all teams') from error
 
         return [
-            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]))
-            for team in teams
+            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]),
+                 user_repository.get_by_team(team[0])) for team in teams
         ]
 
     def get_by_id(self, teid: str):
         sql = """
             SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname
-            FROM Teams
+            FROM Teams T
             JOIN Users U ON T.team_leader = U.id
             WHERE T.id=:id
         """
@@ -61,12 +61,13 @@ class TeamRepository:
             raise DatabaseException('while getting team') from error
 
         return Team(team[0], team[1], team[2], team[3],
-                    fullname(team[4], team[5]))
+                    fullname(team[4], team[5]),
+                    user_repository.get_by_team(team[0]))
 
     def get_name(self, teid: str):
         sql = """
             SELECT name 
-            FROM Teams 
+            FROM Teams T 
             WHERE id=:id
         """
         try:
@@ -99,7 +100,8 @@ class TeamRepository:
         if str(teid) != str(team_id):
             raise DatabaseException('While saving updated team into database')
 
-        return Team(teid, name, description, tlid, tlname)
+        return Team(teid, name, description, tlid, tlname,
+                    user_repository.get_by_team(teid))
 
     def add_member(self, teid: str, uid: str):
         sql = """
@@ -113,12 +115,13 @@ class TeamRepository:
             team_id, user_id = db.session.execute(sql, values).fetchone()
             db.session.commit()
         except Exception as error:
+            print(error)
             raise DatabaseException(
                 'While saving new user into team') from error
 
         if str(teid) != str(team_id) or str(uid) != str(user_id):
-            raise DatabaseException(
-                'While saving new user into team') from error
+            print('hh')
+            raise DatabaseException('While saving new user into team')
 
         return (team_id, user_id)
 
@@ -135,7 +138,7 @@ class TeamRepository:
 
     def remove(self, teid: str):
         sql = """
-            DELETE FROM Teams 
+            DELETE FROM Teams
             WHERE id=:id
         """
         sql_tu = """

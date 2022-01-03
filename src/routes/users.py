@@ -91,6 +91,7 @@ def create_user():
             flash(error.message, 'is-danger')
             return redirect("/")
         except DatabaseException as error:
+            print('f')
             flash(error.message, 'is-danger')
             return redirect("/")
         except UsernameDuplicateException as error:
@@ -102,7 +103,7 @@ def create_user():
 def register_user():
     # GET shows creation page
     if request.method == "GET":
-        return render_template("users/users_add.html")
+        return render_template("users/users_register.html")
 
     # POST creates new user
     if request.method == "POST":
@@ -111,7 +112,7 @@ def register_user():
                              request.form["password"],
                              request.form["firstname"],
                              request.form["lastname"], request.form["email"])
-            return redirect(baseUrl)
+            return redirect("/")
         except ValueShorterThanException as error:
             flash(error.message, 'is-danger')
             return redirect("/")
@@ -124,6 +125,9 @@ def register_user():
         except UsernameDuplicateException as error:
             flash(error.message, 'is-danger')
             return redirect("/")
+        except Exception as error:
+            flash(str(error), 'is-danger')
+            return redirect("")
 
 
 @app.route(f"{baseUrl}/remove", methods=["POST"])

@@ -53,7 +53,7 @@ class UserRepository:
             (username, user_role, password_hash, 
             firstname, lastname, email) 
             VALUES (:username, :user_role, :password_hash, 
-            :firstname, :lastname, :email,) 
+            :firstname, :lastname, :email) 
             RETURNING id
         """
         sql_teamsusers = """
@@ -64,10 +64,11 @@ class UserRepository:
         """
         try:
             uid = db.session.execute(sql_user, values).fetchone()[0]
-            tuid = db.session.execute(sql_teamsusers, {
-                "user_id": uid,
-                "team_id": teid
-            }).fetchone()
+            if teid:
+                tuid = db.session.execute(sql_teamsusers, {
+                    "user_id": uid,
+                    "team_id": teid
+                }).fetchone()
             db.session.commit()
         except IntegrityError as error:
             unvalid_email = re.compile(r'.*"users_email_check".*')
@@ -86,10 +87,12 @@ class UserRepository:
         except Exception as error:
             raise DatabaseException(
                 'While saving new user into database') from error
+
         if not uid:
             raise DatabaseException('While saving new user into database')
-        if not tuid:
-            raise DatabaseException('While saving new user into database')
+        if teid:
+            if not tuid:
+                raise DatabaseException('While saving new user into database')
 
         created_user = User(uid, username, user_role, password_hash, firstname,
                             lastname, email, values["profile_image"], teid,
@@ -112,8 +115,8 @@ class UserRepository:
         sql = """
             SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name 
             FROM Users U
-            JOIN Teamsusers TU ON U.id = TU.user_id
-            JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN Teamsusers TU ON U.id = TU.user_id
+            LEFT JOIN Teams T ON TU.team_id = T.id
             WHERE U.id=:id
         """
         try:
@@ -144,8 +147,8 @@ class UserRepository:
         sql = """
             SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
             FROM Users U
-            JOIN Teamsusers TU ON U.id = TU.user_id
-            JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN Teamsusers TU ON U.id = TU.user_id
+            LEFT JOIN Teams T ON TU.team_id = T.id
             WHERE U.username=:username
         """
         try:
@@ -188,8 +191,8 @@ class UserRepository:
         sql = """
             SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
             FROM Users U
-            JOIN Teamsusers TU ON U.id = TU.user_id
-            JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN Teamsusers TU ON U.id = TU.user_id
+            LEFT JOIN Teams T ON TU.team_id = T.id
         """
         try:
             result = db.session.execute(sql)
@@ -214,13 +217,14 @@ class UserRepository:
         sql = """
             SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
             FROM Users U
-            JOIN Teamsusers TU ON U.id = TU.user_id
-            JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN Teamsusers TU ON U.id = TU.user_id
+            LEFT JOIN Teams T ON TU.team_id = T.id
             WHERE TU.team_id=:id
         """
         try:
             result = db.session.execute(sql, {"id": teid})
             users = result.fetchall()
+            print('users', users)
         except Exception as error:
             raise DatabaseException('while getting all users') from error
 

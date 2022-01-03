@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block title %}Teams{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="/teams">List</a>
+            <a class="mdl-navigation__link" href="/teams/add">Add</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+<div class="mdl-grid">
+    <div class="mdl-cell--12-col" style="width: 100%;">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Name</th>
+                    <th class="mdl-data-table__cell--non-numeric">Description</th>
+                    <th class="mdl-data-table__cell--non-numeric">Team leader</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">{{ team.name }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ team.description }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ team.team_leader_name }}</td>
+                        <td>
+                            <form action="/teams/{{ team.team_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="edit{{ team.team_id }}">edit</i>
+                                    <div class="mdl-tooltip" data-mdl-for="edit{{ team.team_id }}">
+                                        Edit
+                                    </div>
+                                </button>
+                            </form>     
+                        </td>
+                        <td>
+                            <form action="/teams/remove" method="post">
+                                <input type="hidden" name="team_id" value="{{ team.team_id }}" />
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="remove{{ team.team_id }}">delete</i>
+                                    <div class="mdl-tooltip" data-mdl-for="remove{{ team.team_id }}">
+                                        Remove
+                                    </div>
+                                </button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
