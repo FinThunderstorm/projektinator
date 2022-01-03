@@ -1,3 +1,4 @@
+from os import getenv
 from invoke import task
 
 
@@ -5,6 +6,11 @@ from invoke import task
 def start(ctx):
     #ctx.run('flask run --host=0.0.0.0')
     ctx.run('python3 src/index.py')
+
+
+@task
+def start_production(ctx):
+    ctx.run(f"cd src && gunicorn app:app --bind 0.0.0.0:{getenv('PORT')}")
 
 
 @task

@@ -4,6 +4,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV POETRY_HOME=/usr
 
+#RUN apt update && apt install python3-pkg-resources python3-setuptools
+RUN python3 -m pip install --upgrade pip setuptools wheel invoke
+
+
 # Install Poetry for managing Python packages
 RUN curl -sSL https://install.python-poetry.org | python3 -
 RUN poetry --version
@@ -19,11 +23,18 @@ ENTRYPOINT [ "poetry" ]
 FROM base AS production
 
 ENV FLASK_ENV production
+ENV MODE production
 
-RUN poetry install --no-dev --no-interaction
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-dev --no-interaction -vvv
+RUN poetry run pip install -U setuptools
 
 EXPOSE 8000
-CMD ["run","gunicorn","app:app", "--bind","0.0.0.0:8000"]
+
+# RUN useradd -u 8877 projektinator
+# USER projektinator
+
+CMD ["run","invoke","start-production"]
 
 # DEV IMAGE
 FROM base AS dev
