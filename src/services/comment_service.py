@@ -36,7 +36,7 @@ class CommentService:
             tid: str = None,
             fid: str = None):
         aname = self._user_repository.get_fullname(aid)
-        print(aname)
+
         try:
             tspent = float(tspent)
         except Exception as error:
@@ -44,7 +44,6 @@ class CommentService:
 
         if fid != None:
             fname = self._feature_repository.get_name(fid)
-            print(type(fname))
             created_comment = self._comment_repository.new(aid,
                                                            aname,
                                                            comment,
@@ -86,22 +85,22 @@ class CommentService:
     def update(self,
                cid: str,
                aid: str,
-               aname: str,
-               comment: str,
+               comment_text: str,
                tspent: float,
                tid: str = None,
-               tname: str = None,
-               fid: str = None,
-               fname: str = None):
+               fid: str = None):
         comment = self.get_by_id(cid)
+        aname = self._user_repository.get_fullname(aid)
+        tname = self._task_repository.get_name(tid)
+        fname = self._feature_repository.get_name(fid)
 
         updated_comment = self._comment_repository.update(
-            cid, aid, aname, comment, tspent, tid, tname, fid, fname)
+            cid, aid, aname, comment_text, tspent, tid, tname, fid, fname)
 
         return updated_comment
 
     def remove(self, cid: str):
-        pass
+        self._comment_repository.remove(cid)
 
 
 comment_service = CommentService()

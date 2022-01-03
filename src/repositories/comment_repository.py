@@ -40,6 +40,7 @@ class CommentRepository:
         RETURNING id, created, updated_on
         """
         sql = sql_feature if fid != None else sql_task
+        mode = 'features' if fid != None else 'tasks'
 
         try:
             cid, created, updated_on = db.session.execute(sql,
@@ -51,6 +52,7 @@ class CommentRepository:
                 'While saving new comment into database') from error
 
         if not cid:
+            print('h')
             raise DatabaseException(
                 'While saving new comment into database') from error
 
@@ -63,7 +65,8 @@ class CommentRepository:
                                       created,
                                       updated_on,
                                       fid=fid,
-                                      fname=fname)
+                                      fname=fname,
+                                      mode=mode)
             return created_comment
         else:
             created_comment = Comment(cid,
@@ -74,16 +77,17 @@ class CommentRepository:
                                       created,
                                       updated_on,
                                       tid=tid,
-                                      tname=tname)
+                                      tname=tname,
+                                      mode=mode)
             return created_comment
 
     def get_by_id(self, cid: str):
         sql = """
         SELECT C.id, C.feature_id, F.name, C.task_id, T.name, C.comment, C.time_spent, C.assignee, U.firstname, U.lastname, C.created, C.updated_on
         FROM Comments C
-        JOIN Users U ON C.assignee = U.id
-        JOIN Features F ON C.feature_id = F.id
-        JOIN Tasks T ON C.task_id = T.id
+        LEFT JOIN Users U ON C.assignee = U.id
+        LEFT JOIN Features F ON C.feature_id = F.id
+        LEFT JOIN Tasks T ON C.task_id = T.id
         WHERE C.id=:id
         """
         try:
@@ -99,7 +103,8 @@ class CommentRepository:
                        comment[10],
                        comment[11],
                        fid=comment[1],
-                       fname=comment[2]) if comment[1] != None else Comment(
+                       fname=comment[2],
+                       mode="features") if comment[1] != None else Comment(
                            comment[0],
                            comment[7],
                            fullname(comment[8], comment[9]),
@@ -108,7 +113,8 @@ class CommentRepository:
                            comment[10],
                            comment[11],
                            tid=comment[3],
-                           tname=comment[4])
+                           tname=comment[4],
+                           mode="tasks")
 
     def get_by_feature_id(self, fid: str):
         sql = """
@@ -133,7 +139,8 @@ class CommentRepository:
                     comment[8],
                     comment[9],
                     fid=comment[1],
-                    fname=comment[2]) for comment in comments
+                    fname=comment[2],
+                    mode="features") for comment in comments
         ]
 
     def get_by_task_id(self, tid: str):
@@ -158,7 +165,8 @@ class CommentRepository:
                     comment[8],
                     comment[9],
                     tid=comment[1],
-                    tname=comment[2]) for comment in comments
+                    tname=comment[2],
+                    mode="tasks") for comment in comments
         ]
 
     def get_by_assignee(self, aid: str):
@@ -184,7 +192,8 @@ class CommentRepository:
                     comment[10],
                     comment[11],
                     fid=comment[1],
-                    fname=comment[2])
+                    fname=comment[2],
+                    mode="features")
             if comment[1] != None else Comment(comment[0],
                                                comment[7],
                                                fullname(comment[8], comment[9]),
@@ -193,7 +202,8 @@ class CommentRepository:
                                                comment[10],
                                                comment[11],
                                                tid=comment[3],
-                                               tname=comment[4])
+                                               tname=comment[4],
+                                               mode="tasks")
             for comment in comments
         ]
 
@@ -201,7 +211,7 @@ class CommentRepository:
                cid: str,
                aid: str,
                aname: str,
-               comment: str,
+               comment_text: str,
                tspent: float,
                tid: str = None,
                tname: str = None,
@@ -211,7 +221,7 @@ class CommentRepository:
             "id": cid,
             "feature_id": fid,
             "task_id": tid,
-            "comment": comment,
+            "comment": comment_text,
             "time_spent": tspent,
             "assignee": aid,
         }
@@ -228,11 +238,14 @@ class CommentRepository:
         RETURNING id, created, updated_on
         """
         sql = sql_feature if fid != None else sql_task
+        mode = 'features' if fid != None else 'tasks'
+
         try:
             comment_id, created, updated_on = db.session.execute(
                 sql, values).fetchone()
             db.session.commit()
         except Exception as error:
+            print(error)
             raise DatabaseException(
                 'While saving updated comment into database') from error
 
@@ -245,22 +258,24 @@ class CommentRepository:
                                       aid,
                                       aname,
                                       tspent,
-                                      comment,
+                                      comment_text,
                                       created,
                                       updated_on,
                                       fid=fid,
-                                      fname=fname)
+                                      fname=fname,
+                                      mode="features")
             return created_comment
         else:
             created_comment = Comment(cid,
                                       aid,
                                       aname,
                                       tspent,
-                                      comment,
+                                      comment_text,
                                       created,
                                       updated_on,
                                       tid=tid,
-                                      tname=tname)
+                                      tname=tname,
+                                      mode="tasks")
             return created_comment
 
     def remove(self, cid: str):

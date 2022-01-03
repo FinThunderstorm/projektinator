@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}Edit comment{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            {% if comment.mode == "features" %}
+            <a class="mdl-navigation__link" href="/features">List all features</a>
+            <a class="mdl-navigation__link" href="/features/add">Add new feature</a>
+            {% elif comment.mode == "tasks" %}
+            <a class="mdl-navigation__link" href="/tasks">List all tasks</a>
+            <a class="mdl-navigation__link" href="/tasks/add">Add new task</a>
+            {% endif %}
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+    <form action="/comments/edit" method="POST">
+        <div class="mdl-grid">
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <textarea class="mdl-textfield__input" type="text" rows= "3" id="comment" name="comment" required></textarea>
+                <label class="mdl-textfield__label" for="comment">Comment</label>
+            </div>
+
+            <script>
+                document.getElementById("comment").value = "{{ comment.comment }}"
+            </script>
+
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="time_spent" name="time_spent" value="{{ comment.time_spent }}" required>
+                <label class="mdl-textfield__label" for="time_spent">Time spent</label>
+            </div>
+
+            <input type="hidden" name="assignee_id" value="{{ comment.assignee_id }}" />
+            <input type="hidden" name="comment_id" value="{{ comment.comment_id }}" />
+            {% if comment.mode == "features" %}
+            <input type="hidden" name="feature_id" value="{{ comment.feature_id }}" />
+            <input type="hidden" name="id" value="{{ comment.feature_id }}" />
+            {% elif comment.mode == "tasks" %}
+            <input type="hidden" name="task_id" value="{{ comment.task_id }}" />
+            <input type="hidden" name="id" value="{{ comment.task_id }}" />
+            {% endif %}
+            <input type="hidden" name="mode" value="{{ comment.mode }}" />
+
+            <div class="mdl-cell--12-col">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Save
+                </button>
+            </div>
+            
+        </div>
+    </form>
+{% endblock %}

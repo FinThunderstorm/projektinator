@@ -17,7 +17,8 @@ class Comment:
                  tid: str = None,
                  tname: str = None,
                  fid: str = None,
-                 fname: str = None):
+                 fname: str = None,
+                 mode: str = None):
         """Initializes Comment with given values. Is optional to use with tasks or features.
 
         Args:
@@ -45,6 +46,7 @@ class Comment:
         self.comment_html = markdown(comment)
         self.created = created
         self.updated_on = updated_on
+        self.mode = mode
 
     def __str__(self) -> str:
         """Method for generating formatted string from object to be mainly used in debugging matters.
@@ -55,6 +57,7 @@ class Comment:
         relates = f"task ”{self.task_name} ({self.task_name})”" if self.task_id else f"feature ”{self.feature_name} ({self.feature_id})”"
         return (f'Comment ”{self.comment_id}”: \n'
                 f' - is related to {relates}\n'
+                f' - mode {self.mode}\n'
                 f' - assignee ”{self.assignee_name} ({self.assignee_id})”\n'
                 f' - used time ”{self.time_spent}”\n'
                 f' - comment ”{self.comment}”\n'

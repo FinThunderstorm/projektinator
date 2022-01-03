@@ -4,24 +4,18 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
-            {% if feature_id != None %}
-            <a class="mdl-navigation__link" href="/features">List features</a>
-            <a class="mdl-navigation__link" href="/features/add">Add feature</a>
-            {% endif %}
-            {% if task_id != None %}
-            <a class="mdl-navigation__link" href="/tasks">List tasks</a>
-            <a class="mdl-navigation__link" href="/tasks/add">Add task</a>
+            {% if mode == "features" %}
+            <a class="mdl-navigation__link" href="/features">List all features</a>
+            <a class="mdl-navigation__link" href="/features/add">Add new feature</a>
+            {% elif mode == "tasks" %}
+            <a class="mdl-navigation__link" href="/tasks">List all tasks</a>
+            <a class="mdl-navigation__link" href="/tasks/add">Add new task</a>
             {% endif %}
         </nav>
     </div>
 {% endblock %}
 {% block content %}
-    {% if feature_id != None %}
-    <form action="/comments/add/feature/{{ feature_id }}" method="POST">
-    {% endif %}
-    {% if task_id != None %}
-    <form action="/comments/add/task/{{ task_id }}" method="POST">
-    {% endif %}
+    <form action="/comments/add" method="POST">
         <div class="mdl-grid">
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <textarea class="mdl-textfield__input" type="text" rows= "3" id="comment" name="comment" ></textarea>
@@ -34,12 +28,8 @@
             </div>
 
             <input type="hidden" name="assignee" value="{{ session.user }}" />
-            {% if feature_id != None %}
-            <input type="hidden" name="feature_id" value="{{ feature_id }}" />
-            {% endif %}
-            {% if task_id != None %}
-            <input type="hidden" name="task_id" value="{{ task_id }}" />
-            {% endif %}
+            <input type="hidden" name="id" value="{{ id }}" />
+            <input type="hidden" name="mode" value="{{ mode }}" />
 
             <div class="mdl-cell--12-col">
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
