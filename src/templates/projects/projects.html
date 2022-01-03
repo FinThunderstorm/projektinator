@@ -4,8 +4,9 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="/projects">List</a>
-            <a class="mdl-navigation__link" href="/projects/add">Add</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/projects">List projects</a>
+            <a class="mdl-navigation__link" href="/projects/add">Add new project</a>
         </nav>
     </div>
 {% endblock %}
@@ -21,6 +22,7 @@
                     <th class="mdl-data-table__cell--non-numeric">Created</th>
                     <th class="mdl-data-table__cell--non-numeric">Updated on</th>
                     <th class="mdl-data-table__cell--non-numeric">Flags</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -48,16 +50,26 @@
                         <td>
                             <form action="/projects/{{ project.project_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                    <i class="material-icons" id="edit{{ project.project_id }}">edit</i>
-                                    <div class="mdl-tooltip" data-mdl-for="edit{{ project.project_id }}">
-                                        Edit
+                                    <i class="material-icons" id="view{{ project.project_id }}">read_more</i>
+                                    <div class="mdl-tooltip" data-mdl-for="view{{ project.project_id }}">
+                                        VIEW
                                     </div>
                                 </button>
                             </form>     
                         </td>
                         <td>
-                            <form action="/projects/remove" method="post">
-                                <input type="hidden" name="project_id" value="{{ project.project_id }}" />
+                            <form action="/projects/edit/{{ project.project_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                                    <i class="material-icons" id="edit{{ project.project_id }}">edit</i>
+                                    <div class="mdl-tooltip" data-mdl-for="edit{{ project.project_id }}">
+                                        Edit
+                                    </div>
+                                </button>
+                            </form>
+                            
+                        </td>
+                        <td>
+                            <form action="/projects/remove/{{ project.project_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
                                     <i class="material-icons" id="remove{{ project.project_id }}">delete</i>
                                     <div class="mdl-tooltip" data-mdl-for="remove{{ project.project_id }}">
@@ -65,7 +77,6 @@
                                     </div>
                                 </button>
                             </form>
-                            
                         </td>
                     </tr>
                 {% endfor %}

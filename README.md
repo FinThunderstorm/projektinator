@@ -23,7 +23,6 @@ Sivurakenne:
 - Projektin sivu
 - Tehtävän sivu
 
-
 - Pääsivu / henkilökohtainen työpöytä
 - Kirjautumissivu + rekisteröitymislomake, jolla pääkäyttäjä voi luoda uusia käyttäjiä
 - Listaus projekteista
@@ -45,7 +44,7 @@ Pääkäyttäjä: admin/admin
 ## Kehitettäessä sovellusta muistettavia käytännöllisiä komentoja
 
 - Flask hot reload: ensin anna komento **export FLASK_ENV=development** ja tämän jälkeen suorita normaalisti **flask run**
-- Postgresin dev-konttiin pääsee seuraavalla komennolla **docker exec -it projektinator_devcontainer_db_1 psql -U example -d projektinator**
+- Postgresin dev-konttiin pääsee seuraavalla komennolla **docker exec -it projektinator-db psql -U example -d projektinator**
 
 ## Todo
 
@@ -54,7 +53,6 @@ Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
 - korjaa projektireposta ei olemassa olon tarkastus serviceen
 - korjaa kaikki repojen yksi alaviiva kahdeksi alaviivaksi
 - muuta repot palauttamaan arvot tuplessa tms ja luo objektiksi vasta servicessä
-
 
 ## Tyylittely
 

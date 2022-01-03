@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block title %}View project ”{{ project.name }}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/projects">List projects</a>
+            <a class="mdl-navigation__link" href="/projects/add">Add new project</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/projects/edit/{{ project.project_id }}">Edit current project</a>
+            <a class="mdl-navigation__link" href="/projects/remove/{{ project.project_id }}">Remove current project</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+    {% set flags = project.flags.split(';') %}
+    <div class="mdl-grid">
+        <div class="mdl-cell--6-col">
+            <p>Project ID:</p>
+            <p id="project_id">{{ project.project_id }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Name:</p>
+            <p id="name">{{ project.name }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Description:</p>
+            <p id="description">{{ project.description }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Project owner:</p>
+            <a href="/users/{{ project.project_owner_id }}" id="project_owner">{{ project.project_owner_name }}</a>
+        </div>
+        
+        <div class="mdl-cell--6-col">
+            <p>Created:</p>
+            <p id="created">{{ project.created.strftime("%d.%m.%Y %H:%M") }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+
+            <p>Updated on:</p>
+            <p id="project_id">{{ project.updated_on.strftime("%d.%m.%Y %H:%M") }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Flags:</p>
+            {% for flag in flags %}
+                {% if flag != "" %}
+                    <span class="mdl-chip">
+                        <span class="mdl-chip__text">
+                            {{ flag.strip() }}
+                        </span>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </div>
+
+<h4>Features:</h2>
+<ul class="mdl-list">
+    {% for feature in project.features %}
+        <li class="mdl-list__item mdl-list__item--three-line">
+            <span class="mdl-list__item-primary-content">
+                <i class="material-icons mdl-list__item-avatar">description</i>
+                <span>{{ feature.name }}</span>
+                <span class="mdl-list__item-text-body">
+                    <b>Feature type:</b> {{ feature.feature_type }}<br />
+                    <b>Status:</b> {{ feature.status }}
+                </span>
+            </span>
+            <span class="mdl-list__item-secondary-content">
+                <form action="/features/{{ feature.feature_id }}">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-list__item-secondary-action" type="submit">View</button>
+                </form>
+            </span>
+        </li>
+    {% endfor %}
+</ul>
+
+
+
+{% endblock %}

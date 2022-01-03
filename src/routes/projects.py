@@ -14,14 +14,20 @@ def projects():
     return render_template('projects/projects.html', projects=projects)
 
 
-@app.route(f"{baseUrl}/<uuid:project_id>", methods=["GET", "POST"])
-def project(project_id):
-    # GET shows project
+@app.route(f"{baseUrl}/<uuid:project_id>", methods=["GET"])
+def view_project(project_id):
+    project = project_service.get_by_id(project_id)
+    return render_template('projects/projects_view.html', project=project)
+
+
+@app.route(f"{baseUrl}/edit/<uuid:project_id>", methods=["GET", "POST"])
+def edit_project(project_id):
     if request.method == "GET":
         project = project_service.get_by_id(project_id)
-        return render_template('projects/projects_project.html',
-                               project=project)
-
+        users = user_service.get_users()
+        return render_template('projects/projects_edit.html',
+                               project=project,
+                               users=users)
     # POST updates project
     if request.method == "POST":
         project = project_service.get_by_id(request.form['project_id'])
@@ -79,13 +85,12 @@ def create_project():
             return redirect(baseUrl)
 
 
-@app.route(f"{baseUrl}/remove", methods=["POST"])
-def remove_project():
+@app.route(f"{baseUrl}/remove/<uuid:project_id>", methods=["GET"])
+def remove_project(project_id):
     try:
-        project_service.remove(request.form['project_id'])
-        flash(
-            f'Project with id {request.form["project_id"]} removed successfully',
-            'is-success')
+        project_service.remove(project_id)
+        flash(f'Project with id {project_id} removed successfully',
+              'is-success')
         return redirect(baseUrl)
     except NotExistingException as error:
         flash(error.message, 'is-danger')
