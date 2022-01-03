@@ -41,16 +41,16 @@ def edit_project(project_id):
                   'is-success')
             return redirect(baseUrl)
         except NotExistingException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except UnvalidInputException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
 
 
@@ -72,16 +72,16 @@ def create_project():
                   'is-success')
             return redirect(baseUrl)
         except NotExistingException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except UnvalidInputException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect(baseUrl)
 
 
@@ -93,8 +93,8 @@ def remove_project(project_id):
               'is-success')
         return redirect(baseUrl)
     except NotExistingException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)
     except DatabaseException as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)

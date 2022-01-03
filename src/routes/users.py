@@ -17,7 +17,7 @@ def login():
         session["username"] = fullname
         session["token"] = os.urandom(16).hex()
     except LoginException as error:
-        flash(error.message, "is-danger")
+        flash(str(error), "is-danger")
 
     return redirect("/")
 
@@ -56,16 +56,16 @@ def user(user_id):
             flash(f'Saved user {user.user_id} successfully', 'is-success')
             return redirect(baseUrl)
         except ValueShorterThanException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except UsernameDuplicateException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
 
 
@@ -85,17 +85,17 @@ def create_user():
                              request.form["lastname"], request.form["email"])
             return redirect(baseUrl)
         except ValueShorterThanException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except DatabaseException as error:
             print('f')
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except UsernameDuplicateException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
 
 
@@ -114,16 +114,16 @@ def register_user():
                              request.form["lastname"], request.form["email"])
             return redirect("/")
         except ValueShorterThanException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except EmptyValueException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except DatabaseException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except UsernameDuplicateException as error:
-            flash(error.message, 'is-danger')
+            flash(str(error), 'is-danger')
             return redirect("/")
         except Exception as error:
             flash(str(error), 'is-danger')
@@ -138,5 +138,5 @@ def remove_user():
               "is-success")
         return redirect(baseUrl)
     except Exception as error:
-        flash(error.message, 'is-danger')
+        flash(str(error), 'is-danger')
         return redirect(baseUrl)

@@ -4,6 +4,7 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
+            <hr />
             <a class="mdl-navigation__link" href="/projects">List</a>
             <a class="mdl-navigation__link" href="/projects/add">Add</a>
         </nav>
@@ -13,18 +14,21 @@
     <form action="/projects/add" method="POST">
         <div class="mdl-grid">
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="name" name="name">
+                <input class="mdl-textfield__input" type="text" id="name" name="name" required>
                 <label class="mdl-textfield__label" for="name">Name</label>
+                <span class="mdl-textfield__error">Field ”Name” can't be empty</span>
             </div>
         
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="description" name="description">
+                <input class="mdl-textfield__input" type="text" id="description" name="description" required>
                 <label class="mdl-textfield__label" for="description">Description</label>
+                <span class="mdl-textfield__error">Field ”Description” can't be empty</span>
             </div>
 
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="flags" name="flags">
+                <input class="mdl-textfield__input" type="text" id="flags" pattern="(.*;)*" name="flags" required>
                 <label class="mdl-textfield__label" for="flags">Flags</label>
+                <span class="mdl-textfield__error">Flags needs to be given in format <em>first;second;third;</em> separated by semicolons.</span>
             </div>
 
             <div class="mdl-cell--12-col">
@@ -44,7 +48,7 @@
                                 <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                                 <td>
                                     <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
-                                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="project_owner" value="{{ id }}">
+                                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="project_owner" value="{{ id }}" required>
                                         <span class="mdl-radio__label"></span>
                                     </label>
                                 </td>
