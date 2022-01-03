@@ -4,10 +4,13 @@ CREATE TABLE IF NOT EXISTS Roles(
   name TEXT NOT NULL,
   description TEXT
 );
-CREATE TABLE IF NOT EXISTS Teams(
+CREATE TABLE IF NOT EXISTS Statuses(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  name TEXT NOT NULL,
-  description TEXT
+  name TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS Types(
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  name TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS Users(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -19,6 +22,12 @@ CREATE TABLE IF NOT EXISTS Users(
   email TEXT CHECK(email LIKE '%@%.%'),
   profile_image TEXT,
   UNIQUE(username)
+);
+CREATE TABLE IF NOT EXISTS Teams(
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  name TEXT NOT NULL,
+  description TEXT,
+  team_leader uuid REFERENCES Users NOT NULL
 );
 CREATE TABLE IF NOT EXISTS Permissions(
   task TEXT PRIMARY KEY NOT NULL,
@@ -40,8 +49,8 @@ CREATE TABLE IF NOT EXISTS Features(
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
-  status TEXT,
-  type TEXT,
+  status uuid REFERENCES Statuses,
+  type uuid REFERENCES Types,
   priority INTEGER,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -53,8 +62,8 @@ CREATE TABLE IF NOT EXISTS Tasks(
   name TEXT NOT NULL,
   description TEXT,
   flags TEXT,
-  status TEXT,
-  type TEXT,
+  status uuid REFERENCES Statuses,
+  type uuid REFERENCES Types,
   priority INTEGER,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -73,6 +82,7 @@ CREATE TABLE IF NOT EXISTS Teamsusers(
   user_id uuid NOT NULL PRIMARY KEY REFERENCES Users,
   team_id uuid NOT NULL REFERENCES Teams
 );
+
 CREATE OR REPLACE FUNCTION updated_on() RETURNS trigger AS $$ BEGIN NEW.updated_on = now();
 RETURN NEW;
 END;
@@ -89,3 +99,15 @@ UPDATE ON Comments FOR EACH ROW EXECUTE PROCEDURE updated_on();
 INSERT INTO Roles (name, description) VALUES ('admin', 'default admin role');
 INSERT INTO Roles (name, description) VALUES ('leader', 'default leader role');
 INSERT INTO Roles (name, description) VALUES ('user','default user role');
+
+INSERT INTO Statuses (name) VALUES ('not started');
+INSERT INTO Statuses (name) VALUES ('in progress');
+INSERT INTO Statuses (name) VALUES ('blocked');
+INSERT INTO Statuses (name) VALUES ('postponed');
+INSERT INTO Statuses (name) VALUES ('ready');
+
+INSERT INTO Types (name) VALUES ('new feature');
+INSERT INTO Types (name) VALUES ('bugfixes');
+INSERT INTO Types (name) VALUES ('extending feature');
+INSERT INTO Types (name) VALUES ('refactoring');
+

@@ -12,8 +12,15 @@ class UserRepository:
     """Class used for handling users in the database
     """
 
-    def new(self, username: str, user_role: int, password_hash: str,
-            firstname: str, lastname: str, email: str) -> User:
+    def new(self,
+            username: str,
+            user_role: int,
+            password_hash: str,
+            firstname: str,
+            lastname: str,
+            email: str,
+            teid: str = None,
+            tename: str = None) -> User:
         """new is used to create new users into the database.
 
         Args:
@@ -41,14 +48,26 @@ class UserRepository:
             "email": email,
             "profile_image": "default"
         }
-        sql = """INSERT INTO Users
-                (username, user_role, password_hash, 
-                firstname, lastname, email) 
-                VALUES (:username, :user_role, :password_hash, 
-                :firstname, :lastname, :email) 
-                RETURNING id"""
+        sql_user = """
+            INSERT INTO Users
+            (username, user_role, password_hash, 
+            firstname, lastname, email) 
+            VALUES (:username, :user_role, :password_hash, 
+            :firstname, :lastname, :email,) 
+            RETURNING id
+        """
+        sql_teamsusers = """
+            INSERT INTO Teamsusers
+            (user_id, team_id)
+            VALUES (:user_id, :team_id)
+            RETURNING user_id
+        """
         try:
-            uid = db.session.execute(sql, values).fetchone()[0]
+            uid = db.session.execute(sql_user, values).fetchone()[0]
+            tuid = db.session.execute(sql_teamsusers, {
+                "user_id": uid,
+                "team_id": teid
+            }).fetchone()
             db.session.commit()
         except IntegrityError as error:
             unvalid_email = re.compile(r'.*"users_email_check".*')
@@ -69,9 +88,12 @@ class UserRepository:
                 'While saving new user into database') from error
         if not uid:
             raise DatabaseException('While saving new user into database')
+        if not tuid:
+            raise DatabaseException('While saving new user into database')
 
         created_user = User(uid, username, user_role, password_hash, firstname,
-                            lastname, email, values["profile_image"])
+                            lastname, email, values["profile_image"], teid,
+                            tename)
         return created_user
 
     def get_by_id(self, uid: str) -> User:
@@ -87,7 +109,13 @@ class UserRepository:
         Returns:
             User: found user as User object
         """
-        sql = "SELECT * FROM Users WHERE id=:id"
+        sql = """
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name 
+            FROM Users U
+            JOIN Teamsusers TU ON U.id = TU.user_id
+            JOIN Teams T ON TU.team_id = T.id
+            WHERE U.id=:id
+        """
         try:
             result = db.session.execute(sql, {"id": uid})
             user = result.fetchone()
@@ -98,7 +126,7 @@ class UserRepository:
             raise NotExistingException('User')
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5],
-                    user[6], user[7])
+                    user[6], user[7], user[8], user[9])
 
     def get_by_username(self, username: str) -> User:
         """get_by_username is used to get user with given username
@@ -113,7 +141,13 @@ class UserRepository:
         Returns:
             User: found user as User object
         """
-        sql = "SELECT * FROM Users WHERE username=:username"
+        sql = """
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
+            FROM Users U
+            JOIN Teamsusers TU ON U.id = TU.user_id
+            JOIN Teams T ON TU.team_id = T.id
+            WHERE U.username=:username
+        """
         try:
             result = db.session.execute(sql, {"username": username.lower()})
             user = result.fetchone()
@@ -124,10 +158,14 @@ class UserRepository:
             raise NotExistingException('User')
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5],
-                    user[6], user[7])
+                    user[6], user[7], user[8], user[9])
 
     def get_fullname(self, uid: str) -> str:
-        sql = "SELECT firstname, lastname FROM Users WHERE id=:id"
+        sql = """
+            SELECT firstname, lastname 
+            FROM Users 
+            WHERE id=:id
+        """
         try:
             firstname, lastname = db.session.execute(sql, {
                 "id": uid
@@ -147,7 +185,12 @@ class UserRepository:
         Returns:
             list[User]: list of all users
         """
-        sql = "SELECT * FROM Users"
+        sql = """
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
+            FROM Users U
+            JOIN Teamsusers TU ON U.id = TU.user_id
+            JOIN Teams T ON TU.team_id = T.id
+        """
         try:
             result = db.session.execute(sql)
             users = result.fetchall()
@@ -156,7 +199,34 @@ class UserRepository:
 
         return [
             User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 user[7]) for user in users
+                 user[7], user[8], user[9]) for user in users
+        ]
+
+    def get_by_team(self, teid: str) -> list[User]:
+        """get_all is used to get all users in the database
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[User]: list of all users
+        """
+        sql = """
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
+            FROM Users U
+            JOIN Teamsusers TU ON U.id = TU.user_id
+            JOIN Teams T ON TU.team_id = T.id
+            WHERE TU.team_id=:id
+        """
+        try:
+            result = db.session.execute(sql, {"id": teid})
+            users = result.fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all users') from error
+
+        return [
+            User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
+                 user[7], user[8], user[9]) for user in users
         ]
 
     def get_users(self) -> list[tuple]:
@@ -168,7 +238,10 @@ class UserRepository:
         Returns:
             list[tuple]: list of users id and fullname
         """
-        sql = "SELECT id, firstname, lastname FROM Users"
+        sql = """
+            SELECT id, firstname, lastname 
+            FROM Users
+        """
         try:
             users = db.session.execute(sql).fetchall()
         except Exception as error:
@@ -178,7 +251,7 @@ class UserRepository:
 
     def update(self, uid: str, username: str, user_role: int,
                password_hash: str, firstname: str, lastname: str, email: str,
-               profile_image: str) -> User:
+               profile_image: str, teid: str, tename: str) -> User:
         """update is used to change values of user into database
 
         Args:
@@ -208,7 +281,13 @@ class UserRepository:
             "profile_image": profile_image,
             "id": uid
         }
-        sql = "UPDATE Users SET username=:username, user_role=:user_role, password_hash=:password_hash, firstname=:firstname, lastname=:lastname, email=:email, profile_image=:profile_image WHERE id=:id"
+        sql = """
+            UPDATE Users 
+            SET username=:username, user_role=:user_role, password_hash=:password_hash, 
+            firstname=:firstname, lastname=:lastname, email=:email, 
+            profile_image=:profile_image 
+            WHERE id=:id
+        """
         try:
             db.session.execute(sql, values)
             db.session.commit()
@@ -217,7 +296,7 @@ class UserRepository:
         except Exception as error:
             raise DatabaseException('user update') from error
         return User(uid, username, user_role, password_hash, firstname,
-                    lastname, email, profile_image)
+                    lastname, email, profile_image, teid, tename)
 
     def remove(self, uid: str):
         """remove is used to remove user's from database

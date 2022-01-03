@@ -5,7 +5,9 @@ class User:
     """Class User resembles user as a object from the database.
     """
 
-    def __init__(self, uid: str, username: str, user_role: int, password_hash: str, firstname: str, lastname: str, email: str, profile_image: str):
+    def __init__(self, uid: str, username: str, user_role: int,
+                 password_hash: str, firstname: str, lastname: str, email: str,
+                 profile_image: str, teid: str, tename: str):
         """Initializes User object with given values
 
         Args:
@@ -27,6 +29,8 @@ class User:
         self.fullname = fullname(self.firstname, self.lastname)
         self.email = email
         self.profile_image = profile_image
+        self.team_id = teid
+        self.team_name = tename
 
     def __str__(self) -> str:
         """Method for generating formatted string from object to be mainly used in debugging matters.
@@ -38,14 +42,12 @@ class User:
         pw_hash_ok = True if self.password_hash[:len(
             "pbkdf2:sha256:260000$")] == "pbkdf2:sha256:260000$" else False
 
-        return (
-            f'User ”{self.fullname} ({self.username})”\n'
-            f' - id ”{self.user_id}”\n'
-            f' - firstname ”{self.firstname}”\n'
-            f' - lastname ”{self.lastname}”\n'
-            f" - user's role ”{self.user_role}”\n"
-            f' - password_hash ok ”{pw_hash_ok}”\n'
-            f' - email ”{self.email}”\n'
-            f' - profile image ”{self.profile_image}”\n'
-
-        )
+        return (f'User ”{self.fullname} ({self.username})”\n'
+                f' - id ”{self.user_id}”\n'
+                f' - firstname ”{self.firstname}”\n'
+                f' - lastname ”{self.lastname}”\n'
+                f" - user's role ”{self.user_role}”\n"
+                f' - password_hash ok ”{pw_hash_ok}”\n'
+                f' - email ”{self.email}”\n'
+                f' - team ”{self.team_name}”\n'
+                f' - profile image ”{self.profile_image}”\n')
