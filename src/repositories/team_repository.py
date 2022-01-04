@@ -48,6 +48,23 @@ class TeamRepository:
                  user_repository.get_by_team(team[0])) for team in teams
         ]
 
+    def get_by_team_leader(self, tlid: str):
+        sql = """
+            SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname
+            FROM Teams T
+            JOIN Users U ON T.team_leader = U.id
+            WHERE T.team_leader=:id
+        """
+        try:
+            teams = db.session.execute(sql, {"id": tlid}).fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all teams') from error
+
+        return [
+            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]),
+                 user_repository.get_by_team(team[0])) for team in teams
+        ]
+
     def get_by_id(self, teid: str):
         sql = """
             SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname

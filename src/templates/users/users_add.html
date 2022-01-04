@@ -12,42 +12,53 @@
 {% endblock %}
 {% block content %}
     <form action="/users/add" method="POST">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="username" name="username">
-            <label class="mdl-textfield__label" for="username">Username</label>
+        <div class="mdl-grid">
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="username" name="username">
+                <label class="mdl-textfield__label" for="username">Username</label>
+            </div>
+
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" id="password" name="password">
+                <label class="mdl-textfield__label" for="password">Password</label>
+            </div>
+
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" id="password_confirm" name="password_confirm">
+                <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
+            </div>
+
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="firstname" name="firstname">
+                <label class="mdl-textfield__label" for="firstname">Firstname</label>
+            </div>
+            
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="lastname" name="lastname">
+                <label class="mdl-textfield__label" for="lastname">Lastname</label>
+            </div>
+
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="email" name="email">
+                <label class="mdl-textfield__label" for="email">Email</label>
+            </div>
+
+            <div class="mdl-cell--12-col">
+                <p>User role:</p>
+                {% for id, name, description in user_roles %}
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role" value="{{ id }}" required>
+                        <span class="mdl-radio__label">{{ name }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+
+            <div class="mdl-cell--12-col">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Add
+                </button>
+            </div>
         </div>
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password" name="password">
-            <label class="mdl-textfield__label" for="password">Password</label>
-        </div>
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password_confirm" name="password_confirm">
-            <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
-        </div>
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="firstname" name="firstname">
-            <label class="mdl-textfield__label" for="firstname">Firstname</label>
-        </div>
-        
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="lastname" name="lastname">
-            <label class="mdl-textfield__label" for="lastname">Lastname</label>
-        </div>
-
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="email" name="email">
-            <label class="mdl-textfield__label" for="email">Email</label>
-        </div>
-
-        
-
-        <input type="hidden" name="user_role" value="1" />
-
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-            Add
-        </button>
     </form>
 {% endblock %}

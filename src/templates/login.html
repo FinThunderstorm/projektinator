@@ -1,21 +1,37 @@
-<h1 class="title">Login</h1>
-<form action="/users/login" method="POST">
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="username" name="username">
-        <label class="mdl-textfield__label" for="username">Username</label>
-    </div>
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='media/taustakuva.jpg') }}");
+        background-size: cover;
+    }
+</style>
 
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" id="password" name="password">
-        <label class="mdl-textfield__label" for="password">Password</label>
-    </div>
 
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-        Login
-    </button>
-</form>
-<form action="/users/register">
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-        Register
-    </button>
-</form>
+    <div class="login mdl-card mdl-shadow--2dp">
+        <form action="/users/login" method="POST">
+            <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Login</h2>
+            </div>
+            <div class="mdl-grid mdl-card__supporting-text">
+                <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="username" name="username">
+                    <label class="mdl-textfield__label" for="username">Username</label>
+                </div>
+
+                <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="password" id="password" name="password">
+                    <label class="mdl-textfield__label" for="password">Password</label>
+                </div>
+            </div>
+            <div class="mdl-grid mdl-card__actions mdl-card--border">
+                <div class="mdl-cell--6-col">
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                        Login
+                    </button>
+                </div>
+                <div class="mdl-cell--6-col">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/users/register">Register</a>
+                </div>
+            </div>
+
+        </form>
+    </div>

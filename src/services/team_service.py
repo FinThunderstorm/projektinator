@@ -21,6 +21,10 @@ class TeamService:
         teams = self._team_repository.get_all()
         return teams
 
+    def get_by_team_leader(self, tlid: str):
+        teams = self._team_repository.get_by_team_leader(tlid)
+        return teams
+
     def get_by_id(self, teid: str):
         team = self._team_repository.get_by_id(teid)
         return team

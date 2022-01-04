@@ -35,10 +35,6 @@ CREATE TABLE IF NOT EXISTS Teams(
   description TEXT,
   team_leader uuid REFERENCES Users NOT NULL
 );
-CREATE TABLE IF NOT EXISTS Permissions(
-  task TEXT PRIMARY KEY NOT NULL,
-  needed_role SERIAL REFERENCES Roles NOT NULL
-);
 CREATE TABLE IF NOT EXISTS Projects(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   project_owner uuid REFERENCES Users NOT NULL,
@@ -103,9 +99,10 @@ UPDATE ON Tasks FOR EACH ROW EXECUTE PROCEDURE updated_on();
 CREATE TRIGGER updated_on BEFORE
 UPDATE ON Comments FOR EACH ROW EXECUTE PROCEDURE updated_on();
 
-INSERT INTO Roles (name, description) VALUES ('admin', 'default admin role');
-INSERT INTO Roles (name, description) VALUES ('leader', 'default leader role');
 INSERT INTO Roles (name, description) VALUES ('user','default user role');
+INSERT INTO Roles (name, description) VALUES ('leader', 'default leader role');
+INSERT INTO Roles (name, description) VALUES ('admin', 'default admin role');
+
 
 INSERT INTO Statuses (name) VALUES ('not started');
 INSERT INTO Statuses (name) VALUES ('in progress');

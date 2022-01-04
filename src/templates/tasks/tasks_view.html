@@ -93,7 +93,6 @@
                         {% else %}
                         low
                         {% endif %}
-                        
                     </span>
                 </li>
                 <li class="mdl-list__item">
@@ -166,7 +165,7 @@
                             </td>
                             <td>
                                 <form action="/comments/remove/{{ comment.comment_id }}">
-                                    <input type="hidden" name="came_from" value="/features/{{ feature.feature_id }}" />
+                                    <input type="hidden" name="came_from" value="/tasks/{{ task.task_id }}" />
                                     <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
                                         <i class="material-icons" id="remove{{ comment.comment_id }}">delete</i>
                                         <div class="mdl-tooltip" data-mdl-for="remove{{ comment.comment_id }}">

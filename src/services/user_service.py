@@ -3,6 +3,7 @@ from utils.exceptions import ValueShorterThanException, EmptyValueException, Log
 from entities.user import User
 from utils.database import db
 from repositories.user_repository import user_repository, UserRepository
+from repositories.role_repository import role_repository, RoleRepository
 
 
 class UserService:
@@ -10,13 +11,15 @@ class UserService:
     """
 
     def __init__(self,
-                 default_user_repository: UserRepository = user_repository):
+                 default_user_repository: UserRepository = user_repository,
+                 default_role_repository: RoleRepository = role_repository):
         """Initializes UserService with default user repository
 
         Args:
             default_user_repository (UserRepository, optional): option to give custom user_repository. Defaults to user_repository.
         """
         self._user_repository = default_user_repository
+        self._role_repository = default_role_repository
 
     def new(self, username: str, user_role: str, password: str, firstname: str,
             lastname: str, email: str) -> User:
@@ -60,9 +63,11 @@ class UserService:
                                         "user role") from error
         password_hash = generate_password_hash(password)
 
+        user_role_name = self._role_repository.get_by_id(user_role)
+
         created_user = self._user_repository.new(username, user_role,
-                                                 password_hash, firstname,
-                                                 lastname, email)
+                                                 user_role_name, password_hash,
+                                                 firstname, lastname, email)
         return created_user
 
     def get_by_id(self, uid: str) -> User:
@@ -195,9 +200,12 @@ class UserService:
         username = current_user.username if username == current_user.username else username.lower(
         )
 
+        user_role_name = self._role_repository.get_by_id(user_role)
+
         user = self._user_repository.update(uid, username, user_role,
-                                            password_hash, firstname, lastname,
-                                            email, "profile_image")
+                                            user_role_name, password_hash,
+                                            firstname, lastname, email,
+                                            "profile_image")
 
         return user
 

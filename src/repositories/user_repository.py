@@ -15,6 +15,7 @@ class UserRepository:
     def new(self,
             username: str,
             user_role: int,
+            user_role_name: str,
             password_hash: str,
             firstname: str,
             lastname: str,
@@ -98,8 +99,9 @@ class UserRepository:
             if not tuid:
                 raise DatabaseException('While saving new user into database')
 
-        created_user = User(uid, username, user_role, password_hash, firstname,
-                            lastname, email, None, teid, tename)
+        created_user = User(uid, username, user_role, user_role_name,
+                            password_hash, firstname, lastname, email, None,
+                            teid, tename)
         return created_user
 
     def get_by_id(self, uid: str) -> User:
@@ -116,26 +118,27 @@ class UserRepository:
             User: found user as User object
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
+            SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
+            LEFT JOIN Roles R ON R.id = U.user_role
             WHERE U.id=:id
         """
         try:
             result = db.session.execute(sql, {"id": uid})
             user = result.fetchone()
         except Exception as error:
+            print(error)
             raise DatabaseException('while getting user by username') from error
 
         if not user:
             raise NotExistingException('User')
 
-        # 7 on profile imagen kohta
-
-        return User(user[0], user[1], user[2], user[3], user[4], user[5],
-                    user[6], image_string(user[7], user[8]), user[9], user[10])
+        return User(user[0], user[1], user[2], user[3],
+                    user[4], user[5], user[6], user[7],
+                    image_string(user[8], user[9]), user[10], user[11])
 
     def get_by_username(self, username: str) -> User:
         """get_by_username is used to get user with given username
@@ -151,11 +154,12 @@ class UserRepository:
             User: found user as User object
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
+            SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
+            LEFT JOIN Roles R ON R.id = U.user_role
             WHERE U.username=:username
         """
         try:
@@ -167,8 +171,9 @@ class UserRepository:
         if not user:
             raise NotExistingException('User')
 
-        return User(user[0], user[1], user[2], user[3], user[4], user[5],
-                    user[6], image_string(user[7], user[8]), user[9], user[10])
+        return User(user[0], user[1], user[2], user[3],
+                    user[4], user[5], user[6], user[7],
+                    image_string(user[8], user[9]), user[10], user[11])
 
     def get_fullname(self, uid: str) -> str:
         sql = """
@@ -213,11 +218,12 @@ class UserRepository:
             list[User]: list of all users
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
+            SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
+            LEFT JOIN Roles R ON R.id = U.user_role
         """
         try:
             result = db.session.execute(sql)
@@ -227,7 +233,7 @@ class UserRepository:
 
         return [
             User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 image_string(user[7], user[8]), user[9], user[10])
+                 user[7], image_string(user[8], user[9]), user[10], user[11])
             for user in users
         ]
 
@@ -241,11 +247,12 @@ class UserRepository:
             list[User]: list of all users
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
+            SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
+            LEFT JOIN Roles R ON R.id = U.user_role
             WHERE TU.team_id=:id
         """
         try:
@@ -256,7 +263,7 @@ class UserRepository:
 
         return [
             User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 image_string(user[7], user[8]), user[9], user[10])
+                 user[7], image_string(user[8], user[9]), user[10], user[11])
             for user in users
         ]
 
@@ -338,6 +345,7 @@ class UserRepository:
                uid: str,
                username: str,
                user_role: int,
+               user_role_name: str,
                password_hash: str,
                firstname: str,
                lastname: str,
@@ -387,8 +395,8 @@ class UserRepository:
             raise UsernameDuplicateException() from error
         except Exception as error:
             raise DatabaseException('user update') from error
-        return User(uid, username, user_role, password_hash, firstname,
-                    lastname, email, profile_image, teid, tename)
+        return User(uid, username, user_role, user_role_name, password_hash,
+                    firstname, lastname, email, profile_image, teid, tename)
 
     def remove(self, uid: str):
         """remove is used to remove user's from database

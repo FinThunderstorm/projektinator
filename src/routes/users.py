@@ -2,6 +2,7 @@ import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.user_service import user_service
+from services.role_service import role_service
 from utils.exceptions import UnvalidInputException, LoginException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException
 
 baseUrl = "/users"
@@ -89,7 +90,8 @@ def edit_user(user_id):
 def create_user():
     # GET shows creation page
     if request.method == "GET":
-        return render_template("users/users_add.html")
+        user_roles = role_service.get_all()
+        return render_template("users/users_add.html", user_roles=user_roles)
 
     # POST creates new user
     if request.method == "POST":
@@ -107,7 +109,6 @@ def create_user():
             flash(str(error), 'is-danger')
             return redirect("/")
         except DatabaseException as error:
-            print('f')
             flash(str(error), 'is-danger')
             return redirect("/")
         except UsernameDuplicateException as error:

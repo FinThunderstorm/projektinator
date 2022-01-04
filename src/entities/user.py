@@ -6,8 +6,9 @@ class User:
     """
 
     def __init__(self, uid: str, username: str, user_role: int,
-                 password_hash: str, firstname: str, lastname: str, email: str,
-                 profile_image: str, teid: str, tename: str):
+                 user_role_name: str, password_hash: str, firstname: str,
+                 lastname: str, email: str, profile_image: str, teid: str,
+                 tename: str):
         """Initializes User object with given values
 
         Args:
@@ -23,6 +24,7 @@ class User:
         self.user_id = uid
         self.username = username
         self.user_role = user_role
+        self.user_role_name = user_role_name
         self.password_hash = password_hash
         self.firstname = firstname
         self.lastname = lastname
@@ -46,7 +48,7 @@ class User:
                 f' - id ”{self.user_id}”\n'
                 f' - firstname ”{self.firstname}”\n'
                 f' - lastname ”{self.lastname}”\n'
-                f" - user's role ”{self.user_role}”\n"
+                f" - user's role ”{self.user_role_name}”\n"
                 f' - password_hash ok ”{pw_hash_ok}”\n'
                 f' - email ”{self.email}”\n'
                 f' - team ”{self.team_name}”\n'

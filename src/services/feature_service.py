@@ -171,10 +171,10 @@ class FeatureService:
         Returns:
             [Feature]: list of found features
         """
-        if not self._project_repository.get_by_id(foid):
+        if not self._user_repository.get_by_id(foid):
             raise NotExistingException("Feature owner")
 
-        features = self._feature_repository.get_all_by_feature_owner()
+        features = self._feature_repository.get_all_by_feature_owner(foid)
         if not features:
             raise NotExistingException("Features")
         return features
