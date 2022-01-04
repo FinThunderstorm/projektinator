@@ -39,24 +39,23 @@
             <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th class="mdl-data-table__cell--non-numeric"></th>
                         <th class="mdl-data-table__cell--non-numeric">Name</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for id, fullname in users %}
+                    {% for id, fullname, profile_image in users %}
                         <tr>
-                            <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                            {% if profile_image != None %}
+                            <td class="mdl-data-table__cell--non-numeric"><img class="profile_image" src="{{ profile_image }}"></img></td>
+                            {% else %}
+                            <td class="mdl-data-table__cell--non-numeric"><i class="material-icons mdl-list__item-avatar">person</i></td>
+                            {% endif %}
                             <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                             <td>
-                                <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}-tl">
-                                    {% if id == team.team_leader_id %}
-                                    <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}" checked required>
-                                    {% else %}
-                                    <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}" required>
-                                    {% endif %}
-                                    <span class="mdl-radio__label"></span>
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="{{ id }}-m">
+                                    <input type="checkbox" id="{{ id }}-m" class="mdl-checkbox__input" name="members" value="{{ id }}">
                                 </label>
                             </td>
                         </tr>

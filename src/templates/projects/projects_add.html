@@ -36,7 +36,7 @@
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th class="mdl-data-table__cell--non-numeric"></th>
                             <th class="mdl-data-table__cell--non-numeric">Name</th>
                             <th></th>
                         </tr>
@@ -45,9 +45,9 @@
                         {% for id, fullname, profile_image in users %}
                             <tr>
                                 {% if profile_image != None %}
-                                <td><img class="profile_image" src="{{ profile_image }}"></img></td>
+                                <td class="mdl-data-table__cell--non-numeric"><img class="profile_image" src="{{ profile_image }}"></img></td>
                                 {% else %}
-                                <td><i class="material-icons mdl-list__item-avatar">person</i></td>
+                                <td class="mdl-data-table__cell--non-numeric"><i class="material-icons mdl-list__item-avatar">person</i></td>
                                 {% endif %}
                                 <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                                 <td>
