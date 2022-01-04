@@ -15,49 +15,64 @@
 {% endblock %}
 {% block content %}
 <div class="mdl-grid">
-    <div class="mdl-cell--6-col">
-        <p>User ID:</p>
-        <p id="user_id">{{ user.user_id }}</p>
-    </div>
-
-    <div class="mdl-cell--6-col">
-        <p>Username:</p>
-        <p id="username">{{ user.username }}</p>
-    </div>
-
-    <div class="mdl-cell--6-col">
-        <p>Firstname:</p>
-        <p id="firstname">{{ user.firstname }}</p>
-    </div>
-    
-    <div class="mdl-cell--6-col">
-        <p>Lastname:</p>
-        <p id="lastname">{{ user.lastname }}</p>
-    </div>
-
-    <div class="mdl-cell--6-col">
-        <p>Email:</p>
-        <p id="email">{{ user.email }}</p>
-    </div>
-
-    <div class="mdl-cell--6-col">
-        <p>User role:</p>
-        <p id="user_role">{{ user.user_role }}</p>
-    </div>
-
-    <div class="mdl-cell--6-col">
-        <p>Team:</p>
-        <a href="/teams/{{ user.team_id }}" id="team_id">{{ user.team_name }}</a>
-    </div>
-
-    <div class="mdl-cell--6-col">
-        <p>Profile image:</p>
-        
-        {% if user.profile_image != None %}
-        <img src="{{ user.profile_image }}" class="profile_image" style="margin-right: 16px;" id="profile_image"/>
-        {% else %}
-        <i class=" profile_image material-icons mdl-list__item-avatar">person</i>
-        {% endif %}
+    <div class="mdl-cell--6-col card mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-card--expand card_header">
+            {% if user.profile_image != None %}
+            <img src="{{ user.profile_image }}" class="profile_image" style="margin-right: 16px;" id="profile_image"/>
+            {% else %}
+            <i class=" profile_image material-icons mdl-list__item-avatar">person</i>
+            {% endif %}
+            <h2 class="mdl-card__title-text">User ”{{ user.fullname }}”</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <ul class="mdl-list">
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                        <div id="user_id_icon" class="material-icons mdl-list__item-icon">fingerprint</div>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="user_id_icon">
+                        User ID
+                        </div>
+                        {{ user.user_id }}
+                        </span>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                        <div id="username_icon" class="material-icons mdl-list__item-icon">badge</div>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="username_icon">
+                            Username
+                        </div>
+                        {{ user.username }}
+                    </span>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                        <div id="email_icon" class="material-icons mdl-list__item-icon">email</div>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="email_icon">
+                            Email
+                        </div>
+                        {{ user.email }}
+                    </span>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                        <div id="user_role_icon" class="material-icons mdl-list__item-icon">key</div>
+                        <div class="mdl-tooltip mdl-tooltip--large" for="user_role_icon">
+                            User Role
+                        </div>
+                        {{ user.user_role }}
+                    </span>
+                </li>
+                <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                    <div id="team_icon" class="material-icons mdl-list__item-icon">groups</div>
+                    <div class="mdl-tooltip mdl-tooltip--large" for="team_icon">
+                        Team
+                    </div>
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="margin-left: -8px;" href="/teams/{{ user.team_id }}" id="project_id">{{ user.team_name }}</a>
+                    </span>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}
