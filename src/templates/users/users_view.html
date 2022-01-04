@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block title %}View user ”{{ user.fullname}}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/users">List all users</a>
+            <a class="mdl-navigation__link" href="/users/add">Add new user</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/users/edit/{{ user.user_id }}">Edit current user</a>
+            <a class="mdl-navigation__link" href="/users/remove/{{ user.user_id }}">Remove current user</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+<div class="mdl-grid">
+    <div class="mdl-cell--6-col">
+        <p>User ID:</p>
+        <p id="user_id">{{ user.user_id }}</p>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <p>Username:</p>
+        <p id="username">{{ user.username }}</p>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <p>Firstname:</p>
+        <p id="firstname">{{ user.firstname }}</p>
+    </div>
+    
+    <div class="mdl-cell--6-col">
+        <p>Lastname:</p>
+        <p id="lastname">{{ user.lastname }}</p>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <p>Email:</p>
+        <p id="email">{{ user.email }}</p>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <p>User role:</p>
+        <p id="user_role">{{ user.user_role }}</p>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <p>Team:</p>
+        <a href="/teams/{{ user.team_id }}" id="team_id">{{ user.team_name }}</a>
+    </div>
+
+    <div class="mdl-cell--6-col">
+        <p>Profile image:</p>
+        
+        {% if user.profile_image != None %}
+        <img src="{{ user.profile_image }}" class="profile_image" style="margin-right: 16px;" id="profile_image"/>
+        {% else %}
+        <i class=" profile_image material-icons mdl-list__item-avatar">person</i>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

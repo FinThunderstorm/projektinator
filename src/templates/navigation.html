@@ -1,6 +1,7 @@
 <header class="mdl-layout__header mdl-layout__header">
     <div class="mdl-layout__header-row">
-        <span class="mdl-layout-title">{{ title() }}</span>
+        <a href="/"><img src="{{ url_for('static', filename='media/logo_valkoinen.svg') }}" style="height: 5vh;"/></a>
+        <span class="mdl-layout-title">&nbsp;&nbsp;{{ title() }}</span>
         <div class="mdl-layout-spacer"></div>
         {% if session.user %}
             <nav class="mdl-navigation">
@@ -10,7 +11,7 @@
                 <a class="mdl-navigation__link" href="/tasks">Tasks</a>
                 <a class="mdl-navigation__link" href="/users">Users</a>
                 <a class="mdl-navigation__link" href="/teams">Teams</a>
-                <a class="mdl-navigation__link" href="/users/{{ session.user }}"><i class="material-icons">account_circle</i>{{ session.username }}</a>
+                <a class="mdl-navigation__link" href="/users/{{ session.user }}"><i class="material-icons">account_circle</i>&nbsp;&nbsp;{{ session.username }}</a>
             </nav>
         {% endif %}
     </div>

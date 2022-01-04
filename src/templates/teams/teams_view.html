@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block title %}Team ”{{ team.name }}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/teams">List all teams</a>
+            <a class="mdl-navigation__link" href="/teams/add">Add new team</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/teams/edit/{{ team.team_id }}">Edit current team</a>
+            <a class="mdl-navigation__link" href="/teams/edit/{{ team.team_id }}/members">Edit current team's members</a>
+            <a class="mdl-navigation__link" href="/teams/remove/{{ team.team_id }}">Remove current team</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="mdl-grid">
+        <div class="mdl-cell--6-col">
+            <p>Team ID:</p>
+            <p id="team_id">{{ team.team_id }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Name:</p>
+            <p id="name">{{ team.name }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Description:</p>
+            <p id="description">{{ team.description }}</p>
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Team Leader:</p>
+            {% if team_leader_profile_image != None %}
+            <img class="profile_image" src="{{ team_leader_profile_image }}"></img>
+            {% else %}
+            <i class="material-icons mdl-list__item-avatar">person</i>
+            {% endif %}
+            <a href="/users/{{ team.team_leader_id }}" id="team_leader">{{ team.team_leader_name }}</a>
+            
+        </div>
+
+        <div class="mdl-cell--6-col">
+            <p>Members:</p>
+            <ul class="demo-list-icon mdl-list">
+                {% for member in team.members %}
+                    <li class="mdl-list__item">
+                        <span class="mdl-list__item-primary-content">
+                            {% if member.profile_image != None %}
+                            <img class="profile_image" src="{{ member.profile_image }}"></img>
+                            {% else %}
+                            <i class="material-icons mdl-list__item-avatar">person</i>
+                            {% endif %}
+                            {{ member.fullname }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

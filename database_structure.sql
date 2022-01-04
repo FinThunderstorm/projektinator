@@ -20,8 +20,14 @@ CREATE TABLE IF NOT EXISTS Users(
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT CHECK(email LIKE '%@%.%'),
-  profile_image TEXT,
   UNIQUE(username)
+);
+CREATE TABLE IF NOT EXISTS ProfileImages(
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  user_id uuid REFERENCES Users NOT NULL,
+  image_type TEXT NOT NULL,
+  image_data BYTEA NOT NULL,
+  UNIQUE(user_id)
 );
 CREATE TABLE IF NOT EXISTS Teams(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
@@ -80,7 +86,8 @@ CREATE TABLE IF NOT EXISTS Comments(
 );
 CREATE TABLE IF NOT EXISTS Teamsusers(
   user_id uuid NOT NULL PRIMARY KEY REFERENCES Users,
-  team_id uuid NOT NULL REFERENCES Teams
+  team_id uuid NOT NULL REFERENCES Teams,
+  UNIQUE(user_id)
 );
 
 CREATE OR REPLACE FUNCTION updated_on() RETURNS trigger AS $$ BEGIN NEW.updated_on = now();

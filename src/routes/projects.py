@@ -17,7 +17,12 @@ def projects():
 @app.route(f"{baseUrl}/<uuid:project_id>", methods=["GET"])
 def view_project(project_id):
     project = project_service.get_by_id(project_id)
-    return render_template('projects/projects_view.html', project=project)
+    project_owner_profile_image = user_service.get_profile_image(
+        project.project_owner_id)
+    return render_template(
+        'projects/projects_view.html',
+        project=project,
+        project_owner_profile_image=project_owner_profile_image)
 
 
 @app.route(f"{baseUrl}/edit/<uuid:project_id>", methods=["GET", "POST"])

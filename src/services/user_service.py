@@ -120,6 +120,30 @@ class UserService:
         users = self._user_repository.get_users()
         return users
 
+    def get_team_users(self, teid: str) -> list[tuple]:
+        """get_users is used to get all users for selecting users in the frontend
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[tuple]: list of all users in the database
+        """
+        users = self._user_repository.get_team_users(teid)
+        return users
+
+    def get_profile_image(self, uid: str) -> str:
+        image = self._user_repository.get_profile_image(uid)
+        return image
+
+    def update_profile_image(self, uid: str, img_type: str, img_data: str):
+        if img_type not in ["image/jpeg", "image/png", "image/gif"]:
+            raise UnvalidInputException('profile image type not supported')
+        if len(img_data) > 1000 * 1024:
+            raise UnvalidInputException('profile image size too big')
+        return self._user_repository.update_profile_image(
+            uid, img_type, img_data)
+
     def update(self, uid: str, username: str, user_role: str, password: str,
                firstname: str, lastname: str, email: str,
                profile_image: str) -> User:
@@ -170,11 +194,10 @@ class UserService:
 
         username = current_user.username if username == current_user.username else username.lower(
         )
-        profile_image = profile_image if profile_image != "" else "default_image"
 
         user = self._user_repository.update(uid, username, user_role,
                                             password_hash, firstname, lastname,
-                                            email, profile_image)
+                                            email, "profile_image")
 
         return user
 

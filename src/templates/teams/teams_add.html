@@ -4,8 +4,9 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="/teams">List</a>
-            <a class="mdl-navigation__link" href="/teams/add">Add</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/teams">List all teams</a>
+            <a class="mdl-navigation__link" href="/teams/add">Add new team</a>
         </nav>
     </div>
 {% endblock %}
@@ -13,13 +14,15 @@
     <form action="/teams/add" method="POST">
         <div class="mdl-grid">
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="name" name="name">
+                <input class="mdl-textfield__input" type="text" id="name" name="name" required>
                 <label class="mdl-textfield__label" for="name">Name</label>
+                <span class="mdl-textfield__error">Field ”Name” can't be empty</span>
             </div>
         
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" id="description" name="description">
+                <input class="mdl-textfield__input" type="text" id="description" name="description" required>
                 <label class="mdl-textfield__label" for="description">Description</label>
+                <span class="mdl-textfield__error">Field ”Description” can't be empty</span>
             </div>
 
 
@@ -34,13 +37,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for id, fullname in users %}
+                        {% for id, fullname, profile_image in users %}
                             <tr>
-                                <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                                {% if profile_image != None %}
+                                <td><img class="profile_image" src="{{ profile_image }}"></img></td>
+                                {% else %}
+                                <td><i class="material-icons mdl-list__item-avatar">person</i></td>
+                                {% endif %}
                                 <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                                 <td>
                                     <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}-tl">
-                                        <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}">
+                                        <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}" required>
                                         <span class="mdl-radio__label"></span>
                                     </label>
                                 </td>
@@ -61,9 +68,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for id, fullname in users %}
+                        {% for id, fullname, profile_image in users %}
                             <tr>
-                                <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                                {% if profile_image != None %}
+                                <td><img class="profile_image" src="{{ profile_image }}"></img></td>
+                                {% else %}
+                                <td><i class="material-icons mdl-list__item-avatar">person</i></td>
+                                {% endif %}
                                 <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                                 <td>
                                     <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="{{ id }}-m">

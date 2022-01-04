@@ -48,6 +48,11 @@
 
                 <div class="mdl-cell--6-col">
                     <p>Assignee:</p>
+                    {% if assignee_profile_image != None %}
+                    <img class="profile_image" src="{{ assignee_profile_image }}"></img>
+                    {% else %}
+                    <i class="material-icons mdl-list__item-avatar">person</i>
+                    {% endif %}
                     <a href="/users/{{ task.assignee_id }}" id="assignee_id">{{ task.assignee_name }}</a>
                 </div>
 
@@ -105,7 +110,7 @@
                     <td>
                         <form action="/comments/edit">
                             <input type="hidden" name="id" value="{{ comment.comment_id }}" />
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
                                 <i class="material-icons" id="edit{{ comment.comment_id }}">edit</i>
                                 <div class="mdl-tooltip" data-mdl-for="edit{{ comment.comment_id }}">
                                     Edit
@@ -115,7 +120,7 @@
                     </td>
                     <td>
                         <form action="/comments/remove/{{ comment.comment_id }}">
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
+                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
                                 <input type="hidden" name="came_from" value="/tasks/{{ task.task_id }}" >
                                 <i class="material-icons" id="remove{{ comment.comment_id }}">delete</i>
                                 <div class="mdl-tooltip" data-mdl-for="remove{{ comment.comment_id }}">

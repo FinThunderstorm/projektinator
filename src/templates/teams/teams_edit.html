@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block title %}Edit team ”{{ team.name }}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/teams">List all teams</a>
+            <a class="mdl-navigation__link" href="/teams/add">Add new team</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/teams/{{ team.team_id }}">View current team</a>
+            <a class="mdl-navigation__link" href="/teams/remove/{{ team.team_id }}">Remove current team</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+<form action="/teams/edit/{{ team.team_id }}" method="POST">
+    <div class="mdl-grid">
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="team_id_show" name="team_id_show" value="{{ team.team_id }}" disabled>
+            <label class="mdl-textfield__label" for="team_id">Team ID</label>
+        </div>
+        <input type="hidden" id="team_id" name="team_id" value="{{ team.team_id }}" required>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ team.name }}" required>
+            <label class="mdl-textfield__label" for="name">Name</label>
+            <span class="mdl-textfield__error">Field ”Name” can't be empty</span>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{ team.description }}" required>
+            <label class="mdl-textfield__label" for="description">Description</label>
+            <span class="mdl-textfield__error">Field ”Description” can't be empty</span>
+        </div>
+
+        <div class="mdl-cell--12-col">
+            <p>Team leader</p>
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="mdl-data-table__cell--non-numeric">Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for id, fullname in users %}
+                        <tr>
+                            <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
+                            <td>
+                                <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}-tl">
+                                    {% if id == team.team_leader_id %}
+                                    <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}" checked required>
+                                    {% else %}
+                                    <input type="radio" id="{{ id }}-tl" class="mdl-radio__button" name="team_leader" value="{{ id }}" required>
+                                    {% endif %}
+                                    <span class="mdl-radio__label"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mdl-cell--12-col">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Save
+            </button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

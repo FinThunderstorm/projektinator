@@ -33,6 +33,11 @@
 
         <div class="mdl-cell--6-col">
             <p>Project owner:</p>
+            {% if project_owner_profile_image != None %}
+            <img class="profile_image" src="{{ project_owner_profile_image }}"></img>
+            {% else %}
+            <i class="material-icons mdl-list__item-avatar">person</i>
+            {% endif %}
             <a href="/users/{{ project.project_owner_id }}" id="project_owner">{{ project.project_owner_name }}</a>
         </div>
         

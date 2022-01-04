@@ -26,7 +26,12 @@ def features():
 @app.route(f"{baseUrl}/<uuid:feature_id>", methods=["GET"])
 def view_feature(feature_id):
     feature = feature_service.get_by_id(feature_id)
-    return render_template('features/features_view.html', feature=feature)
+    feature_owner_profile_image = user_service.get_profile_image(
+        feature.feature_owner)
+    return render_template(
+        'features/features_view.html',
+        feature=feature,
+        feature_owner_profile_image=feature_owner_profile_image)
 
 
 @app.route(f"{baseUrl}/edit/<uuid:feature_id>", methods=["GET", "POST"])

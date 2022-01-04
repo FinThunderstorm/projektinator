@@ -28,7 +28,10 @@ def tasks():
 @app.route(f"{baseUrl}/<uuid:task_id>", methods=["GET", "POST"])
 def view_task(task_id):
     task = task_service.get_by_id(task_id)
-    return render_template('tasks/tasks_view.html', task=task)
+    assignee_profile_image = user_service.get_profile_image(task.assignee)
+    return render_template('tasks/tasks_view.html',
+                           task=task,
+                           assignee_profile_image=assignee_profile_image)
 
 
 @app.route(f"{baseUrl}/edit/<uuid:task_id>", methods=["GET", "POST"])

@@ -19,3 +19,9 @@ def get_test_user():
 
 def fullname(firstname: str, lastname: str) -> str:
     return f'{firstname} {lastname}'
+
+
+def image_string(img_type: str, img_data: str):
+    if not img_type:
+        return None
+    return f'data:{img_type};base64,{img_data}'

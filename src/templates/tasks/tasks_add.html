@@ -69,9 +69,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for id, fullname in users %}
+                        {% for id, fullname, profile_image in users %}
                             <tr>
-                                <td><i class="material-icons  mdl-list__item-icon">person</i></td>
+                                {% if profile_image != None %}
+                                <td><img class="profile_image" src="{{ profile_image }}"></img></td>
+                                {% else %}
+                                <td><i class="material-icons mdl-list__item-avatar">person</i></td>
+                                {% endif %}
                                 <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                                 <td>
                                     <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">

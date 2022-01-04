@@ -4,56 +4,72 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="/users">List</a>
-            <a class="mdl-navigation__link" href="/users/add">Add</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/users">List all users</a>
+            <a class="mdl-navigation__link" href="/users/add">Add new user</a>
         </nav>
     </div>
 {% endblock %}
 {% block content %}
-    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-        <thead>
-            <tr>
-                <th class="mdl-data-table__cell--non-numeric">User ID</th>
-                <th class="mdl-data-table__cell--non-numeric">Name</th>
-                <th class="mdl-data-table__cell--non-numeric">Username</th>
-                <th class="mdl-data-table__cell--non-numeric">User role</th>
-                <th class="mdl-data-table__cell--non-numeric">Email</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
+<div class="mdl-grid">
+    <div class="mdl-cell--12-col" style="width: 100%;">
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
+            <thead>
                 <tr>
-                    <td class="mdl-data-table__cell--non-numeric">{{ user.user_id }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ user.fullname }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ user.username }}</td>
-                    <td>{{ user.user_role }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ user.email }}</td>
-                    <td>
-                        <form action="/users/{{ user.user_id }}">
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                <i class="material-icons" id="edit{{ user.user_id }}">edit</i>
-                                <div class="mdl-tooltip" data-mdl-for="edit{{ user.user_id }}">
-                                    Edit
-                                </div>
-                            </button>
-                        </form>     
-                    </td>
-                    <td>
-                        <form action="/users/remove" method="post">
-                            <input type="hidden" name="user_id" value="{{ user.user_id }}" />
-                            <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" type="submit">
-                                <i class="material-icons" id="remove{{ user.user_id }}">delete</i>
-                                <div class="mdl-tooltip" data-mdl-for="remove{{ user.user_id }}">
-                                    Remove
-                                </div>
-                            </button>
-                        </form>
-                        
-                    </td>
+                    <th class="mdl-data-table__cell--non-numeric">Name</th>
+                    <th class="mdl-data-table__cell--non-numeric">Username</th>
+                    <th class="mdl-data-table__cell--non-numeric">User role</th>
+                    <th class="mdl-data-table__cell--non-numeric">Email</th>
+                    <th class="mdl-data-table__cell--non-numeric">Team</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">{{ user.fullname }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ user.username }}</td>
+                        <td>{{ user.user_role }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ user.email }}</td>
+                        <td class="mdl-data-table__cell--non-numeric">{{ user.team_name }}</td>
+                        <td>
+                            <form action="/users/{{ user.user_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
+                                    <i class="material-icons" id="view{{ user.user_id }}">read_more</i>
+                                    <div class="mdl-tooltip" data-mdl-for="view{{ user.user_id }}">
+                                        View
+                                    </div>
+                                </button>
+                            </form>     
+                        </td>
+                        <td>
+                            <form action="/users/edit/{{ user.user_id }}">
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
+                                    <i class="material-icons" id="edit{{ user.user_id }}">edit</i>
+                                    <div class="mdl-tooltip" data-mdl-for="edit{{ user.user_id }}">
+                                        Edit
+                                    </div>
+                                </button>
+                            </form>     
+                        </td>
+                        <td>
+                            <form action="/users/remove" method="post">
+                                <input type="hidden" name="user_id" value="{{ user.user_id }}" />
+                                <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
+                                    <i class="material-icons" id="remove{{ user.user_id }}">delete</i>
+                                    <div class="mdl-tooltip" data-mdl-for="remove{{ user.user_id }}">
+                                        Remove
+                                    </div>
+                                </button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

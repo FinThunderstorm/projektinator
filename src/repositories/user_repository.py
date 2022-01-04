@@ -1,11 +1,11 @@
 import re
 from sqlalchemy import exc
 from werkzeug.security import generate_password_hash
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException, UsernameDuplicateException
 from entities.user import User
 from utils.database import db
-from utils.helpers import fullname
+from utils.helpers import fullname, image_string
 
 
 class UserRepository:
@@ -46,7 +46,6 @@ class UserRepository:
             "firstname": firstname,
             "lastname": lastname,
             "email": email,
-            "profile_image": "default"
         }
         sql_user = """
             INSERT INTO Users
@@ -84,7 +83,12 @@ class UserRepository:
             else:
                 raise DatabaseException(
                     'While saving new user into database') from error
+        except OperationalError as error:
+            print(error)
+            raise DatabaseException(source="",
+                                    message="Database server not found")
         except Exception as error:
+            print(error)
             raise DatabaseException(
                 'While saving new user into database') from error
 
@@ -95,8 +99,7 @@ class UserRepository:
                 raise DatabaseException('While saving new user into database')
 
         created_user = User(uid, username, user_role, password_hash, firstname,
-                            lastname, email, values["profile_image"], teid,
-                            tename)
+                            lastname, email, None, teid, tename)
         return created_user
 
     def get_by_id(self, uid: str) -> User:
@@ -113,10 +116,11 @@ class UserRepository:
             User: found user as User object
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name 
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             WHERE U.id=:id
         """
         try:
@@ -128,8 +132,10 @@ class UserRepository:
         if not user:
             raise NotExistingException('User')
 
+        # 7 on profile imagen kohta
+
         return User(user[0], user[1], user[2], user[3], user[4], user[5],
-                    user[6], user[7], user[8], user[9])
+                    user[6], image_string(user[7], user[8]), user[9], user[10])
 
     def get_by_username(self, username: str) -> User:
         """get_by_username is used to get user with given username
@@ -145,10 +151,11 @@ class UserRepository:
             User: found user as User object
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             WHERE U.username=:username
         """
         try:
@@ -161,7 +168,7 @@ class UserRepository:
             raise NotExistingException('User')
 
         return User(user[0], user[1], user[2], user[3], user[4], user[5],
-                    user[6], user[7], user[8], user[9])
+                    user[6], image_string(user[7], user[8]), user[9], user[10])
 
     def get_fullname(self, uid: str) -> str:
         sql = """
@@ -179,6 +186,23 @@ class UserRepository:
             raise NotExistingException('User')
         return fullname(firstname, lastname)
 
+    def get_profile_image(self, uid: str) -> str:
+        sql = """
+            SELECT U.id, PI.image_type, encode(PI.image_data, 'base64') 
+            FROM Users U
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
+            WHERE U.id=:id
+        """
+        try:
+            user_id, image_type, image_data = db.session.execute(
+                sql, {
+                    "id": uid
+                }).fetchone()
+        except Exception as error:
+            raise DatabaseException(
+                'while getting user´s profile image') from error
+        return image_string(image_type, image_data)
+
     def get_all(self) -> list[User]:
         """get_all is used to get all users in the database
 
@@ -189,10 +213,11 @@ class UserRepository:
             list[User]: list of all users
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
         """
         try:
             result = db.session.execute(sql)
@@ -202,7 +227,8 @@ class UserRepository:
 
         return [
             User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 user[7], user[8], user[9]) for user in users
+                 image_string(user[7], user[8]), user[9], user[10])
+            for user in users
         ]
 
     def get_by_team(self, teid: str) -> list[User]:
@@ -215,22 +241,23 @@ class UserRepository:
             list[User]: list of all users
         """
         sql = """
-            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, U.profile_image, T.id, T.name
+            SELECT U.id, U.username, U.user_role, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             WHERE TU.team_id=:id
         """
         try:
             result = db.session.execute(sql, {"id": teid})
             users = result.fetchall()
-            print('users', users)
         except Exception as error:
             raise DatabaseException('while getting all users') from error
 
         return [
             User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 user[7], user[8], user[9]) for user in users
+                 image_string(user[7], user[8]), user[9], user[10])
+            for user in users
         ]
 
     def get_users(self) -> list[tuple]:
@@ -243,19 +270,81 @@ class UserRepository:
             list[tuple]: list of users id and fullname
         """
         sql = """
-            SELECT id, firstname, lastname 
-            FROM Users
+            SELECT U.id, U.firstname, U.lastname, PI.image_type, encode(PI.image_data, 'base64')
+            FROM Users U
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
         """
         try:
             users = db.session.execute(sql).fetchall()
         except Exception as error:
+            print(error)
             raise DatabaseException('while getting all users') from error
 
-        return [(user[0], fullname(user[1], user[2])) for user in users]
+        return [(user[0], fullname(user[1],
+                                   user[2]), image_string(user[3], user[4]))
+                for user in users]
 
-    def update(self, uid: str, username: str, user_role: int,
-               password_hash: str, firstname: str, lastname: str, email: str,
-               profile_image: str, teid: str, tename: str) -> User:
+    def get_team_users(self, teid: str) -> list[tuple]:
+        """get_users is used to get all users for selecting users in the frontend
+
+        Raises:
+            DatabaseException: if problem occurs while handling with database
+
+        Returns:
+            list[tuple]: list of users id and fullname
+        """
+        sql = """
+            SELECT U.id, U.firstname, U.lastname, PI.image_type, encode(PI.image_data, 'base64')
+            FROM Users U
+            LEFT JOIN Teamsusers TU ON TU.user_id = U.id
+            LEFT JOIN ProfileImages PI ON PI.user_id = U.id
+            WHERE TU.team_id=:id
+        """
+        try:
+            users = db.session.execute(sql, {"id": teid}).fetchall()
+        except Exception as error:
+            raise DatabaseException('while getting all users') from error
+
+        return [(user[0], fullname(user[1],
+                                   user[2]), image_string(user[3], user[4]))
+                for user in users]
+
+    def update_profile_image(self, uid: str, img_type: str, img_data: str):
+        sql = """
+            INSERT INTO ProfileImages
+            (user_id, image_type, image_data)
+            VALUES (:user_id, :image_type, :image_data)
+            ON CONFLICT (user_id) DO UPDATE
+                SET image_type = excluded.image_type,
+                    image_data = excluded.image_data
+            RETURNING user_id
+        """
+        values = {
+            "user_id": uid,
+            "image_type": img_type,
+            "image_data": img_data
+        }
+        try:
+            db.session.execute(sql, values)
+            db.session.commit()
+        except IntegrityError as error:
+            raise DatabaseException('prof img') from error
+        except Exception as error:
+            print(error)
+            raise DatabaseException('user update') from error
+        return (uid)
+
+    def update(self,
+               uid: str,
+               username: str,
+               user_role: int,
+               password_hash: str,
+               firstname: str,
+               lastname: str,
+               email: str,
+               profile_image: str,
+               teid: str = None,
+               tename: str = None) -> User:
         """update is used to change values of user into database
 
         Args:
@@ -288,8 +377,7 @@ class UserRepository:
         sql = """
             UPDATE Users 
             SET username=:username, user_role=:user_role, password_hash=:password_hash, 
-            firstname=:firstname, lastname=:lastname, email=:email, 
-            profile_image=:profile_image 
+            firstname=:firstname, lastname=:lastname, email=:email
             WHERE id=:id
         """
         try:

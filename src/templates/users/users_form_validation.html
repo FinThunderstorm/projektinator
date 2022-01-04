@@ -1,0 +1,12 @@
+<script>
+    const checkPasswords = () => {
+        const passwordInput = document.getElementById('password')
+        const passwordConfirmInput = document.getElementById('password_confirm')
+        if (passwordInput.value === passwordConfirmInput.value) {
+            return true
+        } else {
+            alert('Passwords need to be matching')
+            return false
+        }
+    }
+</script>

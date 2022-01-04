@@ -2,7 +2,7 @@ import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.user_service import user_service
-from utils.exceptions import LoginException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException
+from utils.exceptions import UnvalidInputException, LoginException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException
 
 baseUrl = "/users"
 
@@ -36,11 +36,17 @@ def users():
 
 
 @app.route(f"{baseUrl}/<uuid:user_id>", methods=["GET", "POST"])
-def user(user_id):
-    # GET shows profile
+def view_user(user_id):
+    user = user_service.get_by_id(user_id)
+    return render_template('users/users_view.html', user=user)
+
+
+@app.route(f"{baseUrl}/edit/<uuid:user_id>", methods=["GET", "POST"])
+def edit_user(user_id):
+    # GET shows profile editor
     if request.method == "GET":
         user = user_service.get_by_id(user_id)
-        return render_template('users/users_user.html', user=user)
+        return render_template('users/users_edit.html', user=user)
 
     # POST updates profile
     if request.method == "POST":
@@ -52,9 +58,19 @@ def user(user_id):
                                 request.form['password'],
                                 request.form['firstname'],
                                 request.form['lastname'], request.form['email'],
-                                request.form['profile_image'])
+                                "")
+            profile_image = request.files["profile_image"]
+            img_type = profile_image.content_type
+            img_data = profile_image.read()
+
+            user_service.update_profile_image(request.form['user_id'], img_type,
+                                              img_data)
+
             flash(f'Saved user {user.user_id} successfully', 'is-success')
             return redirect(baseUrl)
+        except UnvalidInputException as error:
+            flash(str(error), 'is-danger')
+            return redirect("/")
         except ValueShorterThanException as error:
             flash(str(error), 'is-danger')
             return redirect("/")
@@ -130,12 +146,11 @@ def register_user():
             return redirect("")
 
 
-@app.route(f"{baseUrl}/remove", methods=["POST"])
-def remove_user():
+@app.route(f"{baseUrl}/remove/<uuid:user_id>", methods=["GET"])
+def remove_user(user_id):
     try:
-        user_service.remove(request.form["user_id"])
-        flash(f"User with id {request.form['user_id']} removed successfully",
-              "is-success")
+        user_service.remove(user_id)
+        flash(f"User with id {user_id} removed successfully", "is-success")
         return redirect(baseUrl)
     except Exception as error:
         flash(str(error), 'is-danger')

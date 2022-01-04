@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block title %}Edit user ”{{ user.fullname}}”{% endblock %}
+{% block drawer %}
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">{{ title() }}</span>
+        <nav class="mdl-navigation">
+            <hr />
+            <a class="mdl-navigation__link" href="/users">List all users</a>
+            <a class="mdl-navigation__link" href="/users/add">Add new user</a>
+            <hr />
+            <a class="mdl-navigation__link" href="/users/{{ user.user_id }}">View current user</a>
+            <a class="mdl-navigation__link" href="/users/remove/{{ user.user_id }}">Remove current user</a>
+        </nav>
+    </div>
+{% endblock %}
+{% block content %}
+{% include 'users/users_form_validation.html' %}
+<form action="/users/edit/{{ user.user_id }}" method="POST" enctype="multipart/form-data" onsubmit="return checkPasswords()">
+    <div class="mdl-grid">
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="user_id_show" name="user_id_show" value="{{user.user_id}}" disabled>
+            <label class="mdl-textfield__label" for="user_id_show">User ID</label>
+        </div>
+        <input type="hidden" id="user_id" name="user_id" value="{{user.user_id}}">
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="username_show" name="username_show" value="{{user.username}}" disabled>
+            <label class="mdl-textfield__label" for="username_show">Username</label>
+        </div>
+        <input type="hidden" id="username" name="username" value="{{user.username}}">
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="password" name="password">
+            <label class="mdl-textfield__label" for="password">Password</label>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="password_confirm" name="password_confirm">
+            <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="firstname" name="firstname" value="{{user.firstname}}" required>
+            <label class="mdl-textfield__label" for="firstname">Firstname</label>
+            <span class="mdl-textfield__error">Field ”Firstname” can't be empty</span>
+        </div>
+        
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="lastname" name="lastname" value="{{user.lastname}}" required>
+            <label class="mdl-textfield__label" for="lastname">Lastname</label>
+            <span class="mdl-textfield__error">Field ”Lastname” can't be empty</span>
+        </div>
+
+        <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="email" id="email" name="email" value="{{user.email}}" required>
+            <label class="mdl-textfield__label" for="email">Email</label>
+            <span class="mdl-textfield__error">Field ”Email” needs to be correct email</span>
+        </div>
+
+        <input type="file" id="profile_image" name="profile_image">       
+
+        <input type="hidden" name="user_role" value="{{ user.user_role}}" />
+
+        <div class="mdl-cell--12-col">
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Save
+            </button>
+        </div>
+        
+    </div>
+</form>
+{% endblock %}

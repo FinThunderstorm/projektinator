@@ -1,6 +1,6 @@
 # Projektinator
 
-Kurssisuoritus Helsingin yliopiston [tietokantasovelluskurssin](https://hy-tsoha.github.io/materiaali/index) kevään 2021 toteutukseen.
+Kurssisuoritus Helsingin yliopiston [tietokantasovelluskurssille](https://hy-tsoha.github.io/materiaali/index).
 Sovellus pyörii osoitteessa [projektinator.herokuapp.com](https://projektinator.herokuapp.com).
 
 ## Idea
@@ -15,31 +15,17 @@ Käyttäjätasoja on kolme:
 
 Sovelluksella voi luoda projekteja. Projekti voi sisältää useita erilaisia ominaisuuksia. Ominaisuudet voi sisältää erilaisia tehtäviä. Tehtäville voidaan antaa kuvaus, mitä pitää tehdä ja merkitä kauan siihen on käytetty aikaa. Tehtäville, ominaisuuksille ja projekteille voi antaa erilaisia lippuja kuvaamaan niiden luonnetta ja tehtäviä sekä ominaisuuksia voi kommentoida = kerätä tietoa edistymisestä. Tehtäville ja ominaisuuksille voi antaa kiireellisyysluokituksen. Ominaisuuksia ja tehtäviä voidaan seurata ns. **dashboardin** avulla projektikohtaisesti.
 
-Sivurakenne:
-
-- Dashboard
-- Login/register-form
-- Projektilistaus
-- Projektin sivu
-- Tehtävän sivu
-
-- Pääsivu / henkilökohtainen työpöytä
-- Kirjautumissivu + rekisteröitymislomake, jolla pääkäyttäjä voi luoda uusia käyttäjiä
-- Listaus projekteista
-- Projektin sivu, joka listaa ominaisuudet ja tehtävät
-- Ominaisuuden sivu, joka listaa tehtävät
-- Tehtävän sivu, josta saa tehtävän lisätiedot auki, ja pystyy tarvittaessa muuttamaan sen tietoja.
-- Tiimien hallinta
-- Hallintasivu, josta voi hallita asennuksen oikeuksia ja käyttäjien asetuksia.
-
 Testaustunnukset:
 Pääkäyttäjä: admin/admin
+Tiimin vetäjä: leader/leader
+Peruskäyttäjä: user/user
 
 ## Tech stack
 
 - Python & Flask
+- Material Design Lite käyttöliittymäkirjasto
 - PostgreSQL
-- Suoritetaan kehityksen aikaisesti Docker-kontitettuna, tuotantoversio Herokussa normaalina sovelluksena.
+- Suoritetaan Docker-kontitettuna.
 
 ## Kehitettäessä sovellusta muistettavia käytännöllisiä komentoja
 

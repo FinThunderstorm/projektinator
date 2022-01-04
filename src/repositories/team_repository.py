@@ -92,12 +92,14 @@ class TeamRepository:
             RETURNING id
         """
         try:
-            team_id = db.session.execute(sql, values).fetchone()
+            team_id = db.session.execute(sql, values).fetchone()[0]
             db.session.commit()
         except Exception as error:
+            print(error)
             raise DatabaseException(
                 'While saving updated team into database') from error
         if str(teid) != str(team_id):
+            print('h')
             raise DatabaseException('While saving updated team into database')
 
         return Team(teid, name, description, tlid, tlname,
