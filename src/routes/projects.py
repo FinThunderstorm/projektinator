@@ -27,8 +27,17 @@ def view_project(project_id):
 
 @app.route(f"{baseUrl}/edit/<uuid:project_id>", methods=["GET", "POST"])
 def edit_project(project_id):
-    if request.method == "GET":
+    try:
         project = project_service.get_by_id(project_id)
+    except Exception as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
+    if project.project_owner_id != session["user"] or session["user_role"] < 3:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
+    if request.method == "GET":
         users = user_service.get_users()
         return render_template('projects/projects_edit.html',
                                project=project,
@@ -37,7 +46,6 @@ def edit_project(project_id):
     if request.method == "POST":
         if session["token"] != request.form["token"]:
             abort(403)
-        project = project_service.get_by_id(request.form['project_id'])
         try:
             project_service.update(request.form['project_id'],
                                    request.form['project_owner_id'],
@@ -97,6 +105,12 @@ def create_project():
 @app.route(f"{baseUrl}/remove/<uuid:project_id>", methods=["GET"])
 def remove_project(project_id):
     try:
+        project = project_service.get_by_id(project_id)
+        if project.project_owner_id != session["user"] or session[
+                "user_role"] < 3:
+            flash("Not enough permissions.", 'is-danger')
+            return redirect("/")
+
         project_service.remove(project_id)
         flash(f'Project with id {project_id} removed successfully',
               'is-success')

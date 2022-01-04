@@ -13,15 +13,23 @@ baseUrl = "/comments"
 
 @app.route(f"{baseUrl}/edit", methods=["GET", "POST"])
 def edit_comment():
-    # GET shows comment edit form
-    if request.method == "GET":
+    try:
         id = request.args.get('id')
 
         if not validate_uuid4(id):
-            flash(f'Given id is unvalid.', 'is-danger')
-            return redirect('/')
+            raise UnvalidInputException('comment id')
 
         comment = comment_service.get_by_id(id)
+    except Exception as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
+    if comment.assignee_id != session["user"] or session["user_role"] < 2:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
+    # GET shows comment edit form
+    if request.method == "GET":
         return render_template('comments/comments_edit.html', comment=comment)
 
     # POST updates comment
@@ -125,6 +133,12 @@ def create_comment():
 @app.route(f"{baseUrl}/remove/<uuid:comment_id>", methods=["GET"])
 def remove_comment(comment_id):
     try:
+        comment = comment_service.get_by_id(comment_id)
+
+        if comment.assignee_id != session["user"] or session["user_role"] < 2:
+            flash("Not enough permissions.", 'is-danger')
+            return redirect("/")
+
         comment_service.remove(comment_id)
         flash(f'Comment with id {comment_id} removed successfully',
               'is-success')

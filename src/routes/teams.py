@@ -34,9 +34,18 @@ def view_team(team_id):
 
 @app.route(f"{baseUrl}/edit/<uuid:team_id>", methods=["GET", "POST"])
 def edit_team(team_id):
+    try:
+        team = team_service.get_by_id(team_id)
+    except Exception as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
+    if team.team_leader_id != session["user"] or session["user_role"] < 3:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     # GET shows task
     if request.method == "GET":
-        team = team_service.get_by_id(team_id)
         users = user_service.get_users()
         return render_template('teams/teams_edit.html', team=team, users=users)
 
@@ -44,7 +53,6 @@ def edit_team(team_id):
     if request.method == "POST":
         if session["token"] != request.form["token"]:
             abort(403)
-        team = team_service.get_by_id(request.form['team_id'])
         try:
             updated_team = team_service.update(request.form['team_id'],
                                                request.form['name'],
@@ -69,9 +77,18 @@ def edit_team(team_id):
 
 @app.route(f"{baseUrl}/edit/<uuid:team_id>/members", methods=["GET", "POST"])
 def edit_team_members(team_id):
-    # GET shows task
-    if request.method == "GET":
+    try:
         team = team_service.get_by_id(team_id)
+    except Exception as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
+    if team.team_leader_id != session["user"] or session["user_role"] < 3:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
+    # GET shows team
+    if request.method == "GET":
         teamusers = user_service.get_team_users(team_id)
         users = user_service.get_users()
         return render_template('teams/teams_members.html',
@@ -79,7 +96,7 @@ def edit_team_members(team_id):
                                teamusers=teamusers,
                                users=users)
 
-    # POST updates task
+    # POST updates team
     if request.method == "POST":
         if session["token"] != request.form["token"]:
             abort(403)
@@ -114,6 +131,10 @@ def edit_team_members(team_id):
 
 @app.route(f"{baseUrl}/add", methods=["GET", "POST"])
 def create_team():
+    if session["user_role"] < 2:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     # GET shows creation page
     if request.method == "GET":
         users = user_service.get_users()
@@ -153,9 +174,13 @@ def create_team():
 @app.route(f"{baseUrl}/remove", methods=["POST"])
 def remove_team():
     try:
-        team_service.remove(request.form['team_id'])
-        flash(f'Team with id {request.form["team_id"]} removed successfully',
-              'is-success')
+        team = team_service.get_by_id(request.form['team_id'])
+        if team.team_leader_id != session["user"] or session["user_role"] < 3:
+            flash("Not enough permissions.", 'is-danger')
+            return redirect("/")
+
+        team_service.remove(team.team_id)
+        flash(f'Team with id {team.team_id} removed successfully', 'is-success')
         return redirect(baseUrl)
     except NotExistingException as error:
         flash(str(error), 'is-danger')

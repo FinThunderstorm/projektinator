@@ -13,9 +13,10 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     try:
-        uid, fullname = user_service.login(username, password)
+        uid, fullname, user_role = user_service.login(username, password)
         session["user"] = uid
         session["username"] = fullname
+        session["user_role"] = user_role
         session["token"] = os.urandom(16).hex()
     except LoginException as error:
         flash(str(error), "is-danger")
@@ -45,6 +46,10 @@ def view_user(user_id):
 
 @app.route(f"{baseUrl}/edit/<uuid:user_id>", methods=["GET", "POST"])
 def edit_user(user_id):
+    if user_id != session["user"] or session["user_role"] < 3:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     # GET shows profile editor
     if request.method == "GET":
         user = user_service.get_by_id(user_id)
@@ -94,6 +99,10 @@ def edit_user(user_id):
 
 @app.route(f"{baseUrl}/add", methods=["GET", "POST"])
 def create_user():
+    if session["user_role"] < 3:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     # GET shows creation page
     if request.method == "GET":
         user_roles = role_service.get_all()
@@ -157,6 +166,10 @@ def register_user():
 
 @app.route(f"{baseUrl}/remove/<uuid:user_id>", methods=["GET"])
 def remove_user(user_id):
+    if user_id != session["user"] or session["user_role"] < 3:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     try:
         user_service.remove(user_id)
         flash(f"User with id {user_id} removed successfully", "is-success")

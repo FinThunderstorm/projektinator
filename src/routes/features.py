@@ -36,9 +36,18 @@ def view_feature(feature_id):
 
 @app.route(f"{baseUrl}/edit/<uuid:feature_id>", methods=["GET", "POST"])
 def edit_feature(feature_id):
+    try:
+        feature = feature_service.get_by_id(feature_id)
+    except Exception as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
+    if feature.feature_owner != session["user"] or session["user_role"] < 2:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     # GET shows feature
     if request.method == "GET":
-        feature = feature_service.get_by_id(feature_id)
         users = user_service.get_users()
         projects = project_service.get_projects()
         statuses = status_service.get_all()
@@ -54,7 +63,7 @@ def edit_feature(feature_id):
     if request.method == "POST":
         if session["token"] != request.form["token"]:
             abort(403)
-        feature = feature_service.get_by_id(request.form["feature_id"])
+
         try:
             updated_feature = feature_service.update(
                 request.form['feature_id'], request.form['project_id'],
@@ -123,6 +132,12 @@ def create_feature():
 @app.route(f"{baseUrl}/remove/<uuid:feature_id>", methods=["GET"])
 def remove_feature(feature_id):
     try:
+        feature = feature_service.get_by_id(feature_id)
+
+        if feature.feature_owner != session["user"] or session["user_role"] < 2:
+            flash("Not enough permissions.", 'is-danger')
+            return redirect("/")
+
         feature_service.remove(feature_id)
         flash(f'Feature with id {feature_id} removed successfully',
               'is-success')

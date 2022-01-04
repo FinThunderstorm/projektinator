@@ -239,7 +239,7 @@ class UserService:
         except NotExistingException as error:
             raise LoginException() from error
         if check_password_hash(user.password_hash, password):
-            return (user.user_id, user.fullname)
+            return (user.user_id, user.fullname, user.user_role)
         raise LoginException()
 
 

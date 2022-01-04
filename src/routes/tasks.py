@@ -15,8 +15,6 @@ baseUrl = "/tasks"
 def tasks():
     try:
         tasks = task_service.get_all()
-        for task in tasks:
-            print(task)
     except NotExistingException as error:
         tasks = []
     except DatabaseException as error:
@@ -36,9 +34,18 @@ def view_task(task_id):
 
 @app.route(f"{baseUrl}/edit/<uuid:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
+    try:
+        task = task_service.get_by_id(task_id)
+    except Exception as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
+    if task.assignee_id != session["user"] or session["user_role"] < 2:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     # GET shows task
     if request.method == "GET":
-        task = task_service.get_by_id(task_id)
         users = user_service.get_users()
         features = feature_service.get_features()
         statuses = status_service.get_all()
@@ -54,7 +61,6 @@ def edit_task(task_id):
     if request.method == "POST":
         if session["token"] != request.form["token"]:
             abort(403)
-        task = task_service.get_by_id(request.form['task_id'])
         try:
             updated_task = task_service.update(
                 request.form['task_id'], request.form['feature_id'],
@@ -123,6 +129,11 @@ def create_task():
 @app.route(f"{baseUrl}/remove/<uuid:task_id>", methods=["POST"])
 def remove_task(task_id):
     try:
+        task = task_service.get_by_id(task_id)
+        if task.assignee_id != session["user"] or session["user_role"] < 2:
+            flash("Not enough permissions.", 'is-danger')
+            return redirect("/")
+
         task_service.remove(task_id)
         flash(f'Task with id {task_id} removed successfully', 'is-success')
         return redirect(baseUrl)
