@@ -52,6 +52,8 @@ def edit_feature(feature_id):
 
     # POST updates feature
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         feature = feature_service.get_by_id(request.form["feature_id"])
         try:
             updated_feature = feature_service.update(
@@ -93,6 +95,8 @@ def create_feature():
 
     # POST creates new feature
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         try:
             new_feature = feature_service.new(
                 request.form['project'], request.form['feature_owner'],

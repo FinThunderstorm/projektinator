@@ -26,6 +26,8 @@ def edit_comment():
 
     # POST updates comment
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         mode = request.form.get('mode')
         id = request.form.get('id')
         try:
@@ -84,6 +86,8 @@ def create_comment():
 
     # POST creates new comment for feature
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         mode = request.form.get('mode')
         id = request.form.get('id')
         try:

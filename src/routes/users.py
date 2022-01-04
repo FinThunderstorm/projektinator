@@ -26,6 +26,7 @@ def login():
 @app.route(f"{baseUrl}/logout", methods=["GET"])
 def logout():
     del session["user"]
+    del session["username"]
     del session["token"]
     return redirect("/")
 
@@ -47,10 +48,15 @@ def edit_user(user_id):
     # GET shows profile editor
     if request.method == "GET":
         user = user_service.get_by_id(user_id)
-        return render_template('users/users_edit.html', user=user)
+        user_roles = role_service.get_all()
+        return render_template('users/users_edit.html',
+                               user=user,
+                               user_roles=user_roles)
 
     # POST updates profile
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         user = user_service.get_by_id(request.form['user_id'])
         try:
             user_service.update(request.form['user_id'],
@@ -95,6 +101,8 @@ def create_user():
 
     # POST creates new user
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         try:
             user_service.new(request.form["username"],
                              request.form["user_role"],

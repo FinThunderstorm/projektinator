@@ -42,6 +42,8 @@ def edit_team(team_id):
 
     # POST updates task
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         team = team_service.get_by_id(request.form['team_id'])
         try:
             updated_team = team_service.update(request.form['team_id'],
@@ -79,6 +81,8 @@ def edit_team_members(team_id):
 
     # POST updates task
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         team_id = request.form['team_id']
         teamusers = user_service.get_team_users(request.form['team_id'])
         teamusers_id = list(map(lambda x: str(x[0]), teamusers))
@@ -117,6 +121,8 @@ def create_team():
 
     # POST creates new task
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         try:
             new_team = team_service.new(request.form['name'],
                                         request.form['description'],

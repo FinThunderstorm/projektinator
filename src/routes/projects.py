@@ -35,6 +35,8 @@ def edit_project(project_id):
                                users=users)
     # POST updates project
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         project = project_service.get_by_id(request.form['project_id'])
         try:
             project_service.update(request.form['project_id'],
@@ -68,6 +70,8 @@ def create_project():
 
     # POST creates new project
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         try:
             new_project = project_service.new(request.form['project_owner'],
                                               request.form['name'],

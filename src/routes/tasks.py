@@ -52,6 +52,8 @@ def edit_task(task_id):
 
     # POST updates task
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         task = task_service.get_by_id(request.form['task_id'])
         try:
             updated_task = task_service.update(
@@ -93,6 +95,8 @@ def create_task():
 
     # POST creates new task
     if request.method == "POST":
+        if session["token"] != request.form["token"]:
+            abort(403)
         try:
             new_task = task_service.new(
                 request.form['feature_id'], request.form['assignee_id'],

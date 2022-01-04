@@ -41,6 +41,7 @@
             <input type="hidden" name="id" value="{{ comment.task_id }}" />
             {% endif %}
             <input type="hidden" name="mode" value="{{ comment.mode }}" />
+            <input type="hidden" name="token" value="{{ session.token }}">
 
             <div class="mdl-cell--12-col">
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
