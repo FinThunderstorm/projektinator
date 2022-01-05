@@ -9,7 +9,8 @@ class EmptyValueException(Exception):
 
         Args:
             source (str): source where exception is raised, required
-            message (str, optional): option to give custom exception message. Defaults to "Given value can not be empty".
+            message (str, optional): option to give custom
+                exception message. Defaults to "Given value can not be empty".
         """
         self.source = source
         self.message = message
@@ -36,7 +37,9 @@ class ValueShorterThanException(Exception):
         Args:
             source (str): source where exception is raised, required
             length (int): asked length for value, required
-            message (str, optional): option to give custom exception message. Defaults to "Given value can not be shorter than".
+            message (str, optional): option to give custom
+                exception message. Defaults to
+                "Given value can not be shorter than".
         """
         self.source = source
         self.length = length
@@ -63,7 +66,9 @@ class DatabaseException(Exception):
 
         Args:
             source (str): source where exception is raised
-            message (str, optional): option to give custom exception message. Defaults to "Something went wrong while saving into database:".
+            message (str, optional): option to give custom
+                exception message. Defaults to
+                "Something went wrong while saving into database:".
         """
         self.source = source
         self.message = message
@@ -88,8 +93,11 @@ class NotExistingException(Exception):
         """Intializes class with message
 
         Args:
-            eobject (str, optional): option to give custom object name. Defaults to "Object".
-            message (str, optional): option to give custom exception message. Defaults to "not found. Please check your input and try again.".
+            eobject (str, optional): option to give custom
+                object name. Defaults to "Object".
+            message (str, optional): option to give custom
+                exception message. Defaults to "not found.
+                Please check your input and try again.".
         """
         self.object = eobject
         self.message = message
@@ -111,7 +119,8 @@ class LoginException(Exception):
         """Initializes class with message
 
         Args:
-            message (str, optional): option to give custom exception message. Defaults to "Login failed.".
+            message (str, optional): option to give custom
+                exception message. Defaults to "Login failed."
         """
         self.message = message
 
@@ -132,7 +141,8 @@ class UsernameDuplicateException(Exception):
         """Initializes class with message
 
         Args:
-            message (str, optional): option to give custom exception message. Defaults to "Username is already taken.".
+            message (str, optional): option to give custom
+                exception message. Defaults to "Username is already taken."
         """
         self.message = message
 
@@ -156,9 +166,12 @@ class UnvalidInputException(Exception):
         """Initializes class with message, reason and source
 
         Args:
-            message (str, optional): option to give custom exception message. Defaults to "Unvalid input".
-            reason (str, optional): option to give custom reason. Defaults to "unexpected value".
-            source (str, optional): option to give custon source where exception occured. Defaults to "given source".
+            message (str, optional): option to give custom
+                exception message. Defaults to "Unvalid input".
+            reason (str, optional): option to give custom
+                reason. Defaults to "unexpected value".
+            source (str, optional): option to give custon
+                source where exception occured. Defaults to "given source".
         """
         self.message = message
         self.source = source

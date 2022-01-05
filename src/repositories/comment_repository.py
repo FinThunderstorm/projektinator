@@ -14,7 +14,7 @@ class CommentRepository:
             tspent: float,
             tid: str = None,
             fid: str = None) -> tuple:
-        """new is used to create new comments into the database
+        '''new is used to create new comments into the database
 
         Args:
             aid (str): id of the comments's assignee
@@ -29,7 +29,7 @@ class CommentRepository:
 
         Returns:
             tuple: created comment's id, creation and updated on time
-        """
+        '''
 
         values = {
             'feature_id': fid,
@@ -68,7 +68,7 @@ class CommentRepository:
         return (comment_id, created, updated_on)
 
     def get_by_id(self, cid: str) -> tuple:
-        """get_by_id is used to find exact comment with
+        '''get_by_id is used to find exact comment with
            given id from the database
 
         Args:
@@ -81,7 +81,7 @@ class CommentRepository:
 
         Returns:
             tuple: comment with given id
-        """
+        '''
 
         sql = '''
             SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name, C.task_id, T.name  
@@ -112,7 +112,7 @@ class CommentRepository:
             raise NotExistingException('Comment')
 
     def get_all_by_feature_id(self, fid: str) -> [tuple]:
-        """get_all_by_feature_id is used to get list of all comments
+        '''get_all_by_feature_id is used to get list of all comments
            associated with given feature id in the database.
 
            If no comments found, returns empty list.
@@ -126,7 +126,7 @@ class CommentRepository:
 
         Returns:
             [tuple]: list of found comments
-        """
+        '''
 
         sql = '''
             SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name
@@ -147,7 +147,7 @@ class CommentRepository:
                  comment[9]) for comment in comments]
 
     def get_all_by_task_id(self, tid: str) -> [tuple]:
-        """get_all_by_task_id is used to get list of all comments
+        '''get_all_by_task_id is used to get list of all comments
            associated with given task id in the database.
 
            If no comments found, returns empty list.
@@ -161,7 +161,7 @@ class CommentRepository:
 
         Returns:
             [tuple]: list of found comments
-        """
+        '''
 
         sql = '''
             SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.task_id, T.name
@@ -182,7 +182,7 @@ class CommentRepository:
                  comment[9]) for comment in comments]
 
     def get_all_by_assignee(self, aid: str) -> [tuple]:
-        """get_all_by_assignee is used to get list of all comments
+        '''get_all_by_assignee is used to get list of all comments
            associated with given assignee's id in the database.
 
            If no comments found, returns empty list.
@@ -196,7 +196,7 @@ class CommentRepository:
 
         Returns:
             [tuple]: list of found comments
-        """
+        '''
 
         sql = '''
             SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name, C.task_id, T.name
@@ -226,7 +226,7 @@ class CommentRepository:
                tspent: float,
                tid: str = None,
                fid: str = None) -> tuple:
-        """update is used to update new values into
+        '''update is used to update new values into
            the database for specific comment
 
         Args:
@@ -247,7 +247,7 @@ class CommentRepository:
 
         Returns:
             tuple: updated comment's id, creation and updated on time
-        """
+        '''
 
         values = {
             'id': cid,
@@ -287,7 +287,7 @@ class CommentRepository:
         return (cid, created, updated_on)
 
     def remove(self, cid: str):
-        """remove is used to remove comment from the database
+        '''remove is used to remove comment from the database
 
         Args:
             cid (str): id of comment to be removed
@@ -295,7 +295,7 @@ class CommentRepository:
         Raises:
             DatabaseException: raised if problems occur
                 while interacting with the database
-        """
+        '''
 
         sql = '''
             DELETE FROM Comments 

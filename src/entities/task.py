@@ -22,7 +22,7 @@ class Task:
                  created: datetime,
                  updated_on: datetime,
                  flags: str = "",
-                 comments: [Comment] = None):
+                 comments: [Comment] = []):
         """Initializes Task object with given values
 
         Args:

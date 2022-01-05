@@ -4,6 +4,7 @@ from utils.validators import validate_uuid4
 
 
 class StatusService:
+    '''Class used for handling statuses in the application'''
 
     def __init__(
             self,
@@ -28,11 +29,6 @@ class StatusService:
 
         Returns:
             [tuple]: list of all statuses
-        '''
-
-        sql = '''
-            SELECT id, name 
-            FROM Statuses
         '''
 
         statuses = self._status_repository.get_all()

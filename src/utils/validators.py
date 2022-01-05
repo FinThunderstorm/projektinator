@@ -10,10 +10,13 @@ def validate_uuid4(uuid: str) -> bool:
         uuid (str): uuid4 string to check
 
     Returns:
-        Union(str, None): returns valid string and if not valid, returns None
+        bool: returns valid string and if not valid,
+             returns None
     """
-    pattern = re.compile(
-        r'^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')
+    pattern = re.compile(r'''
+            ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-
+            [89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$
+        ''')
 
     if not isinstance(uuid, str):
         if isinstance(uuid, UUID):
@@ -21,7 +24,7 @@ def validate_uuid4(uuid: str) -> bool:
         else:
             return False
     check = pattern.match(uuid)
-    return True if check else False
+    return bool(check)
 
 
 def validate_flags(flags: str) -> bool:

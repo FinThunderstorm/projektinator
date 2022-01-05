@@ -9,8 +9,8 @@ from utils.helpers import fullname
 
 
 class CommentService:
-    '''Class used for handling comments in the application
-    '''
+    """Class used for handling comments in the application
+    """
 
     def __init__(
         self,
@@ -19,7 +19,7 @@ class CommentService:
         default_task_repository: TaskRepository = task_repository,
         default_user_repository: UserRepository = user_repository,
     ):
-        '''Initializes CommentService
+        """Initializes CommentService
 
         Args:
             default_comment_repository (CommentRepository, optional):
@@ -34,7 +34,7 @@ class CommentService:
             default_user_repository (UserRepository, optional):
                 interaction module with database for users.
                 Defaults to user_repository.
-        '''
+        """
 
         self._comment_repository = default_comment_repository
         self._feature_repository = default_feature_repository
@@ -44,7 +44,7 @@ class CommentService:
     def new(self,
             aid: str,
             comment: str,
-            tspent: str = '0.0',
+            tspent: str = "0.0",
             tid: str = None,
             fid: str = None) -> Comment:
         """new is used to create new comments
@@ -71,7 +71,7 @@ class CommentService:
 
         if not aid or not comment or not tspent:
             raise EmptyValueException(
-                'One of given values is empty, all values need to have value')
+                "One of given values is empty, all values need to have value")
 
         if not validate_uuid4(aid):
             raise UnvalidInputException("comment's assignee id")
@@ -139,7 +139,7 @@ class CommentService:
                                       tname=tname)
         else:
             raise EmptyValueException(
-                'Adding comment', 'either feature or task id needs to be given')
+                "Adding comment", "either feature or task id needs to be given")
         return created_comment
 
     def get_all_by_feature_id(self, fid: str) -> [Comment]:
@@ -282,7 +282,7 @@ class CommentService:
         comment = self._comment_repository.get_by_id(cid)
 
         if not comment:
-            raise NotExistingException('Comment')
+            raise NotExistingException("Comment")
 
         if comment[0] == "features":
             return Comment(comment[1],
@@ -337,7 +337,7 @@ class CommentService:
         """
         if not cid or not aid or not comment_text or not tspent:
             raise EmptyValueException(
-                'One of given values is empty, all values need to have value')
+                "One of given values is empty, all values need to have value")
 
         if not validate_uuid4(cid):
             raise UnvalidInputException("comment's id")
@@ -401,8 +401,8 @@ class CommentService:
                                       tname=tname)
         else:
             raise EmptyValueException(
-                'Updating comment',
-                'either feature or task id needs to be given')
+                "Updating comment",
+                "either feature or task id needs to be given")
 
         return updated_comment
 
@@ -422,8 +422,8 @@ class CommentService:
         """
 
         if not validate_uuid4(cid):
-            raise UnvalidInputException(reason='unvalid formatting of uuid4',
-                                        source='comment id')
+            raise UnvalidInputException(reason="unvalid formatting of uuid4",
+                                        source="comment id")
 
         self._comment_repository.get_by_id(cid)
         self._comment_repository.remove(cid)

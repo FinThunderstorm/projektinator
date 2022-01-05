@@ -6,7 +6,16 @@ class Project:
     """Class Project resembles project from the database as a object
     """
 
-    def __init__(self, pid: str, p_owner: str, p_owner_name: str, name: str, description: str, created: datetime, updated_on: datetime, flags: str = "", features: [Feature] = None):
+    def __init__(self,
+                 pid: str,
+                 p_owner: str,
+                 p_owner_name: str,
+                 name: str,
+                 description: str,
+                 created: datetime,
+                 updated_on: datetime,
+                 flags: str = "",
+                 features: [Feature] = []):
         """initializes Project object
 
         Args:
@@ -48,8 +57,7 @@ class Project:
             f' - created ”{self.created}”\n'
             f' - updated on ”{self.updated_on}”\n'
             f' - flags ”{self.flags}”\n'
-            f' - features:\n{features}'
-        )
+            f' - features:\n{features}')
 
     def __eq__(self, o: object) -> bool:
         """Method for comparing if two objects are the same

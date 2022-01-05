@@ -1,7 +1,10 @@
-from datetime import datetime
 from entities.project import Project
-from services.user_service import user_service, UserService
+
+from repositories.user_repository import user_repository, UserRepository
 from repositories.project_repository import project_repository, ProjectRepository
+
+from services.feature_service import feature_service, FeatureService
+
 from utils.exceptions import EmptyValueException, UnvalidInputException, NotExistingException
 from utils.validators import validate_flags, validate_uuid4
 from utils.helpers import fullname
@@ -14,7 +17,8 @@ class ProjectService:
     def __init__(
             self,
             default_project_repository: ProjectRepository = project_repository,
-            default_user_service: UserService = user_service):
+            default_user_repository: UserRepository = user_repository,
+            default_feature_service: FeatureService = feature_service):
         '''Initializes ProjectService
 
         Args:
@@ -26,7 +30,8 @@ class ProjectService:
                 Defaults to user_repository.
         '''
         self._project_repository = default_project_repository
-        self._user_service = default_user_service
+        self._user_repository = default_user_repository
+        self._feature_service = default_feature_service
 
     def new(self,
             poid: str,
@@ -64,7 +69,7 @@ class ProjectService:
                                         'not being in correct format of uuid4',
                                         'project owner id')
 
-        poname = self._user_service.get_fullname(poid)
+        poname = self._user_repository.get_fullname(poid)
 
         if not poname:
             raise NotExistingException('Project Owner')
@@ -157,7 +162,8 @@ class ProjectService:
 
         projects = [
             Project(project[0], project[1], fullname(project[2], project[3]),
-                    project[4], project[5], project[6], project[7])
+                    project[4], project[5], project[6], project[7], project[8],
+                    self._feature_service.get_all_by_project_id(project[0]))
             for project in self._project_repository.get_all()
         ]
 
@@ -208,8 +214,9 @@ class ProjectService:
 
         projects = [
             Project(project[0], project[1], fullname(project[2], project[3]),
-                    project[4], project[5], project[6], project[7]) for project
-            in self._project_repository.get_all_by_project_owner(poid)
+                    project[4], project[5], project[6], project[7], project[8],
+                    self._feature_service.get_all_by_project_id(project[0])) for
+            project in self._project_repository.get_all_by_project_owner(poid)
         ]
 
         return projects
@@ -238,8 +245,10 @@ class ProjectService:
 
         project = self._project_repository.get_by_id(pid)
 
-        return Project(project[0], project[1], fullname(project[2], project[3]),
-                       project[4], project[5], project[6], project[7])
+        return Project(project[0], project[1], fullname(project[2],
+                                                        project[3]), project[4],
+                       project[5], project[6], project[7], project[8],
+                       self._feature_service.get_all_by_project_id(project[0]))
 
     def get_name(self, pid: str) -> str:
         '''get_name is used to get name of project with given id

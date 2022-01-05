@@ -23,8 +23,8 @@ class Feature:
                  created: datetime,
                  updated_on: datetime,
                  flags: str = "",
-                 tasks: [Task] = None,
-                 comments: [Comment] = None):
+                 tasks: [Task] = [],
+                 comments: [Comment] = []):
         """Initializes Feature object with given values
 
         Args:

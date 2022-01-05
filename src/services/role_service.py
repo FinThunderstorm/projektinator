@@ -3,6 +3,7 @@ from utils.exceptions import UnvalidInputException
 
 
 class RoleService:
+    '''Class used for handling roles in the application'''
 
     def __init__(self,
                  default_role_repository: RoleRepository = role_repository):

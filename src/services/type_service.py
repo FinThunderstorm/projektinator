@@ -4,6 +4,7 @@ from utils.validators import validate_uuid4
 
 
 class TypeService:
+    '''Class used for handling types in the application'''
 
     def __init__(self,
                  default_type_repository: TypeRepository = type_repository):

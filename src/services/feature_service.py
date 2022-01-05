@@ -1,13 +1,13 @@
 from entities.feature import Feature
 
+from repositories.project_repository import project_repository, ProjectRepository
 from repositories.feature_repository import feature_repository, FeatureRepository
+from repositories.type_repository import type_repository, TypeRepository
+from repositories.status_repository import status_repository, StatusRepository
+from repositories.user_repository import user_repository, UserRepository
 
-from services.project_service import project_service, ProjectService
 from services.task_service import task_service, TaskService
-from services.type_service import type_service, TypeService
-from services.status_service import status_service, StatusService
 from services.comment_service import comment_service, CommentService
-from services.user_service import user_service, UserService
 
 from utils.exceptions import EmptyValueException, UnvalidInputException, NotExistingException
 from utils.validators import validate_flags, validate_uuid4
@@ -19,46 +19,46 @@ class FeatureService:
 
     def __init__(
             self,
+            default_project_repository: ProjectRepository = project_repository,
             default_feature_repository: FeatureRepository = feature_repository,
-            default_project_service: ProjectService = project_service,
+            default_type_repository: TypeRepository = type_repository,
+            default_status_repository: StatusRepository = status_repository,
+            default_user_repository: UserRepository = user_repository,
             default_task_service: TaskService = task_service,
-            default_type_service: TypeService = type_service,
-            default_status_service: StatusService = status_service,
-            default_comment_service: CommentService = comment_service,
-            default_user_service: UserService = user_service):
+            default_comment_service: CommentService = comment_service):
         """Initializes FeatureService
 
         Args:
+            default_project_repository (ProjectRepository, optional):
+                interaction module with database for projects.
+                Defaults to project_repository.
             default_feature_repository (FeatureRepository, optional):
                 interaction module with database for features.
                 Defaults to feature_repository.
-            default_project_service (ProjectService, optional):
-                interaction module with projects.
-                Defaults to project_service.
+            default_type_repository (TypeRepository, optional):
+                interaction module with database for types.
+                Defaults to feature_repository.
+            default_status_repository (StatusRepository, optional):
+                interaction module with database for statuses.
+                Defaults to status_repository.
+            default_user_repository (UserRepository, optional):
+                interaction module with database for users.
+                Defaults to user_repository.
             default_task_service (TaskService, optional):
                 interaction module with tasks.
                 Defaults to task_service.
-            default_type_service (TypeService, optional):
-                interaction module with types.
-                Defaults to type_service.
-            default_status_service (StatusService, optional):
-                interaction module with statuses.
-                Defaults to status_service.
             default_comment_service (CommentService, optional):
                 interaction module with comments.
                 Defaults to comment_service.
-            default_user_service (UserService, optional):
-                interaction module with users.
-                Defaults to user_service.
         """
 
+        self._project_repository = default_project_repository
         self._feature_repository = default_feature_repository
-        self._project_service = default_project_service
+        self._type_repository = default_type_repository
+        self._status_repository = default_status_repository
+        self._user_repository = default_user_repository
         self._task_service = default_task_service
-        self._type_service = default_type_service
-        self._status_service = default_status_service
         self._comment_service = default_comment_service
-        self._user_service = default_user_service
 
     def new(
         self,
@@ -134,10 +134,10 @@ class FeatureService:
             raise UnvalidInputException(reson='priority is not in scale 1-3',
                                         source='priority')
 
-        pname = self._project_service.get_name(pid)
-        foname = self._user_service.get_fullname(foid)
-        sname = self._status_service.get_name(status)
-        ftname = self._type_service.get_name(ftype)
+        pname = self._project_repository.get_name(pid)
+        foname = self._user_repository.get_fullname(foid)
+        sname = self._status_repository.get_name(status)
+        ftname = self._type_repository.get_name(ftype)
 
         if not pname:
             raise NotExistingException('Project')
@@ -223,7 +223,7 @@ class FeatureService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='project id')
 
-        if not self._project_service.get_by_id(pid):
+        if not self._project_repository.get_by_id(pid):
             raise NotExistingException('Project')
 
         features = [
@@ -262,7 +262,7 @@ class FeatureService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source="feature owner's id")
 
-        if not self._user_service.get_by_id(foid):
+        if not self._user_repository.get_by_id(foid):
             raise NotExistingException('Feature owner')
 
         features = [
@@ -415,10 +415,10 @@ class FeatureService:
             raise UnvalidInputException(reson='priority is not in scale 1-3',
                                         source='priority')
 
-        pname = self._project_service.get_name(pid)
-        foname = self._user_service.get_fullname(foid)
-        sname = self._status_service.get_name(status)
-        ftname = self._type_service.get_name(ftype)
+        pname = self._project_repository.get_name(pid)
+        foname = self._user_repository.get_fullname(foid)
+        sname = self._status_repository.get_name(status)
+        ftname = self._type_repository.get_name(ftype)
 
         if not pname:
             raise NotExistingException('Project')

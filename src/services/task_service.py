@@ -1,7 +1,7 @@
 from entities.task import Task
 
 from repositories.task_repository import task_repository, TaskRepository
-from services.feature_service import feature_service, FeatureService
+from repositories.feature_repository import feature_repository, FeatureRepository
 from services.type_service import type_service, TypeService
 from services.status_service import status_service, StatusService
 from services.user_service import user_service, UserService
@@ -18,7 +18,7 @@ class TaskService:
     def __init__(
         self,
         default_task_repository: TaskRepository = task_repository,
-        default_feature_service: FeatureService = feature_service,
+        default_feature_repository: FeatureRepository = feature_repository,
         default_status_service: StatusService = status_service,
         default_type_service: TypeService = type_service,
         default_comment_service: CommentService = comment_service,
@@ -30,9 +30,9 @@ class TaskService:
             default_task_repository (TaskRepository, optional):
                 interaction module with database for tasks.
                 Defaults to task_repository.
-            default_feature_service (FeatureService, optional):
-                interaction module with features.
-                Defaults to task_service.
+            default_feature_repository (FeatureRepository, optional):
+                interaction module with database for features.
+                Defaults to feature_repository.
             default_status_service (StatusService, optional):
                 interaction module with statuses.
                 Defaults to status_service.
@@ -47,7 +47,7 @@ class TaskService:
                 Defaults to user_service.
         '''
         self._task_repository = default_task_repository
-        self._feature_service = default_feature_service
+        self._feature_repository = default_feature_repository
         self._status_service = default_status_service
         self._type_service = default_type_service
         self._comment_service = default_comment_service
@@ -91,7 +91,8 @@ class TaskService:
             Task: created task
         '''
 
-        if not fid or not aid or not name or not description or not status or not ttype or not priority:
+        if (not fid or not aid or not name or not description or not status
+                or not ttype or not priority):
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
 
@@ -125,7 +126,7 @@ class TaskService:
                                         source='priority')
 
         fname = self._feature_repository.get_name(fid)
-        aname = self._user_repository.get_fullname(aid)
+        aname = self._user_service.get_fullname(aid)
         sname = self._status_repository.get_name(status)
         ttname = self._type_repository.get_name(ttype)
 
@@ -230,7 +231,7 @@ class TaskService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source="assignee's id")
 
-        if not self._user_repository.get_by_id(aid):
+        if not self._user_service.get_by_id(aid):
             raise NotExistingException('Assignee')
 
         tasks = [
@@ -325,14 +326,16 @@ class TaskService:
         Returns:
             Task: updated task
         '''
-        if not tid or not fid or not aid or not name or not description or not status or not ttype or not priority:
+        if (not tid or not fid or not aid or not name or not description
+                or not status or not ttype or not priority):
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(tid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='task id')
-        task = self._task_repository.get_by_id(tid)
+
+        self._task_repository.get_by_id(tid)
 
         if not validate_uuid4(fid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
@@ -364,7 +367,7 @@ class TaskService:
                                         source='priority')
 
         fname = self._feature_repository.get_name(fid)
-        aname = self._user_repository.get_fullname(aid)
+        aname = self._user_service.get_fullname(aid)
         sname = self._status_repository.get_name(status)
         ttname = self._type_repository.get_name(ttype)
 

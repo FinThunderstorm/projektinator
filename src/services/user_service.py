@@ -143,6 +143,7 @@ class UserService:
             list[tuple]: list of all users in the database
         '''
         users = self._user_repository.get_team_users(teid)
+
         return users
 
     def get_profile_image(self, uid: str) -> str:
@@ -158,8 +159,7 @@ class UserService:
             uid, img_type, img_data)
 
     def update(self, uid: str, username: str, user_role: str, password: str,
-               firstname: str, lastname: str, email: str,
-               profile_image: str) -> User:
+               firstname: str, lastname: str, email: str) -> User:
         '''update is used to update users
 
         Args:
@@ -254,7 +254,7 @@ class UserService:
         except NotExistingException as error:
             raise LoginException() from error
         if check_password_hash(user.password_hash, password):
-            return (user.user_id, user.fullname, user.user_role)
+            return (user.user_id, user.fullname, user.user_role, user.team_id)
         raise LoginException()
 
 
