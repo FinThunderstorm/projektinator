@@ -54,11 +54,10 @@ class FeatureRepository:
                 sql, values).fetchone()
             db.session.commit()
         except Exception as error:
-            raise DatabaseException(
-                'While saving new feature into database') from error
+            raise DatabaseException('While saving new feature') from error
 
         if not feature_id:
-            raise DatabaseException('While saving new feature into database')
+            raise DatabaseException('While saving new feature')
 
         return (feature_id, created, updated_on)
 

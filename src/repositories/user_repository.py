@@ -1,28 +1,18 @@
 import re
-from sqlalchemy import exc
-from werkzeug.security import generate_password_hash
-from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy.exc import IntegrityError
 from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException, UsernameDuplicateException
-from entities.user import User
 from utils.database import db
-from utils.helpers import fullname, image_string
+
+from entities.user import User
 
 
 class UserRepository:
-    """Class used for handling users in the database
-    """
+    '''Class used for handling users in the database
+    '''
 
-    def new(self,
-            username: str,
-            user_role: int,
-            user_role_name: str,
-            password_hash: str,
-            firstname: str,
-            lastname: str,
-            email: str,
-            teid: str = None,
-            tename: str = None) -> User:
-        """new is used to create new users into the database.
+    def new(self, username: str, user_role: int, password_hash: str,
+            firstname: str, lastname: str, email: str) -> str:
+        '''new is used to create new users into the database.
 
         Args:
             username (str): user's unique username
@@ -33,91 +23,77 @@ class UserRepository:
             email (str): user's email address
 
         Raises:
-            DatabaseException: raised if problems while saving into database.
-            UnvalidInputException: raised if email is given in unvalid format.
-            UsernameDuplicateException: raised if given username is already in use.
+            DatabaseException: raised if problems occurs while
+                saving into the database
+            UnvalidInputException: raised if email is
+                given in unvalid format.
+            UsernameDuplicateException: raised if given
+                username is already in use.
 
         Returns:
-            User: created user as User object
-        """
+            tuple: created user's id'
+        '''
+
         values = {
-            "username": username,
-            "user_role": user_role,
-            "password_hash": password_hash,
-            "firstname": firstname,
-            "lastname": lastname,
-            "email": email,
+            'username': username,
+            'user_role': user_role,
+            'password_hash': password_hash,
+            'firstname': firstname,
+            'lastname': lastname,
+            'email': email,
         }
-        sql_user = """
+
+        sql = '''
             INSERT INTO Users
             (username, user_role, password_hash, 
             firstname, lastname, email) 
             VALUES (:username, :user_role, :password_hash, 
             :firstname, :lastname, :email) 
             RETURNING id
-        """
-        sql_teamsusers = """
-            INSERT INTO Teamsusers
-            (user_id, team_id)
-            VALUES (:user_id, :team_id)
-            RETURNING user_id
-        """
+        '''
+
         try:
-            uid = db.session.execute(sql_user, values).fetchone()[0]
-            if teid:
-                tuid = db.session.execute(sql_teamsusers, {
-                    "user_id": uid,
-                    "team_id": teid
-                }).fetchone()
+            user_id = db.session.execute(sql, values).fetchone()[0]
             db.session.commit()
         except IntegrityError as error:
             unvalid_email = re.compile(r'.*"users_email_check".*')
             duplicate_username = re.compile(
-                r'.*duplicate key value violates unique constraint "users_username_key".*'
-            )
+                r'.*violates unique constraint "users_username_key".*')
+
             if unvalid_email.match(str(error)):
-                raise UnvalidInputException("Unvalid input",
-                                            "unvalid formatting",
-                                            "email") from error
+                raise UnvalidInputException('Unvalid input',
+                                            'unvalid formatting',
+                                            'email') from error
             elif duplicate_username.match(str(error)):
                 raise UsernameDuplicateException() from error
             else:
-                raise DatabaseException(
-                    'While saving new user into database') from error
-        except OperationalError as error:
-            print(error)
-            raise DatabaseException(source="",
-                                    message="Database server not found")
+                raise DatabaseException('While saving new user') from error
+
         except Exception as error:
-            print(error)
             raise DatabaseException(
                 'While saving new user into database') from error
 
-        if not uid:
+        if not user_id:
             raise DatabaseException('While saving new user into database')
-        if teid:
-            if not tuid:
-                raise DatabaseException('While saving new user into database')
 
-        created_user = User(uid, username, user_role, user_role_name,
-                            password_hash, firstname, lastname, email, None,
-                            teid, tename)
-        return created_user
+        return user_id[0]
 
-    def get_by_id(self, uid: str) -> User:
-        """get_by_id is used to get user with given id
+    def get_by_id(self, uid: str) -> tuple:
+        '''get_by_id is used to found user with given id
 
         Args:
-            id (str): id of user in search
+            uid (str): id of the user
 
         Raises:
-            UserNotExistingException: raised if user not found with given id
-            DatabaseException: if problem occurs while handling with database
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if there is none users with given id
 
         Returns:
-            User: found user as User object
-        """
-        sql = """
+            tuple: found user
+        '''
+
+        sql = '''
             SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
@@ -125,35 +101,35 @@ class UserRepository:
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             LEFT JOIN Roles R ON R.id = U.user_role
             WHERE U.id=:id
-        """
+        '''
+
         try:
-            result = db.session.execute(sql, {"id": uid})
-            user = result.fetchone()
+            user = db.session.execute(sql, {'id': uid}).fetchone()
         except Exception as error:
-            print(error)
-            raise DatabaseException('while getting user by username') from error
+            raise DatabaseException('While getting user by id') from error
 
         if not user:
             raise NotExistingException('User')
 
-        return User(user[0], user[1], user[2], user[3],
-                    user[4], user[5], user[6], user[7],
-                    image_string(user[8], user[9]), user[10], user[11])
+        return (user[0], user[1], user[2], user[3], user[4], user[5], user[6],
+                user[7], user[8], user[9], user[10], user[11])
 
-    def get_by_username(self, username: str) -> User:
-        """get_by_username is used to get user with given username
+    def get_by_username(self, username: str) -> tuple:
+        '''get_by_id is used to found user with given username
 
         Args:
-            username (str): username of user in search
+            username (str): username of the user
 
         Raises:
-            NotExistingException: raised if user not found with given username
-            DatabaseException: if problem occurs while handling with database
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if there is none user with given id
 
         Returns:
-            User: found user as User object
-        """
-        sql = """
+            tuple: found user
+        '''
+
+        sql = '''
             SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
@@ -161,92 +137,140 @@ class UserRepository:
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             LEFT JOIN Roles R ON R.id = U.user_role
             WHERE U.username=:username
-        """
+        '''
+
+        values = {'username': username.lower()}
+
         try:
-            result = db.session.execute(sql, {"username": username.lower()})
-            user = result.fetchone()
+            user = db.session.execute(sql, values).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting user by username') from error
+            raise DatabaseException('While getting user by username') from error
 
         if not user:
             raise NotExistingException('User')
 
-        return User(user[0], user[1], user[2], user[3],
-                    user[4], user[5], user[6], user[7],
-                    image_string(user[8], user[9]), user[10], user[11])
+        return (user[0], user[1], user[2], user[3], user[4], user[5], user[6],
+                user[7], user[8], user[9], user[10], user[11])
 
-    def get_fullname(self, uid: str) -> str:
-        sql = """
+    def get_fullname(self, uid: str) -> tuple:
+        '''get_fullname is used to get name of user with given id
+
+        Args:
+            uid (str): id of the user
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if user is not
+                found with given id
+
+        Returns:
+            tuple: found name
+        '''
+
+        sql = '''
             SELECT firstname, lastname 
             FROM Users 
             WHERE id=:id
-        """
+        '''
+
         try:
             firstname, lastname = db.session.execute(sql, {
-                "id": uid
+                'id': uid
             }).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting user´s fullname') from error
+            raise DatabaseException('While getting user´s fullname') from error
+
         if not firstname or not lastname:
             raise NotExistingException('User')
-        return fullname(firstname, lastname)
 
-    def get_profile_image(self, uid: str) -> str:
-        sql = """
+        return (firstname, lastname)
+
+    def get_profile_image(self, uid: str) -> tuple:
+        '''get_profile_image is used to get profile image
+           of user with given id
+
+        Args:
+            uid (str): id of the user
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+
+        Returns:
+            tuple: found profile image
+        '''
+
+        sql = '''
             SELECT U.id, PI.image_type, encode(PI.image_data, 'base64') 
             FROM Users U
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             WHERE U.id=:id
-        """
+        '''
+
         try:
             user_id, image_type, image_data = db.session.execute(
                 sql, {
-                    "id": uid
+                    'id': uid
                 }).fetchone()
         except Exception as error:
             raise DatabaseException(
-                'while getting user´s profile image') from error
-        return image_string(image_type, image_data)
+                'While getting user´s profile image') from error
 
-    def get_all(self) -> list[User]:
-        """get_all is used to get all users in the database
+        if str(user_id) != str(uid):
+            raise DatabaseException('')
+
+        return (image_type, image_data)
+
+    def get_all(self) -> [tuple]:
+        '''get_all is used to list of all users in the database
+
+        If no users found, returns empty list.
 
         Raises:
-            DatabaseException: if problem occurs while handling with database
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
         Returns:
-            list[User]: list of all users
-        """
-        sql = """
+            [tuple]: list of all users
+        '''
+
+        sql = '''
             SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
             LEFT JOIN Teams T ON TU.team_id = T.id
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             LEFT JOIN Roles R ON R.id = U.user_role
-        """
+        '''
+
         try:
             result = db.session.execute(sql)
             users = result.fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all users') from error
+            raise DatabaseException('While getting all users') from error
 
-        return [
-            User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 user[7], image_string(user[8], user[9]), user[10], user[11])
-            for user in users
-        ]
+        return [(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
+                 user[7], user[8], user[9], user[10], user[11])
+                for user in users]
 
-    def get_by_team(self, teid: str) -> list[User]:
-        """get_all is used to get all users in the database
+    def get_by_team(self, teid: str) -> [tuple]:
+        '''get_all is used to list of all features in the database
+
+        If no features found, returns empty list.
+
+        Args:
+            teid (str): id of the team
 
         Raises:
-            DatabaseException: if problem occurs while handling with database
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
         Returns:
-            list[User]: list of all users
-        """
-        sql = """
+            [tuple]: list of all features
+        '''
+
+        sql = '''
             SELECT U.id, U.username, U.user_role, R.name, U.password_hash, U.firstname, U.lastname, U.email, PI.image_type, encode(PI.image_data, 'base64'), T.id, T.name 
             FROM Users U
             LEFT JOIN Teamsusers TU ON U.id = TU.user_id
@@ -254,70 +278,93 @@ class UserRepository:
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             LEFT JOIN Roles R ON R.id = U.user_role
             WHERE TU.team_id=:id
-        """
+        '''
+
         try:
-            result = db.session.execute(sql, {"id": teid})
-            users = result.fetchall()
+            users = db.session.execute(sql, {'id': teid}).fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all users') from error
+            raise DatabaseException(
+                'While getting all users by team') from error
 
-        return [
-            User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
-                 user[7], image_string(user[8], user[9]), user[10], user[11])
-            for user in users
-        ]
+        return [(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
+                 user[7], user[8], user[9], user[10], user[11])
+                for user in users]
 
-    def get_users(self) -> list[tuple]:
-        """get_users is used to get all users for selecting users in the frontend
+    def get_users(self) -> [tuple]:
+        '''get_users is used to get all users for
+           selecting users in the frontend
+
+        If no users found, returns empty list.
 
         Raises:
-            DatabaseException: if problem occurs while handling with database
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
         Returns:
-            list[tuple]: list of users id and fullname
-        """
-        sql = """
+            [tuple]: list of user id, name and profile images
+        '''
+
+        sql = '''
             SELECT U.id, U.firstname, U.lastname, PI.image_type, encode(PI.image_data, 'base64')
             FROM Users U
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
-        """
+        '''
+
         try:
             users = db.session.execute(sql).fetchall()
         except Exception as error:
-            print(error)
-            raise DatabaseException('while getting all users') from error
+            raise DatabaseException('While getting all users') from error
 
-        return [(user[0], fullname(user[1],
-                                   user[2]), image_string(user[3], user[4]))
-                for user in users]
+        return [(user[0], user[1], user[2], user[3], user[4]) for user in users]
 
-    def get_team_users(self, teid: str) -> list[tuple]:
-        """get_users is used to get all users for selecting users in the frontend
+    def get_team_users(self, teid: str) -> [tuple]:
+        '''get_team_users is used to get all team's users for
+           selecting users in the frontend
+
+        If no users found, returns empty list.
+
+        Args:
+            teid (str): id of the team
 
         Raises:
-            DatabaseException: if problem occurs while handling with database
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
         Returns:
-            list[tuple]: list of users id and fullname
-        """
-        sql = """
+            [tuple]: list of user id, name and profile images
+        '''
+
+        sql = '''
             SELECT U.id, U.firstname, U.lastname, PI.image_type, encode(PI.image_data, 'base64')
             FROM Users U
             LEFT JOIN Teamsusers TU ON TU.user_id = U.id
             LEFT JOIN ProfileImages PI ON PI.user_id = U.id
             WHERE TU.team_id=:id
-        """
+        '''
+
         try:
-            users = db.session.execute(sql, {"id": teid}).fetchall()
+            users = db.session.execute(sql, {'id': teid}).fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all users') from error
+            raise DatabaseException('While getting all users') from error
 
-        return [(user[0], fullname(user[1],
-                                   user[2]), image_string(user[3], user[4]))
-                for user in users]
+        return [(user[0], user[1], user[2], user[3], user[4]) for user in users]
 
-    def update_profile_image(self, uid: str, img_type: str, img_data: str):
-        sql = """
+    def update_profile_image(self, uid: str, img_type: str,
+                             img_data: str) -> str:
+        """update_profile_image is used to update user's
+           profile images into the database
+
+        Args:
+            uid (str): uid (str): id of user
+            img_type (str): type of the image.
+            img_data (str): byte data of the image
+
+        Raises:
+            DatabaseException: raised if problems occurs while
+                saving into the database
+        """
+
+        sql = '''
             INSERT INTO ProfileImages
             (user_id, image_type, image_data)
             VALUES (:user_id, :image_type, :image_data)
@@ -325,97 +372,93 @@ class UserRepository:
                 SET image_type = excluded.image_type,
                     image_data = excluded.image_data
             RETURNING user_id
-        """
+        '''
+
         values = {
-            "user_id": uid,
-            "image_type": img_type,
-            "image_data": img_data
+            'user_id': uid,
+            'image_type': img_type,
+            'image_data': img_data
         }
+
         try:
             db.session.execute(sql, values)
             db.session.commit()
-        except IntegrityError as error:
-            raise DatabaseException('prof img') from error
         except Exception as error:
-            print(error)
-            raise DatabaseException('user update') from error
-        return (uid)
+            raise DatabaseException('While updating profile image') from error
 
-    def update(self,
-               uid: str,
-               username: str,
-               user_role: int,
-               user_role_name: str,
-               password_hash: str,
-               firstname: str,
-               lastname: str,
-               email: str,
-               profile_image: str,
-               teid: str = None,
-               tename: str = None) -> User:
-        """update is used to change values of user into database
+    def update(self, uid: str, username: str, user_role: int,
+               password_hash: str, firstname: str, lastname: str,
+               email: str) -> str:
+        '''update is used to update feature with given values into the database
 
         Args:
-            uid (str): id of user
-            username (str): user's username, needs to be unique
-            user_role (int): user's user_role
-            password_hash (str): user's password as encrypted hash
+            uid (str): id of the user
+            username (str): user's unique username
+            user_role (int): user's role in the application
+            password_hash (str): user's password in encrypted format
             firstname (str): user's firstname
             lastname (str): user's lastname
-            email (str): user's email
-            profile_image (str): user's profile_image
+            email (str): user's email address
 
         Raises:
-            DatabaseException: raised if problems while saving into database
-            UsernameDuplicateException: raised if given username is already in use.
+            DatabaseException: raised if problems occurs while
+                saving into the database
+            UsernameDuplicateException: raised if given username
+                is already in use.
 
         Returns:
-            User: user object with updated values
-        """
+            str: user's id
+        '''
+
         values = {
-            "username": username,
-            "user_role": user_role,
-            "password_hash": password_hash,
-            "firstname": firstname,
-            "lastname": lastname,
-            "email": email,
-            "profile_image": profile_image,
-            "id": uid
+            'username': username,
+            'user_role': user_role,
+            'password_hash': password_hash,
+            'firstname': firstname,
+            'lastname': lastname,
+            'email': email,
+            'id': uid
         }
-        sql = """
+
+        sql = '''
             UPDATE Users 
             SET username=:username, user_role=:user_role, password_hash=:password_hash, 
             firstname=:firstname, lastname=:lastname, email=:email
             WHERE id=:id
-        """
+            RETURNING id
+        '''
+
         try:
-            db.session.execute(sql, values)
+            user_id = db.session.execute(sql, values).fetchone()
             db.session.commit()
         except IntegrityError as error:
             raise UsernameDuplicateException() from error
         except Exception as error:
             raise DatabaseException('user update') from error
-        return User(uid, username, user_role, user_role_name, password_hash,
-                    firstname, lastname, email, profile_image, teid, tename)
+
+        return user_id[0]
 
     def remove(self, uid: str):
-        """remove is used to remove user's from database
+        '''remove is used to remove feature from the database
 
         Args:
-            uid (str): id of user to be removed
+            fid (str): id of the feature to be removed
 
         Raises:
-            NotExistingException: raised if user not found with given id
-            DatabaseException: raised if problems while interacting with database
-        """
-        if not self.get_by_id(uid):
-            raise NotExistingException('User')
-        sql = "DELETE FROM Users WHERE id=:id"
+            DatabaseException: raised if problems occur
+                while interacting with the database
+        '''
+
+        sql = '''
+            DELETE FROM Users 
+            WHERE id=:id
+        '''
+
         try:
-            db.session.execute(sql, {"id": uid})
+            db.session.execute(sql, {'id': uid})
             db.session.commit()
         except Exception as error:
-            raise DatabaseException('user remove') from error
+            raise DatabaseException('While removing the user') from error
 
 
 user_repository = UserRepository()
