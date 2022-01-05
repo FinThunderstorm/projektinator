@@ -15,7 +15,7 @@ def index():
         projects = project_service.get_all_by_project_owner(user_id)
         features = feature_service.get_all_by_feature_owner(user_id)
         tasks = task_service.get_all_by_assignee(user_id)
-        comments = comment_service.get_by_assignee(user_id)
+        comments = comment_service.get_all_by_assignee(user_id)
         teams = team_service.get_by_team_leader(user_id)
 
         return render_template("index.html",
