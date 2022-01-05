@@ -6,7 +6,7 @@ class RoleService:
 
     def __init__(self,
                  default_role_repository: RoleRepository = role_repository):
-        '''Initializes FeatureService
+        '''Initializes RoleService
 
         Args:
             default_role_repository (RoleRepository, optional):

@@ -3,83 +3,97 @@ from utils.exceptions import DatabaseException, NotExistingException
 
 
 class TypeRepository:
+    '''Class for handling Types in the database
+    '''
 
-    def new(self, name: str):
-        sql = """
-        INSERT INTO Types
-        (name)
-        VALUES (:name)
-        RETURNING id
-        """
+    def get_all(self) -> [tuple]:
+        '''get_all is used to list of all types
 
-        values = {"name": name}
+        If no types found, returns empty list.
 
-        try:
-            tyid = db.session.execute(sql, values).fetchone()
-            db.session.commit()
-        except Exception as error:
-            raise DatabaseException(
-                'While saving new type into database') from error
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
-        if not tyid:
-            raise DatabaseException(
-                'While saving new type into database') from error
+        Returns:
+            [tuple]: list of all types
+        '''
 
-        return (tyid, name)
+        sql = '''
+            SELECT id, name 
+            FROM Types
+        '''
 
-    def get_all(self):
-        sql = "SELECT id, name FROM Types"
         try:
             types = db.session.execute(sql).fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all types') from error
+            raise DatabaseException('While getting all types') from error
 
         return [(type[0], type[1]) for type in types]
 
-    def get_by_id(self, tyid: str):
-        sql = "SELECT id, name FROM Types WHERE id=:id"
+    def get_by_id(self, tyid: str) -> tuple:
+        '''get_by_id is used to found type with given id
+
+        Args:
+            rid (str): id of the type to be found
+
+        Raises:
+            DatabaseException: raised if problems while
+                interacting with the database
+            NotExistingException: raised if type is not
+                found with given id
+
+        Returns:
+            tuple: type with given id
+        '''
+
+        sql = '''
+            SELECT id, name 
+            FROM Types 
+            WHERE id=:id
+        '''
+
         try:
-            type = db.session.execute(sql, {"id": tyid}).fetchone()
+            found_type = db.session.execute(sql, {'id': tyid}).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting types') from error
+            raise DatabaseException('While getting the type') from error
 
-        return (type[0], type[1])
+        if not found_type:
+            raise NotExistingException('Type')
 
-    def get_name(self, tyid: str):
-        sql = "SELECT name FROM Types WHERE id=:id"
+        return (found_type[0], found_type[1])
+
+    def get_name(self, tyid: str) -> str:
+        '''get_name is used to get name of type with given id
+
+        Args:
+            rid (int): id of the type
+
+        Raises:
+            DatabaseException: raised if problems while
+                interacting with the database
+            NotExistingException: raised if type is not
+                found with given id
+
+        Returns:
+            str: found name
+        '''
+
+        sql = '''
+            SELECT name 
+            FROM Types 
+            WHERE id=:id
+        '''
+
         try:
-            type = db.session.execute(sql, {"id": tyid}).fetchone()
+            name = db.session.execute(sql, {'id': tyid}).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting types') from error
+            raise DatabaseException("While getting type's name") from error
 
-        return type
+        if not name:
+            raise NotExistingException('Type')
 
-    def update(self, tyid: str, name: str):
-        values = {"id": tyid, "name": name}
-        sql = """
-        UPDATE Types 
-        SET name=:name
-        WHERE id=:id 
-        RETURNING id
-        """
-        try:
-            type_id = db.session.execute(sql, values).fetchone()
-            db.session.commit()
-        except Exception as error:
-            raise DatabaseException(
-                'While saving updated type into database') from error
-        if str(tyid) != str(type_id):
-            raise DatabaseException('While saving updated type into database')
-
-        return (type_id, name)
-
-    def remove(self, tyid: str):
-        sql = "DELETE FROM Types WHERE id=:id"
-        try:
-            db.session.execute(sql, {"id": tyid})
-            db.session.commit()
-        except Exception as error:
-            raise DatabaseException('type remove') from error
+        return name[0]
 
 
 type_repository = TypeRepository()

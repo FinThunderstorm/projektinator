@@ -8,6 +8,13 @@ class StatusService:
     def __init__(
             self,
             default_status_repository: StatusRepository = status_repository):
+        '''Initializes StatusServce
+
+        Args:
+            default_status_repository (StatusRepository, optional):
+                interaction module with database for statuses.
+                Defaults to status_repository.
+        '''
         self._status_repository = default_status_repository
 
     def get_all(self):
