@@ -1,11 +1,14 @@
 from entities.task import Task
-from repositories.user_repository import UserRepository, user_repository
-from repositories.task_repository import TaskRepository, task_repository
-from repositories.feature_repository import FeatureRepository, feature_repository
-from repositories.type_repository import TypeRepository, type_repository
-from repositories.status_repository import StatusRepository, status_repository
+
+from repositories.task_repository import task_repository, TaskRepository
+from services.feature_service import feature_service, FeatureService
+from services.type_service import type_service, TypeService
+from services.status_service import status_service, StatusService
+from services.user_service import user_service, UserService
+from services.comment_service import comment_service, CommentService
 from utils.exceptions import EmptyValueException, NotExistingException, UnvalidInputException
 from utils.validators import validate_flags, validate_uuid4
+from utils.helpers import fullname
 
 
 class TaskService:
@@ -13,22 +16,42 @@ class TaskService:
     '''
 
     def __init__(
-            self,
-            default_task_repository: TaskRepository = task_repository,
-            default_feature_repository: FeatureRepository = feature_repository,
-            default_user_repository: UserRepository = user_repository,
-            default_status_repository: StatusRepository = status_repository,
-            default_type_repository: TypeRepository = type_repository):
-        '''Initializes TaskService with default task repository
+        self,
+        default_task_repository: TaskRepository = task_repository,
+        default_feature_service: FeatureService = feature_service,
+        default_status_service: StatusService = status_service,
+        default_type_service: TypeService = type_service,
+        default_comment_service: CommentService = comment_service,
+        default_user_service: UserService = user_service,
+    ):
+        '''Initializes FeatureService
 
         Args:
-            default_task_repository (TaskRepository, optional): option to give custom task_repository. Defaults to task_repository.
+            default_task_repository (TaskRepository, optional):
+                interaction module with database for tasks.
+                Defaults to task_repository.
+            default_feature_service (FeatureService, optional):
+                interaction module with features.
+                Defaults to task_service.
+            default_status_service (StatusService, optional):
+                interaction module with statuses.
+                Defaults to status_service.
+            default_type_service (TypeService, optional):
+                interaction module with types.
+                Defaults to type_service.
+            default_comment_service (CommentService, optional):
+                interaction module with comments.
+                Defaults to comment_service.
+            default_user_service (UserService, optional):
+                interaction module with users.
+                Defaults to user_service.
         '''
         self._task_repository = default_task_repository
-        self._feature_repository = default_feature_repository
-        self._user_repository = default_user_repository
-        self._status_repository = default_status_repository
-        self._type_repository = default_type_repository
+        self._feature_service = default_feature_service
+        self._status_service = default_status_service
+        self._type_service = default_type_service
+        self._comment_service = default_comment_service
+        self._user_service = default_user_service
 
     def new(self,
             fid: str,
@@ -39,27 +62,35 @@ class TaskService:
             ttype: str,
             priority: int,
             flags: str = '') -> Task:
-        '''new is used to create new tasks
+        '''new is used to create new tasks into the database
 
         Args:
             fid (str): id of associated feature
             aid (str): id of associated assignee
             name (str): name of task
             description (str): description of task
-            status (str): status of task, for example 'in progress', 'waiting', 'ready', 'postponed'
-            ttype (str): type of task, for example 'new feature', 'bug fixes'
-            priority (int): priority of task, in three stages: low, severe and high (1 = low, 3 = high)
-            flags (str, optional): flags used to identify tasks, given in string, example = 'one;two;flags;'. Defaults to ''.
+            status (str): status of task, for example
+                'in progress', 'waiting', 'ready', 'postponed'
+            ttype (str): type of task, for example
+                'new feature', 'bug fixes'
+            priority (int): priority of task, in three stages:
+                low, medium and high (1 = low, 3 = high)
+            flags (str): flags used to identify tasks,
+                given in string, example = 'one;two;flags;'
 
         Raises:
-            DatabaseException: raised if problems occurs while saving into the database
+            DatabaseException: raised if problems occurs while
+                saving into the database
             EmptyValueException: raised if any given values is empty
-            UnvalidInputException: raised if formatting of given input value is incorrect
-            NotExistingException: raised if feature owner or project with given id is not found
+            UnvalidInputException: raised if formatting of given
+                input value is incorrect
+            NotExistingException: raised if feature owner or project
+                with given id is not found
 
         Returns:
             Task: created task
         '''
+
         if not fid or not aid or not name or not description or not status or not ttype or not priority:
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
@@ -67,10 +98,15 @@ class TaskService:
         if not validate_uuid4(fid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='feature id')
-
         if not validate_uuid4(aid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='assignee')
+        if not validate_uuid4(ttype):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='task type id')
+        if not validate_uuid4(status):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='status id')
 
         if not validate_flags(flags):
             raise UnvalidInputException(
@@ -84,7 +120,7 @@ class TaskService:
                 reason='can not be converted into integer',
                 source='priority') from error
 
-        if priority < 0 or priority > 3:
+        if 1 <= priority <= 3:
             raise UnvalidInputException(reson='priority is not in scale 1-3',
                                         source='priority')
 
@@ -102,131 +138,189 @@ class TaskService:
         if not ttname:
             raise NotExistingException('Type')
 
-        created_task = self._task_repository.new(fid, fname, aid, aname, name,
-                                                 description, status, sname,
-                                                 ttype, ttname, priority, flags)
+        task_id, created, updated_on = self._task_repository.new(
+            fid, aid, name, description, status, ttype, priority, flags)
+
+        created_task = Task(task_id, fid, fname, aid, aname, name, description,
+                            status, sname, ttype, ttname, priority, created,
+                            updated_on, flags)
         return created_task
 
     def get_all(self) -> [Task]:
         '''get_all is used to get all tasks from the database
 
+        If no tasks found, returns empty list.
+
         Raises:
-            DatabaseException: raised if problem occurs while interacting with the database
-            NotExistingException: raised if features not found
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
         Returns:
             [Task]: list of all found tasks
         '''
-        tasks = self._task_repository.get_all()
-        if not tasks:
-            raise NotExistingException('Features', 'not found')
+
+        tasks = [
+            Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
+                 task[6], task[7], task[8], task[9], task[10], task[11],
+                 task[12], task[13], task[14], task[15])
+            for task in self._task_repository.get_all()
+        ]
+
         return tasks
 
     def get_all_by_feature_id(self, fid: str) -> [Task]:
-        '''get_all_by_feature_id is used to find all tasks associated with given feature
+        '''get_all_by_feature_id is used to get all tasks
+           associated with given task
+
+        If no tasks found, returns empty list.
 
         Args:
-            fid (str): if of feature associated with
+            fid (str): id of the feature in which tasks are associated
 
         Raises:
-            DatabaseException: raised if problem occurs while interacting with the database
-            NotExistingException: raised if feature or tasks not found
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if feature with given
+                id not found
+            UnvalidInputException: raised if unvalid
+                id is given
 
         Returns:
             [Task]: list of all found tasks
         '''
+
+        if not validate_uuid4(fid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='Feature ID')
+
         if not self._feature_repository.get_by_id(fid):
             raise NotExistingException('Feature')
 
-        tasks = self._task_repository.get_all_by_feature_id(fid)
-
-        if not tasks:
-            raise NotExistingException('Tasks')
+        tasks = [
+            Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
+                 task[6], task[7], task[8], task[9], task[10], task[11],
+                 task[12], task[13], task[14], task[15])
+            for task in self._task_repository.get_all_by_feature_id(fid)
+        ]
 
         return tasks
 
     def get_all_by_assignee(self, aid: str) -> [Task]:
-        '''get_all_by_assignee is used to find all tasks associated with given assignee
+        '''get_all_by_feature_id is used to get all tasks
+           associated with given task
+
+        If no tasks found, returns empty list.
 
         Args:
-            aid (str): if of assignee associated with
+            fid (str): id of the feature in which tasks are associated
 
         Raises:
-            DatabaseException: raised if problem occurs while interacting with the database
-            NotExistingException: raised if assignee or tasks not found
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if user with given
+                id not found
+            UnvalidInputException: raised if unvalid
+                id is given
 
         Returns:
             [Task]: list of all found tasks
         '''
+
+        if not validate_uuid4(aid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source="assignee's id")
+
         if not self._user_repository.get_by_id(aid):
             raise NotExistingException('Assignee')
 
-        tasks = self._task_repository.get_all_by_assignee(aid)
-
-        if not tasks:
-            raise NotExistingException('Tasks')
+        tasks = [
+            Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
+                 task[6], task[7], task[8], task[9], task[10], task[11],
+                 task[12], task[13], task[14], task[15])
+            for task in self._task_repository.get_all_by_assignee(aid)
+        ]
 
         return tasks
 
     def get_by_id(self, tid: str) -> Task:
-        '''get_by_id is used to find specific task
+        '''get_by_id is used to found task with given id
 
         Args:
-            tid (str): if of task to be found
+            tid (str): id of the task
 
         Raises:
-            DatabaseException: raised if problems occur while interacting with the database
+            DatabaseException: raised if problems while
+                interacting with the database
+            NotExistingException: raised if task is not
+                found with given id
+            UnvalidInputException: raised if unvalid
+                id is given
 
         Returns:
-            Task: found task
+            Task: task with given id
         '''
+        if not validate_uuid4(tid):
+            raise UnvalidInputException("tasks's id")
+
         task = self._task_repository.get_by_id(tid)
 
-        if not task:
-            raise NotExistingException('Task')
-
-        return task
+        return Task(task[0], task[1], task[2], task[3],
+                    fullname(task[4],
+                             task[5]), task[6], task[7], task[8], task[9],
+                    task[10], task[11], task[12], task[13], task[14], task[15])
 
     def get_name(self, tid: str) -> str:
         '''get_name is used to get name of specific task
 
         Args:
-            tid (str): if of task
+            tid (str): if of the task
 
         Raises:
-            DatabaseException: raised if problems occur while interacting with the database
-            NotExistingException: raised if task not found with given id
+            DatabaseException: raised if problems while
+                interacting with the database
+            NotExistingException: raised if task is not
+                found with given id
+            UnvalidInputException: raised if unvalid
+                id is given
 
         Returns:
             str: found name
         '''
-        name = self._task_repository.get_name(tid)
 
-        if not name:
-            raise NotExistingException('Task')
+        if not validate_uuid4(tid):
+            raise UnvalidInputException("tasks's id")
+
+        name = self._task_repository.get_name(tid)
 
         return name
 
     def update(self, tid: str, fid: str, aid: str, name: str, description: str,
                status: str, ttype: str, priority: int, flags: str) -> Task:
-        '''update is used to update tasks
+        '''update is used to update task
 
         Args:
-            tid (str): id of task to be updated
+            tid (str): id of the task
             fid (str): id of associated feature
             aid (str): id of associated assignee
-            name (str): name of task
-            description (str): description of task
-            status (str): status of task, for example 'in progress', 'waiting', 'ready', 'postponed'
-            ttype (str): type of task, for example 'new feature', 'bug fixes'
-            priority (int): priority of task, in three stages: low, severe and high (1 = low, 3 = high)
-            flags (str): flags used to identify tasks, given in string, example = 'one;two;flags;'.
+            name (str): name of the task
+            description (str): description of the task
+            status (str): status of the task, for example
+                'in progress', 'waiting', 'ready', 'postponed'
+            ttype (str): type of the task, for example
+                'new feature', 'bug fixes'
+            priority (int): priority of the task, in three stages:
+                low, medium and high (1 = low, 3 = high)
+            flags (str): flags used to identify tasks,
+                given in string, example = 'one;two;flags;'
 
         Raises:
-            DatabaseException: raised if problems occurs while saving into the database
+            DatabaseException: raised if problems occurs while
+                saving into the database
             EmptyValueException: raised if any given values is empty
-            UnvalidInputException: raised if formatting of given input value is incorrect
-            NotExistingException: raised if task, feature owner or project with given id is not found
+            UnvalidInputException: raised if formatting of given
+                input value is incorrect
+            NotExistingException: raised if feature, feature owner or project
+                with given id is not found
 
         Returns:
             Task: updated task
@@ -235,17 +329,23 @@ class TaskService:
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
 
+        if not validate_uuid4(tid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='task id')
         task = self._task_repository.get_by_id(tid)
-        if not task:
-            raise NotExistingException('Task')
 
         if not validate_uuid4(fid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='feature id')
-
         if not validate_uuid4(aid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='assignee')
+        if not validate_uuid4(ttype):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='task type id')
+        if not validate_uuid4(status):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='status id')
 
         if not validate_flags(flags):
             raise UnvalidInputException(
@@ -259,7 +359,7 @@ class TaskService:
                 reason='can not be converted into integer',
                 source='priority') from error
 
-        if priority < 0 or priority > 3:
+        if 1 <= priority <= 3:
             raise UnvalidInputException(reson='priority is not in scale 1-3',
                                         source='priority')
 
@@ -272,25 +372,38 @@ class TaskService:
             raise NotExistingException('Feature')
         if not aname:
             raise NotExistingException('Assignee')
+        if not sname:
+            raise NotExistingException('Status')
+        if not ttname:
+            raise NotExistingException('Type')
 
-        updated_task = self._task_repository.update(tid, fid, fname, aid, aname,
-                                                    name, description, status,
-                                                    sname, ttype, ttname,
-                                                    priority, flags)
+        task_id, created, updated_on = self._task_repository.update(
+            fid, aid, name, description, status, ttype, priority, flags)
+
+        updated_task = Task(task_id, fid, fname, aid, aname, name, description,
+                            status, sname, ttype, ttname, priority, created,
+                            updated_on, flags)
         return updated_task
 
     def remove(self, tid: str) -> None:
         '''remove is used to remove task from the database
 
         Args:
-            tid (str): id of task
+            tid (str): id of the task to be removed
 
         Raises:
-            DatabaseException: raised if problems occur while interacting with the database
-            NotExistingException: raised if task not found
+            DatabaseException: raised if problems occurs
+                while interacting with database.
+            NotExistingException: raised if feature not found with given id
+            UnvalidInputException: raised if unvalid
+                id is given
         '''
-        if not self._task_repository.get_by_id(tid):
-            raise NotExistingException('Task')
+
+        if not validate_uuid4(tid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='task id')
+
+        self._task_repository.get_by_id(tid)
         self._task_repository.remove(tid)
 
 

@@ -55,6 +55,7 @@ class StatusService:
         Returns:
             tuple: status with given id
         '''
+
         if not validate_uuid4(sid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='Status ID')
