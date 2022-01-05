@@ -1,66 +1,71 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, NotExistingException, UnvalidInputException
 from entities.user import User
-from utils.database import db
 from repositories.user_repository import user_repository, UserRepository
 from repositories.role_repository import role_repository, RoleRepository
 
 
 class UserService:
-    """Class used for handling users in the application
-    """
+    '''Class used for handling users in the application
+    '''
 
     def __init__(self,
                  default_user_repository: UserRepository = user_repository,
                  default_role_repository: RoleRepository = role_repository):
-        """Initializes UserService with default user repository
+        '''Initializes UserService with default user repository
 
         Args:
-            default_user_repository (UserRepository, optional): option to give custom user_repository. Defaults to user_repository.
-        """
+            default_user_repository (UserRepository, optional): option to give
+                custom user_repository. Defaults to user_repository.
+        '''
         self._user_repository = default_user_repository
         self._role_repository = default_role_repository
 
     def new(self, username: str, user_role: str, password: str, firstname: str,
             lastname: str, email: str) -> User:
-        """new is used to create new users
+        '''new is used to create new users
 
         Args:
             username (str): user's username, needs to be unique
-            user_role (str): user's user role as integer format, inputted as string, 1 = highest permission level
-            password (str): user's password as not encrypted version, used to create encrypted hash
+            user_role (str): user's user role as integer format, inputted
+                as string, 1 = highest permission level
+            password (str): user's password as not encrypted version,
+                used to create encrypted hash
             firstname (str): user's firstname
             lastname (str): user's lastname
             email (str): user's email
 
         Raises:
-            ValueShorterThanException: raised if username or password are not longer than 5 characters
-            EmptyValueException: raised if username, password, firstname or lastname are empty
+            ValueShorterThanException: raised if username or password are
+                not longer than 5 characters
+            EmptyValueException: raised if username, password, firstname
+                or lastname are empty
             DatabaseException: raised if problems while saving into database.
-            UsernameDuplicateException: raised if given username is already in use
+            UsernameDuplicateException: raised if given username is
+                already in use
 
         Returns:
             User: created user as user object
-        """
-        if username == "":
+        '''
+        if username == '':
             raise EmptyValueException('username')
         elif len(username) < 5:
             raise ValueShorterThanException('username', 5)
 
-        if password == "":
+        if password == '':
             raise EmptyValueException('password')
         elif len(password) < 5:
             raise ValueShorterThanException('password', 5)
 
-        if firstname == "" or lastname == "":
+        if firstname == '' or lastname == '':
             raise EmptyValueException('name')
 
         username = username.lower()
         try:
             user_role = int(user_role)
         except Exception as error:
-            raise UnvalidInputException("Unvalid input", "unexpected value",
-                                        "user role") from error
+            raise UnvalidInputException('Unvalid input', 'unexpected value',
+                                        'user role') from error
         password_hash = generate_password_hash(password)
 
         user_role_name = self._role_repository.get_by_id(user_role)
@@ -71,7 +76,7 @@ class UserService:
         return created_user
 
     def get_by_id(self, uid: str) -> User:
-        """get_by_id is used to find user's from databse by id
+        '''get_by_id is used to find user's from databse by id
 
         Args:
             uid (str): id of user to be found
@@ -81,59 +86,62 @@ class UserService:
 
         Returns:
             User: found user
-        """
+        '''
         user = self._user_repository.get_by_id(uid)
         return user
 
     def get_by_username(self, username: str) -> User:
-        """get_by_username is used to find users from database by username
+        '''get_by_username is used to find users from database by username
 
         Args:
             username (str): username of user to be found
 
         Raises:
-            UserNotExistingException: raised if user not found with given username
+            UserNotExistingException: raised if user not found
+                with given username
             DatabaseException: if problem occurs while handling with database
 
         Returns:
             User: found user
-        """
+        '''
         user = self._user_repository.get_by_username(username)
         return user
 
     def get_all(self) -> list[User]:
-        """get_all is used to get all users in the database
+        '''get_all is used to get all users in the database
 
         Raises:
             DatabaseException: if problem occurs while handling with database
 
         Returns:
             list[User]: list of all users in the database
-        """
+        '''
         users = self._user_repository.get_all()
         return users
 
     def get_users(self) -> list[tuple]:
-        """get_users is used to get all users for selecting users in the frontend
+        '''get_users is used to get all users for selecting
+            users in the frontend
 
         Raises:
             DatabaseException: if problem occurs while handling with database
 
         Returns:
             list[tuple]: list of all users in the database
-        """
+        '''
         users = self._user_repository.get_users()
         return users
 
     def get_team_users(self, teid: str) -> list[tuple]:
-        """get_users is used to get all users for selecting users in the frontend
+        '''get_users is used to get all users for selecting
+            users in the frontend
 
         Raises:
             DatabaseException: if problem occurs while handling with database
 
         Returns:
             list[tuple]: list of all users in the database
-        """
+        '''
         users = self._user_repository.get_team_users(teid)
         return users
 
@@ -142,7 +150,7 @@ class UserService:
         return image
 
     def update_profile_image(self, uid: str, img_type: str, img_data: str):
-        if img_type not in ["image/jpeg", "image/png", "image/gif"]:
+        if img_type not in ['image/jpeg', 'image/png', 'image/gif']:
             raise UnvalidInputException('profile image type not supported')
         if len(img_data) > 1000 * 1024:
             raise UnvalidInputException('profile image size too big')
@@ -152,77 +160,84 @@ class UserService:
     def update(self, uid: str, username: str, user_role: str, password: str,
                firstname: str, lastname: str, email: str,
                profile_image: str) -> User:
-        """update is used to update users
+        '''update is used to update users
 
         Args:
             uid (str): id of user to be updated
             username (str): user's username, needs to be unique
             user_role (str): user's user role
-            password (str): user's password as not encrypted version, used to create encrypted hash
+            password (str): user's password as not encrypted
+                version, used to create encrypted hash
             firstname (str): user's firstname
             lastname (str): user's lastname
             email (str): user's email
             profile_image (str): user's profile image as base64 encoded
 
         Raises:
-            ValueShorterThanException: raised if username or password are not longer than 5 characters
-            EmptyValueException: raised if username, password, firstname or lastname are empty
+            ValueShorterThanException: raised if username or
+                password are not longer than 5 characters
+            EmptyValueException: raised if username, password,
+                firstname or lastname are empty
             DatabaseException: raised if problems while saving into database.
-            UsernameDuplicateException: raised if given username is already in use
+            UsernameDuplicateException: raised if given username
+                is already in use
 
         Returns:
             User: updated user as user object
-        """
+        '''
         current_user = self.get_by_id(uid)
 
-        if username == "":
+        if username == '':
             raise EmptyValueException('username')
         elif len(username) < 5:
             raise ValueShorterThanException('username', 5)
 
-        if password != "":
+        if password != '':
             if len(password) < 5:
                 raise ValueShorterThanException('password', 5)
             password_hash = generate_password_hash(password)
         else:
             password_hash = current_user.password_hash
 
-        if firstname == "" or lastname == "":
+        if firstname == '' or lastname == '':
             raise EmptyValueException('name')
 
         if user_role != str(current_user.user_role):
             try:
                 user_role = int(user_role)
             except Exception as error:
-                raise UnvalidInputException("Unvalid input", "unexpected value",
-                                            "user role") from error
+                raise UnvalidInputException('Unvalid input', 'unexpected value',
+                                            'user role') from error
 
-        username = current_user.username if username == current_user.username else username.lower(
-        )
+        if username == current_user.username:
+            username = current_user.username
+        else:
+            username = username.lower()
 
         user_role_name = self._role_repository.get_by_id(user_role)
 
         user = self._user_repository.update(uid, username, user_role,
                                             user_role_name, password_hash,
                                             firstname, lastname, email,
-                                            "profile_image")
+                                            'profile_image')
 
         return user
 
     def remove(self, uid: str):
-        """remove is used to remove user's from database
+        '''remove is used to remove user's from database
 
         Args:
             uid (str): id of user to be removed
 
         Raises:
             UserNotExistingException: raised if user not found with given id
-            DatabaseException: raised if problems while interacting with database
-        """
+            DatabaseException: raised if problems while
+                interacting with database
+        '''
         self._user_repository.remove(uid)
 
     def login(self, username: str, password: str) -> str:
-        """login is used to check if given username and password are valid
+        '''login is used to check if given username and password are valid
 
         Args:
             username (str): username to be checked
@@ -233,7 +248,7 @@ class UserService:
 
         Returns:
             str: user id for session
-        """
+        '''
         try:
             user = self.get_by_username(username)
         except NotExistingException as error:

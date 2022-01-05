@@ -271,11 +271,11 @@ class FeatureRepository:
         '''update is used to update feature with given values into the database
 
         Args:
-            fid (str): id of feature to be updated
-            pid (str): id of associated project
-            foid (str): id of associated feature owner
-            name (str): name of feature
-            description (str): description of feature
+            fid (str): id of the feature to be updated
+            pid (str): id of the associated project
+            foid (str): id of the associated feature owner
+            name (str): name of the feature
+            description (str): description of the feature
             flags (str): flags used to identify features,
                 given in string, example = 'one;two;flags;'
             status (str): status of feature, for example
@@ -319,7 +319,7 @@ class FeatureRepository:
             raise DatabaseException('While saving updated feature') from error
 
         if str(fid) != str(feature_id):
-            raise DatabaseException('While saving updated feature') from error
+            raise DatabaseException('While saving updated feature')
 
         return (feature_id, created, updated_on)
 
@@ -327,7 +327,7 @@ class FeatureRepository:
         '''remove is used to remove feature from the database
 
         Args:
-            fid (str): id of feature which is removed
+            fid (str): id of the feature to be removed
 
         Raises:
             DatabaseException: raised if problems occur

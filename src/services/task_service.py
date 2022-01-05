@@ -1,5 +1,3 @@
-from repositories.feature_repository import FeatureRepository
-from repositories.task_repository import task_repository, TaskRepository
 from entities.task import Task
 from repositories.user_repository import UserRepository, user_repository
 from repositories.task_repository import TaskRepository, task_repository
@@ -11,8 +9,8 @@ from utils.validators import validate_flags, validate_uuid4
 
 
 class TaskService:
-    """Class used for handling users in the application
-    """
+    '''Class used for handling users in the application
+    '''
 
     def __init__(
             self,
@@ -21,11 +19,11 @@ class TaskService:
             default_user_repository: UserRepository = user_repository,
             default_status_repository: StatusRepository = status_repository,
             default_type_repository: TypeRepository = type_repository):
-        """Initializes TaskService with default task repository
+        '''Initializes TaskService with default task repository
 
         Args:
             default_task_repository (TaskRepository, optional): option to give custom task_repository. Defaults to task_repository.
-        """
+        '''
         self._task_repository = default_task_repository
         self._feature_repository = default_feature_repository
         self._user_repository = default_user_repository
@@ -40,18 +38,18 @@ class TaskService:
             status: str,
             ttype: str,
             priority: int,
-            flags: str = "") -> Task:
-        """new is used to create new tasks
+            flags: str = '') -> Task:
+        '''new is used to create new tasks
 
         Args:
             fid (str): id of associated feature
             aid (str): id of associated assignee
             name (str): name of task
             description (str): description of task
-            status (str): status of task, for example "in progress", "waiting", "ready", "postponed"
-            ttype (str): type of task, for example "new feature", "bug fixes"
+            status (str): status of task, for example 'in progress', 'waiting', 'ready', 'postponed'
+            ttype (str): type of task, for example 'new feature', 'bug fixes'
             priority (int): priority of task, in three stages: low, severe and high (1 = low, 3 = high)
-            flags (str, optional): flags used to identify tasks, given in string, example = "one;two;flags;". Defaults to "".
+            flags (str, optional): flags used to identify tasks, given in string, example = 'one;two;flags;'. Defaults to ''.
 
         Raises:
             DatabaseException: raised if problems occurs while saving into the database
@@ -61,34 +59,34 @@ class TaskService:
 
         Returns:
             Task: created task
-        """
+        '''
         if not fid or not aid or not name or not description or not status or not ttype or not priority:
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(fid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4",
-                                        source="feature id")
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='feature id')
 
         if not validate_uuid4(aid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4",
-                                        source="assignee")
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='assignee')
 
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting",
-                "not being in 'one;two;three;flags;' format", "flags")
+                'Unvalid formatting',
+                'not being in "one;two;three;flags;" format', 'flags')
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer",
-                source="priority") from error
+                reason='can not be converted into integer',
+                source='priority') from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(reson="priority is not in scale 1-3",
-                                        source="priority")
+            raise UnvalidInputException(reson='priority is not in scale 1-3',
+                                        source='priority')
 
         fname = self._feature_repository.get_name(fid)
         aname = self._user_repository.get_fullname(aid)
@@ -110,7 +108,7 @@ class TaskService:
         return created_task
 
     def get_all(self) -> [Task]:
-        """get_all is used to get all tasks from the database
+        '''get_all is used to get all tasks from the database
 
         Raises:
             DatabaseException: raised if problem occurs while interacting with the database
@@ -118,14 +116,14 @@ class TaskService:
 
         Returns:
             [Task]: list of all found tasks
-        """
+        '''
         tasks = self._task_repository.get_all()
         if not tasks:
             raise NotExistingException('Features', 'not found')
         return tasks
 
     def get_all_by_feature_id(self, fid: str) -> [Task]:
-        """get_all_by_feature_id is used to find all tasks associated with given feature
+        '''get_all_by_feature_id is used to find all tasks associated with given feature
 
         Args:
             fid (str): if of feature associated with
@@ -136,7 +134,7 @@ class TaskService:
 
         Returns:
             [Task]: list of all found tasks
-        """
+        '''
         if not self._feature_repository.get_by_id(fid):
             raise NotExistingException('Feature')
 
@@ -148,7 +146,7 @@ class TaskService:
         return tasks
 
     def get_all_by_assignee(self, aid: str) -> [Task]:
-        """get_all_by_assignee is used to find all tasks associated with given assignee
+        '''get_all_by_assignee is used to find all tasks associated with given assignee
 
         Args:
             aid (str): if of assignee associated with
@@ -159,7 +157,7 @@ class TaskService:
 
         Returns:
             [Task]: list of all found tasks
-        """
+        '''
         if not self._user_repository.get_by_id(aid):
             raise NotExistingException('Assignee')
 
@@ -171,7 +169,7 @@ class TaskService:
         return tasks
 
     def get_by_id(self, tid: str) -> Task:
-        """get_by_id is used to find specific task
+        '''get_by_id is used to find specific task
 
         Args:
             tid (str): if of task to be found
@@ -181,7 +179,7 @@ class TaskService:
 
         Returns:
             Task: found task
-        """
+        '''
         task = self._task_repository.get_by_id(tid)
 
         if not task:
@@ -190,7 +188,7 @@ class TaskService:
         return task
 
     def get_name(self, tid: str) -> str:
-        """get_name is used to get name of specific task
+        '''get_name is used to get name of specific task
 
         Args:
             tid (str): if of task
@@ -201,7 +199,7 @@ class TaskService:
 
         Returns:
             str: found name
-        """
+        '''
         name = self._task_repository.get_name(tid)
 
         if not name:
@@ -211,7 +209,7 @@ class TaskService:
 
     def update(self, tid: str, fid: str, aid: str, name: str, description: str,
                status: str, ttype: str, priority: int, flags: str) -> Task:
-        """update is used to update tasks
+        '''update is used to update tasks
 
         Args:
             tid (str): id of task to be updated
@@ -219,10 +217,10 @@ class TaskService:
             aid (str): id of associated assignee
             name (str): name of task
             description (str): description of task
-            status (str): status of task, for example "in progress", "waiting", "ready", "postponed"
-            ttype (str): type of task, for example "new feature", "bug fixes"
+            status (str): status of task, for example 'in progress', 'waiting', 'ready', 'postponed'
+            ttype (str): type of task, for example 'new feature', 'bug fixes'
             priority (int): priority of task, in three stages: low, severe and high (1 = low, 3 = high)
-            flags (str): flags used to identify tasks, given in string, example = "one;two;flags;".
+            flags (str): flags used to identify tasks, given in string, example = 'one;two;flags;'.
 
         Raises:
             DatabaseException: raised if problems occurs while saving into the database
@@ -232,7 +230,7 @@ class TaskService:
 
         Returns:
             Task: updated task
-        """
+        '''
         if not tid or not fid or not aid or not name or not description or not status or not ttype or not priority:
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
@@ -242,28 +240,28 @@ class TaskService:
             raise NotExistingException('Task')
 
         if not validate_uuid4(fid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4",
-                                        source="feature id")
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='feature id')
 
         if not validate_uuid4(aid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4",
-                                        source="assignee")
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='assignee')
 
         if not validate_flags(flags):
             raise UnvalidInputException(
-                "Unvalid formatting",
-                "not being in 'one;two;three;flags;' format", "flags")
+                'Unvalid formatting',
+                'not being in "one;two;three;flags;" format', 'flags')
 
         try:
             priority = int(priority)
         except Exception as error:
             raise UnvalidInputException(
-                reason="can not be converted into integer",
-                source="priority") from error
+                reason='can not be converted into integer',
+                source='priority') from error
 
         if priority < 0 or priority > 3:
-            raise UnvalidInputException(reson="priority is not in scale 1-3",
-                                        source="priority")
+            raise UnvalidInputException(reson='priority is not in scale 1-3',
+                                        source='priority')
 
         fname = self._feature_repository.get_name(fid)
         aname = self._user_repository.get_fullname(aid)
@@ -282,7 +280,7 @@ class TaskService:
         return updated_task
 
     def remove(self, tid: str) -> None:
-        """remove is used to remove task from the database
+        '''remove is used to remove task from the database
 
         Args:
             tid (str): id of task
@@ -290,7 +288,7 @@ class TaskService:
         Raises:
             DatabaseException: raised if problems occur while interacting with the database
             NotExistingException: raised if task not found
-        """
+        '''
         if not self._task_repository.get_by_id(tid):
             raise NotExistingException('Task')
         self._task_repository.remove(tid)

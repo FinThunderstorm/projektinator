@@ -126,7 +126,8 @@ class TaskRepository:
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
                  task[6], task[7], task[9], task[10], task[11], task[12],
                  task[13], task[14], task[15], task[8],
-                 comment_repository.get_by_task_id(task[0])) for task in tasks
+                 comment_repository.get_all_by_task_id(task[0]))
+            for task in tasks
         ]
 
     def get_all_by_assignee(self, aid: str) -> [Task]:
@@ -159,7 +160,8 @@ class TaskRepository:
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
                  task[6], task[7], task[9], task[10], task[11], task[12],
                  task[13], task[14], task[15], task[8],
-                 comment_repository.get_by_task_id(task[0])) for task in tasks
+                 comment_repository.get_all_by_task_id(task[0]))
+            for task in tasks
         ]
 
     def get_by_id(self, tid: str) -> Task:
@@ -192,7 +194,7 @@ class TaskRepository:
                     fullname(task[4],
                              task[5]), task[6], task[7], task[9], task[10],
                     task[11], task[12], task[13], task[14], task[15], task[8],
-                    comment_repository.get_by_task_id(task[0]))
+                    comment_repository.get_all_by_task_id(task[0]))
 
     def get_name(self, tid: str) -> str:
         """get_name is used to get name of specific task

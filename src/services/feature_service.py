@@ -30,25 +30,25 @@ class FeatureService:
 
         Args:
             default_feature_repository (FeatureRepository, optional):
-                interaction module with database for users.
+                interaction module with database for features.
                 Defaults to feature_repository.
             default_project_service (ProjectService, optional):
-                interaction module with database for users.
+                interaction module with projects.
                 Defaults to project_service.
             default_task_service (TaskService, optional):
-                interaction module with database for users.
+                interaction module with tasks.
                 Defaults to task_service.
             default_type_service (TypeService, optional):
-                interaction module with database for users.
+                interaction module with types.
                 Defaults to type_service.
             default_status_service (StatusService, optional):
-                interaction module with database for users.
+                interaction module with statuses.
                 Defaults to status_service.
             default_comment_service (CommentService, optional):
-                interaction module with database for users.
+                interaction module with comments.
                 Defaults to comment_service.
             default_user_service (UserService, optional):
-                interaction module with database for users.
+                interaction module with users.
                 Defaults to user_service.
         """
 
@@ -142,7 +142,7 @@ class FeatureService:
         if not pname:
             raise NotExistingException('Project')
         if not foname:
-            raise NotExistingException('Feature owner')
+            raise NotExistingException('Feature Owner')
         if not sname:
             raise NotExistingException('Status')
         if not ftname:
@@ -448,6 +448,7 @@ class FeatureService:
             UnvalidInputException: raised if unvalid
                 id is given
         '''
+
         if not validate_uuid4(fid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='feature id')
