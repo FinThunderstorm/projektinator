@@ -4,82 +4,94 @@ from utils.exceptions import DatabaseException, NotExistingException
 
 class StatusRepository:
 
-    def new(self, name: str):
-        sql = """
-        INSERT INTO Statuses
-        (name)
-        VALUES (:name)
-        RETURNING id
-        """
+    def get_all(self) -> [tuple]:
+        '''get_all is used to list of all statuses
 
-        values = {"name": name}
+        If no statuses found, returns empty list.
 
-        try:
-            sid = db.session.execute(sql, values).fetchone()
-            db.session.commit()
-        except Exception as error:
-            raise DatabaseException(
-                'While saving new status into database') from error
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
 
-        if not sid:
-            raise DatabaseException(
-                'While saving new status into database') from error
+        Returns:
+            [tuple]: list of all statuses
+        '''
 
-        return (sid, name)
+        sql = '''
+            SELECT id, name 
+            FROM Statuses
+        '''
 
-    def get_all(self):
-        sql = "SELECT id, name FROM Statuses"
         try:
             statuses = db.session.execute(sql).fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all statuses') from error
+            raise DatabaseException('While getting all statuses') from error
 
         return [(status[0], status[1]) for status in statuses]
 
-    def get_by_id(self, sid: str):
-        sql = "SELECT id, name FROM Statuses WHERE id=:id"
+    def get_by_id(self, sid: str) -> tuple:
+        '''get_by_id is used to found status with given id
+
+        Args:
+            rid (str): id of the status to be found
+
+        Raises:
+            DatabaseException: raised if problems while
+                interacting with the database
+            NotExistingException: raised if status is not
+                found with given id
+
+        Returns:
+            tuple: status with given id
+        '''
+
+        sql = '''
+            SELECT id, name 
+            FROM Statuses 
+            WHERE id=:id
+        '''
+
         try:
-            status = db.session.execute(sql, {"id": sid}).fetchone()
+            status = db.session.execute(sql, {'id': sid}).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting status') from error
+            raise DatabaseException('While getting the status') from error
+
+        if not status:
+            raise NotExistingException('Status')
 
         return (status[0], status[1])
 
-    def get_name(self, sid: str):
-        sql = "SELECT name FROM Statuses WHERE id=:id"
+    def get_name(self, sid: str) -> str:
+        '''get_name is used to get name of status with given id
+
+        Args:
+            rid (int): id of the status
+
+        Raises:
+            DatabaseException: raised if problems while
+                interacting with the database
+            NotExistingException: raised if status is not
+                found with given id
+
+        Returns:
+            str: found name
+        '''
+
+        sql = '''
+            SELECT name 
+            FROM Statuses 
+            WHERE id=:id
+        '''
+
         try:
-            status = db.session.execute(sql, {"id": sid}).fetchone()
+            name = db.session.execute(sql, {'id': sid}).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting status') from error
+            raise DatabaseException("While getting status' name") from error
 
-        return status
+        if not name:
+            raise NotExistingException('Status')
 
-    def update(self, sid: str, name: str):
-        values = {"id": sid, "name": name}
-        sql = """
-        UPDATE Projects 
-        SET name=:name
-        WHERE id=:id 
-        RETURNING id
-        """
-        try:
-            status_id = db.session.execute(sql, values).fetchone()
-            db.session.commit()
-        except Exception as error:
-            raise DatabaseException(
-                'While saving updated status into database') from error
-        if str(sid) != str(status_id):
-            raise DatabaseException('While saving updated status into database')
-
-        return (status_id, name)
-
-    def remove(self, sid: str):
-        sql = "DELETE FROM Statuses WHERE id=:id"
-        try:
-            db.session.execute(sql, {"id": sid})
-            db.session.commit()
-        except Exception as error:
-            raise DatabaseException('status remove') from error
+        return name[0]
 
 
 status_repository = StatusRepository()

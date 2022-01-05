@@ -6,6 +6,14 @@ class RoleService:
 
     def __init__(self,
                  default_role_repository: RoleRepository = role_repository):
+        '''Initializes FeatureService
+
+        Args:
+            default_role_repository (RoleRepository, optional):
+                interaction module with database for roles.
+                Defaults to role_repository.
+        '''
+
         self._role_repository = default_role_repository
 
     def get_all(self) -> [tuple]:
@@ -33,6 +41,8 @@ class RoleService:
                 interacting with the database
             NotExistingException: raised if role is not
                 found with given id
+            UnvalidInputException: raised if unvalid
+                id is given
 
         Returns:
             tuple: role with given id
@@ -57,6 +67,8 @@ class RoleService:
                 interacting with the database
             NotExistingException: raised if role is not
                 found with given id
+            UnvalidInputException: raised if unvalid
+                id is given
 
         Returns:
             str: found name

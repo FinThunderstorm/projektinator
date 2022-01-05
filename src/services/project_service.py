@@ -285,7 +285,7 @@ class ProjectService:
                                         'not being in correct format of uuid4',
                                         'project id')
 
-        self.get_by_id(pid)
+        self._project_repository.get_by_id(pid)
         self._project_repository.remove(pid)
 
 

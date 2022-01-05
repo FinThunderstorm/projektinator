@@ -66,7 +66,7 @@ class RoleRepository:
         '''get_name is used to get name of role with given id
 
         Args:
-            rid (int): id of role
+            rid (int): id of the role
 
         Raises:
             DatabaseException: raised if problems while
