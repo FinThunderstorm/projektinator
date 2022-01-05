@@ -8,63 +8,70 @@ from services.type_service import type_service
 from services.user_service import user_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
-baseUrl = "/features"
+baseUrl = '/features'
 
 
-@app.route(f"{baseUrl}", methods=["GET"])
+@app.route(f'{baseUrl}', methods=['GET'])
 def features():
     try:
-        features = feature_service.get_all()
-    except NotExistingException as error:
-        features = []
+        all_features = feature_service.get_all()
     except DatabaseException as error:
         flash(str(error), 'is-danger')
-        return redirect("/")
-    return render_template('features/features.html', features=features)
+        return redirect('/')
+
+    return render_template('features/features.html', features=all_features)
 
 
-@app.route(f"{baseUrl}/<uuid:feature_id>", methods=["GET"])
+@app.route(f'{baseUrl}/<uuid:feature_id>', methods=['GET'])
 def view_feature(feature_id):
-    feature = feature_service.get_by_id(feature_id)
-    feature_owner_profile_image = user_service.get_profile_image(
-        feature.feature_owner)
+    try:
+        feature = feature_service.get_by_id(feature_id)
+        feature_owner_profile_image = user_service.get_profile_image(
+            feature.feature_owner)
+    except (NotExistingException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
     return render_template(
         'features/features_view.html',
         feature=feature,
         feature_owner_profile_image=feature_owner_profile_image)
 
 
-@app.route(f"{baseUrl}/edit/<uuid:feature_id>", methods=["GET", "POST"])
+@app.route(f'{baseUrl}/edit/<uuid:feature_id>', methods=['GET', 'POST'])
 def edit_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
-    except Exception as error:
-        flash(str(error), 'is-danger')
-        return redirect(baseUrl)
 
-    if feature.feature_owner != session["user"] or session["user_role"] < 2:
-        flash("Not enough permissions.", 'is-danger')
-        return redirect("/")
+        if feature.feature_owner != session['user'] or session['user_role'] < 2:
+            flash('Not enough permissions.', 'is-danger')
+            return redirect('/')
 
-    # GET shows feature
-    if request.method == "GET":
-        users = user_service.get_users()
-        projects = project_service.get_projects()
-        statuses = status_service.get_all()
-        types = type_service.get_all()
-        return render_template('features/features_edit.html',
-                               feature=feature,
-                               users=users,
-                               projects=projects,
-                               statuses=statuses,
-                               types=types)
+        # GET shows feature
+        if request.method == 'GET':
+            if session["user_role"] == 1:
+                users = user_service.get_team_users(session["team_id"])
+                if len(users) == 0:
+                    users = [(session["user"], session["username"])]
+            else:
+                users = user_service.get_users()
+            projects = project_service.get_projects()
+            statuses = status_service.get_all()
+            types = type_service.get_all()
 
-    # POST updates feature
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
+            return render_template('features/features_edit.html',
+                                   feature=feature,
+                                   users=users,
+                                   projects=projects,
+                                   statuses=statuses,
+                                   types=types)
 
-        try:
+        # POST updates feature
+        if request.method == 'POST':
+            if session['token'] != request.form['token']:
+                abort(403)
+
             updated_feature = feature_service.update(
                 request.form['feature_id'], request.form['project_id'],
                 request.form['feature_owner_id'], request.form['name'],
@@ -74,39 +81,39 @@ def edit_feature(feature_id):
             flash(f'Saved feature {updated_feature.feature_id} successfully',
                   'is-success')
             return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
+
+    except (NotExistingException, UnvalidInputException, DatabaseException,
+            EmptyValueException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
 
 
-@app.route(f"{baseUrl}/add", methods=["GET", "POST"])
+@app.route(f'{baseUrl}/add', methods=['GET', 'POST'])
 def create_feature():
     # GET shows creation page
-    if request.method == "GET":
-        users = user_service.get_users()
-        projects = project_service.get_projects()
-        statuses = status_service.get_all()
-        types = type_service.get_all()
-        return render_template('features/features_add.html',
-                               users=users,
-                               projects=projects,
-                               statuses=statuses,
-                               types=types)
+    try:
+        if request.method == 'GET':
+            if session["user_role"] == 1:
+                users = user_service.get_team_users(session["team_id"])
+                if len(users) == 0:
+                    users = [(session["user"], session["username"])]
+            else:
+                users = user_service.get_users()
+            projects = project_service.get_projects()
+            statuses = status_service.get_all()
+            types = type_service.get_all()
 
-    # POST creates new feature
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
-        try:
+            return render_template('features/features_add.html',
+                                   users=users,
+                                   projects=projects,
+                                   statuses=statuses,
+                                   types=types)
+
+        # POST creates new feature
+        if request.method == 'POST':
+            if session['token'] != request.form['token']:
+                abort(403)
+
             new_feature = feature_service.new(
                 request.form['project'], request.form['feature_owner'],
                 request.form['name'], request.form['description'],
@@ -115,36 +122,27 @@ def create_feature():
             flash(f'New feature {new_feature.feature_id} created successfully',
                   'is-success')
             return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
+
+    except (NotExistingException, UnvalidInputException, DatabaseException,
+            EmptyValueException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
 
 
-@app.route(f"{baseUrl}/remove/<uuid:feature_id>", methods=["GET"])
+@app.route(f'{baseUrl}/remove/<uuid:feature_id>', methods=['GET'])
 def remove_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
 
-        if feature.feature_owner != session["user"] or session["user_role"] < 2:
-            flash("Not enough permissions.", 'is-danger')
-            return redirect("/")
+        if feature.feature_owner != session['user'] or session['user_role'] < 2:
+            flash('Not enough permissions.', 'is-danger')
+            return redirect('/')
 
         feature_service.remove(feature_id)
         flash(f'Feature with id {feature_id} removed successfully',
               'is-success')
         return redirect(baseUrl)
-    except NotExistingException as error:
-        flash(str(error), 'is-danger')
-        return redirect(baseUrl)
-    except DatabaseException as error:
+    except (NotExistingException, UnvalidInputException,
+            DatabaseException) as error:
         flash(str(error), 'is-danger')
         return redirect(baseUrl)

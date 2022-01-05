@@ -7,184 +7,167 @@ from services.team_service import team_service
 from services.task_service import task_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
-baseUrl = "/teams"
+baseUrl = '/teams'
 
 
-@app.route(f"{baseUrl}", methods=["GET"])
+@app.route(f'{baseUrl}', methods=['GET'])
 def teams():
     try:
-        teams = team_service.get_all()
-    except NotExistingException as error:
-        teams = []
+        all_teams = team_service.get_all()
     except DatabaseException as error:
         flash(str(error), 'is-danger')
-        return redirect("/")
-    return render_template('teams/teams.html', teams=teams)
+        return redirect('/')
+
+    return render_template('teams/teams.html', teams=all_teams)
 
 
-@app.route(f"{baseUrl}/<uuid:team_id>", methods=["GET"])
+@app.route(f'{baseUrl}/<uuid:team_id>', methods=['GET'])
 def view_team(team_id):
-    team = team_service.get_by_id(team_id)
-    team_leader_profile_image = user_service.get_profile_image(
-        team.team_leader_id)
+    try:
+        team = team_service.get_by_id(team_id)
+        team_leader_profile_image = user_service.get_profile_image(
+            team.team_leader_id)
+    except (NotExistingException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
     return render_template('teams/teams_view.html',
                            team=team,
                            team_leader_profile_image=team_leader_profile_image)
 
 
-@app.route(f"{baseUrl}/edit/<uuid:team_id>", methods=["GET", "POST"])
+@app.route(f'{baseUrl}/edit/<uuid:team_id>', methods=['GET', 'POST'])
 def edit_team(team_id):
     try:
         team = team_service.get_by_id(team_id)
-    except Exception as error:
-        flash(str(error), 'is-danger')
-        return redirect(baseUrl)
 
-    if team.team_leader_id != session["user"] or session["user_role"] < 3:
-        flash("Not enough permissions.", 'is-danger')
-        return redirect("/")
+        if team.team_leader_id != session['user'] or session['user_role'] < 3:
+            flash('Not enough permissions.', 'is-danger')
+            return redirect('/')
 
-    # GET shows task
-    if request.method == "GET":
-        users = user_service.get_users()
-        return render_template('teams/teams_edit.html', team=team, users=users)
+        # GET shows edit page
+        if request.method == 'GET':
+            users = user_service.get_users()
+            return render_template('teams/teams_edit.html',
+                                   team=team,
+                                   users=users)
 
-    # POST updates task
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
-        try:
+        # POST updates team
+        if request.method == 'POST':
+            if session['token'] != request.form['token']:
+                abort(403)
+
             updated_team = team_service.update(request.form['team_id'],
                                                request.form['name'],
                                                request.form['description'],
                                                request.form['team_leader'])
+
             flash(f'Saved team {updated_team.team_id} successfully',
                   'is-success')
             return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
 
-
-@app.route(f"{baseUrl}/edit/<uuid:team_id>/members", methods=["GET", "POST"])
-def edit_team_members(team_id):
-    try:
-        team = team_service.get_by_id(team_id)
-    except Exception as error:
+    except (NotExistingException, EmptyValueException, UnvalidInputException,
+            DatabaseException) as error:
         flash(str(error), 'is-danger')
         return redirect(baseUrl)
 
-    if team.team_leader_id != session["user"] or session["user_role"] < 3:
-        flash("Not enough permissions.", 'is-danger')
-        return redirect("/")
 
-    # GET shows team
-    if request.method == "GET":
-        teamusers = user_service.get_team_users(team_id)
-        users = user_service.get_users()
-        return render_template('teams/teams_members.html',
-                               team=team,
-                               teamusers=teamusers,
-                               users=users)
+@app.route(f'{baseUrl}/edit/<uuid:team_id>/members', methods=['GET', 'POST'])
+def edit_team_members(team_id):
+    try:
+        team = team_service.get_by_id(team_id)
 
-    # POST updates team
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
-        team_id = request.form['team_id']
-        teamusers = user_service.get_team_users(request.form['team_id'])
-        teamusers_id = list(map(lambda x: str(x[0]), teamusers))
-        try:
+        if team.team_leader_id != session['user'] or session['user_role'] < 3:
+            flash('Not enough permissions.', 'is-danger')
+            return redirect('/')
+
+        # GET shows team
+        if request.method == 'GET':
+            teamusers = user_service.get_team_users(team_id)
+            users = user_service.get_users()
+            return render_template('teams/teams_members.html',
+                                   team=team,
+                                   teamusers=teamusers,
+                                   users=users)
+
+        # POST updates team
+        if request.method == 'POST':
+            if session['token'] != request.form['token']:
+                abort(403)
+            team_id = request.form['team_id']
+            teamusers = user_service.get_team_users(request.form['team_id'])
+            teamusers_id = [teamuser[0] for teamuser in teamusers]
+
             wanted = request.form.getlist('members')
             to_be_added = filter(lambda x: x not in teamusers_id, wanted)
             to_be_removed = filter(lambda x: x not in wanted, teamusers_id)
 
             for user_id in to_be_added:
-                result = team_service.add_member(team_id, user_id)
+                team_service.add_member(team_id, user_id)
             for user_id in to_be_removed:
-                result = team_service.remove_member(team_id, user_id)
+                team_service.remove_member(team_id, user_id)
 
-            flash(f'Saved team successfully', 'is-success')
-            return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
+            flash('Saved team successfully', 'is-success')
             return redirect(baseUrl)
 
+    except (NotExistingException, EmptyValueException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
 
-@app.route(f"{baseUrl}/add", methods=["GET", "POST"])
+
+@app.route(f'{baseUrl}/add', methods=['GET', 'POST'])
 def create_team():
-    if session["user_role"] < 2:
-        flash("Not enough permissions.", 'is-danger')
-        return redirect("/")
+    try:
+        if session['user_role'] < 2:
+            flash('Not enough permissions.', 'is-danger')
+            return redirect('/')
 
-    # GET shows creation page
-    if request.method == "GET":
-        users = user_service.get_users()
-        return render_template('teams/teams_add.html', users=users)
+        # GET shows creation page
+        if request.method == 'GET':
+            users = user_service.get_users()
+            return render_template('teams/teams_add.html', users=users)
 
-    # POST creates new task
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
-        try:
+        # POST creates new task
+        if request.method == 'POST':
+            if session['token'] != request.form['token']:
+                abort(403)
+
             new_team = team_service.new(request.form['name'],
                                         request.form['description'],
                                         request.form['team_leader'])
+
             for member in request.form.getlist('members'):
                 added = team_service.add_member(new_team.team_id, member)
+
             if request.form['team_leader'] not in request.form.getlist(
                     'members'):
                 team_service.add_member(new_team.team_id,
                                         request.form['team_leader'])
+
             flash(f'New team {new_team.team_id} created successfully',
                   'is-success')
             return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
+
+    except (NotExistingException, EmptyValueException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
 
 
-@app.route(f"{baseUrl}/remove", methods=["POST"])
+@app.route(f'{baseUrl}/remove', methods=['POST'])
 def remove_team():
     try:
         team = team_service.get_by_id(request.form['team_id'])
-        if team.team_leader_id != session["user"] or session["user_role"] < 3:
-            flash("Not enough permissions.", 'is-danger')
-            return redirect("/")
+        if team.team_leader_id != session['user'] or session['user_role'] < 3:
+            flash('Not enough permissions.', 'is-danger')
+            return redirect('/')
 
         team_service.remove(team.team_id)
         flash(f'Team with id {team.team_id} removed successfully', 'is-success')
         return redirect(baseUrl)
-    except NotExistingException as error:
-        flash(str(error), 'is-danger')
-        return redirect(baseUrl)
-    except DatabaseException as error:
+    except (NotExistingException, UnvalidInputException,
+            DatabaseException) as error:
         flash(str(error), 'is-danger')
         return redirect(baseUrl)

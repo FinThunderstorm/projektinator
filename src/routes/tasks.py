@@ -14,19 +14,24 @@ baseUrl = "/tasks"
 @app.route(f"{baseUrl}", methods=["GET"])
 def tasks():
     try:
-        tasks = task_service.get_all()
-    except NotExistingException as error:
-        tasks = []
+        all_tasks = task_service.get_all()
     except DatabaseException as error:
         flash(str(error), 'is-danger')
         return redirect("/")
-    return render_template('tasks/tasks.html', tasks=tasks)
+    return render_template('tasks/tasks.html', tasks=all_tasks)
 
 
 @app.route(f"{baseUrl}/<uuid:task_id>", methods=["GET", "POST"])
 def view_task(task_id):
-    task = task_service.get_by_id(task_id)
-    assignee_profile_image = user_service.get_profile_image(task.assignee_id)
+    try:
+        task = task_service.get_by_id(task_id)
+        assignee_profile_image = user_service.get_profile_image(
+            task.assignee_id)
+    except (NotExistingException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
+
     return render_template('tasks/tasks_view.html',
                            task=task,
                            assignee_profile_image=assignee_profile_image)
@@ -36,110 +41,109 @@ def view_task(task_id):
 def edit_task(task_id):
     try:
         task = task_service.get_by_id(task_id)
-    except Exception as error:
-        flash(str(error), 'is-danger')
-        return redirect(baseUrl)
 
-    if task.assignee_id != session["user"] or session["user_role"] < 2:
-        flash("Not enough permissions.", 'is-danger')
-        return redirect("/")
+        if task.assignee_id != session["user"] or session["user_role"] < 2:
+            flash("Not enough permissions.", 'is-danger')
+            return redirect("/")
 
-    # GET shows task
-    if request.method == "GET":
-        users = user_service.get_users()
-        features = feature_service.get_features()
-        statuses = status_service.get_all()
-        types = type_service.get_all()
-        return render_template('tasks/tasks_edit.html',
-                               task=task,
-                               users=users,
-                               features=features,
-                               statuses=statuses,
-                               types=types)
+        # GET shows task
+        if request.method == "GET":
+            if session["user_role"] == 1:
+                users = user_service.get_team_users(session["team_id"])
+                if len(users) == 0:
+                    users = [(session["user"], session["username"])]
+            else:
+                users = user_service.get_users()
+            features = feature_service.get_features()
+            statuses = status_service.get_all()
+            types = type_service.get_all()
 
-    # POST updates task
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
-        try:
+            return render_template('tasks/tasks_edit.html',
+                                   task=task,
+                                   users=users,
+                                   features=features,
+                                   statuses=statuses,
+                                   types=types)
+
+        # POST updates task
+        if request.method == "POST":
+            if session["token"] != request.form["token"]:
+                abort(403)
+
             updated_task = task_service.update(
                 request.form['task_id'], request.form['feature_id'],
                 request.form['assignee_id'], request.form['name'],
                 request.form['description'], request.form['status'],
                 request.form['task_type'], request.form['priority'],
                 request.form['flags'])
+
             flash(f'Saved task {updated_task.task_id} successfully',
                   'is-success')
             return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
+
+    except (NotExistingException, EmptyValueException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
 
 
 @app.route(f"{baseUrl}/add", methods=["GET", "POST"])
 def create_task():
-    # GET shows creation page
-    if request.method == "GET":
-        users = user_service.get_users()
-        features = feature_service.get_features()
-        statuses = status_service.get_all()
-        types = type_service.get_all()
-        return render_template('tasks/tasks_add.html',
-                               users=users,
-                               features=features,
-                               statuses=statuses,
-                               types=types)
+    try:
+        # GET shows creation page
+        if request.method == "GET":
+            if session["user_role"] == 1:
+                users = user_service.get_team_users(session["team_id"])
+                if len(users) == 0:
+                    users = [(session["user"], session["username"])]
+            else:
+                users = user_service.get_users()
+            features = feature_service.get_features()
+            statuses = status_service.get_all()
+            types = type_service.get_all()
 
-    # POST creates new task
-    if request.method == "POST":
-        if session["token"] != request.form["token"]:
-            abort(403)
-        try:
+            return render_template('tasks/tasks_add.html',
+                                   users=users,
+                                   features=features,
+                                   statuses=statuses,
+                                   types=types)
+
+        # POST creates new task
+        if request.method == "POST":
+            if session["token"] != request.form["token"]:
+                abort(403)
+
             new_task = task_service.new(
                 request.form['feature_id'], request.form['assignee_id'],
                 request.form['name'], request.form['description'],
                 request.form['status'], request.form['task_type'],
                 request.form['priority'], request.form['flags'])
+
             flash(f'New tasks {new_task.task_id} created successfully',
                   'is-success')
             return redirect(baseUrl)
-        except NotExistingException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except EmptyValueException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except UnvalidInputException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
-        except DatabaseException as error:
-            flash(str(error), 'is-danger')
-            return redirect(baseUrl)
+
+    except (NotExistingException, EmptyValueException, UnvalidInputException,
+            DatabaseException) as error:
+        flash(str(error), 'is-danger')
+        return redirect(baseUrl)
 
 
 @app.route(f"{baseUrl}/remove/<uuid:task_id>", methods=["POST"])
 def remove_task(task_id):
     try:
         task = task_service.get_by_id(task_id)
+
         if task.assignee_id != session["user"] or session["user_role"] < 2:
             flash("Not enough permissions.", 'is-danger')
             return redirect("/")
 
         task_service.remove(task_id)
+
         flash(f'Task with id {task_id} removed successfully', 'is-success')
         return redirect(baseUrl)
-    except NotExistingException as error:
-        flash(str(error), 'is-danger')
-        return redirect(baseUrl)
-    except DatabaseException as error:
+
+    except (NotExistingException, UnvalidInputException,
+            DatabaseException) as error:
         flash(str(error), 'is-danger')
         return redirect(baseUrl)
