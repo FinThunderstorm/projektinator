@@ -5,10 +5,10 @@ app = Flask(__name__)
 app.secret_key = configs.secret
 
 if configs.mode != 'TEST':
-    import routes.base    # noqa
-    import routes.users    # noqa
-    import routes.teams    # noqa
-    import routes.tasks    # noqa
-    import routes.projects    # noqa
-    import routes.features    # noqa
-    import routes.comments    # noqa
+    import routes.base    # pylint: disable=unused-import
+    import routes.users    # pylint: disable=unused-import
+    import routes.teams    # pylint: disable=unused-import
+    import routes.tasks    # pylint: disable=unused-import
+    import routes.projects    # pylint: disable=unused-import
+    import routes.features    # pylint: disable=unused-import
+    import routes.comments    # pylint: disable=unused-import
