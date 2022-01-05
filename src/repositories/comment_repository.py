@@ -28,7 +28,7 @@ class CommentRepository:
                 saving into the database
 
         Returns:
-            tuple: created comment's id, creation and updated on
+            tuple: created comment's id, creation and updated on time
         """
 
         values = {
@@ -56,16 +56,16 @@ class CommentRepository:
         sql = sql_feature if fid else sql_task
 
         try:
-            cid, created, updated_on = db.session.execute(sql,
-                                                          values).fetchone()
+            comment_id, created, updated_on = db.session.execute(
+                sql, values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException('While saving new comment') from error
 
-        if not cid:
+        if not comment_id:
             raise DatabaseException('While saving new comment') from error
 
-        return (cid, created, updated_on)
+        return (comment_id, created, updated_on)
 
     def get_by_id(self, cid: str) -> tuple:
         """get_by_id is used to find exact comment with
@@ -129,7 +129,7 @@ class CommentRepository:
         """
 
         sql = '''
-            SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name, C.task_id, T.name
+            SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name
             FROM Comments C
             JOIN Users U ON C.assignee = U.id
             JOIN Features F ON C.feature_id = F.id
@@ -139,7 +139,8 @@ class CommentRepository:
         try:
             comments = db.session.execute(sql, {'id': fid}).fetchall()
         except Exception as error:
-            raise DatabaseException('While getting all comments') from error
+            raise DatabaseException(
+                'While getting all comments by feature id') from error
 
         return [('features', comment[0], comment[1], comment[2], comment[3],
                  comment[4], comment[5], comment[6], comment[7], comment[8],
@@ -163,7 +164,7 @@ class CommentRepository:
         """
 
         sql = '''
-            SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name, C.task_id, T.name
+            SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.task_id, T.name
             FROM Comments C
             JOIN Users U ON C.assignee = U.id
             JOIN Tasks T ON C.task_id = T.id
@@ -173,11 +174,12 @@ class CommentRepository:
         try:
             comments = db.session.execute(sql, {'id': tid}).fetchall()
         except Exception as error:
-            raise DatabaseException('While getting all comments') from error
+            raise DatabaseException(
+                'While getting all comments by task id') from error
 
         return [('tasks', comment[0], comment[1], comment[2], comment[3],
-                 comment[4], comment[5], comment[6], comment[7], comment[10],
-                 comment[11]) for comment in comments]
+                 comment[4], comment[5], comment[6], comment[7], comment[8],
+                 comment[9]) for comment in comments]
 
     def get_all_by_assignee(self, aid: str) -> [tuple]:
         """get_all_by_assignee is used to get list of all comments
@@ -207,7 +209,8 @@ class CommentRepository:
         try:
             comments = db.session.execute(sql, {'id': aid}).fetchall()
         except Exception as error:
-            raise DatabaseException('While getting all comments') from error
+            raise DatabaseException(
+                'While getting all comments by assignee') from error
 
         return [('features', comment[0], comment[1], comment[2], comment[3],
                  comment[4], comment[5], comment[6], comment[7], comment[8],
@@ -243,7 +246,7 @@ class CommentRepository:
                 saving into the database
 
         Returns:
-            tuple: updated comment's id, creation and updated on
+            tuple: updated comment's id, creation and updated on time
         """
 
         values = {

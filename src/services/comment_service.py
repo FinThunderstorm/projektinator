@@ -175,6 +175,7 @@ class CommentService:
                     fname=comment[10])
             for comment in self._comment_repository.get_all_by_feature_id(fid)
         ]
+
         return comments
 
     def get_all_by_task_id(self, tid: str) -> [Comment]:
@@ -279,6 +280,9 @@ class CommentService:
             raise UnvalidInputException("comment's id")
 
         comment = self._comment_repository.get_by_id(cid)
+
+        if not comment:
+            raise NotExistingException('Comment')
 
         if comment[0] == "features":
             return Comment(comment[1],
@@ -416,6 +420,11 @@ class CommentService:
             NotExistingException: raised if there is none
                 comments with given id
         """
+
+        if not validate_uuid4(cid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='comment id')
+
         self._comment_repository.get_by_id(cid)
         self._comment_repository.remove(cid)
 
