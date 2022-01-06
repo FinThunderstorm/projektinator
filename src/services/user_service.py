@@ -167,10 +167,11 @@ class UserService:
                 while interacting with the database
 
         Returns:
-            [tuple]: list of users id and name
+            [tuple]: list of users id, name and profile image
         '''
 
-        users = [(user[0], fullname(user[1], user[2]))
+        users = [(user[0], fullname(user[1],
+                                    user[2]), image_string(user[3], user[4]))
                  for user in self._user_repository.get_users()]
         return users
 
@@ -192,7 +193,7 @@ class UserService:
                 id is given
 
         Returns:
-            [tuple]: list of users id and name
+            [tuple]: list of users, name and profile image
         '''
         if not validate_uuid4(teid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
@@ -201,7 +202,8 @@ class UserService:
         if not self._team_repository.get_by_id(teid):
             raise NotExistingException('Team')
 
-        users = [(user[0], fullname(user[1], user[2]))
+        users = [(user[0], fullname(user[1],
+                                    user[2]), image_string(user[3], user[4]))
                  for user in self._user_repository.get_team_users(teid)]
         return users
 

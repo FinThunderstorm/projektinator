@@ -13,10 +13,9 @@ def validate_uuid4(uuid: str) -> bool:
         bool: returns valid string and if not valid,
              returns None
     """
-    pattern = re.compile(r'''
-            ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-
-            [89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$
-        ''')
+    pattern = re.compile(
+        r'^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$'    # pylint: disable=line-too-long
+    )
 
     if not isinstance(uuid, str):
         if isinstance(uuid, UUID):

@@ -16,7 +16,7 @@ def index():
         features = feature_service.get_all_by_feature_owner(user_id)
         tasks = task_service.get_all_by_assignee(user_id)
         comments = comment_service.get_all_by_assignee(user_id)
-        teams = team_service.get_by_team_leader(user_id)
+        teams = team_service.get_all_by_team_leader(user_id)
 
         return render_template("index.html",
                                projects=projects,
@@ -25,9 +25,11 @@ def index():
                                comments=comments,
                                teams=teams)
     except KeyError:
+
         return render_template("index.html")
 
 
 @app.route("/health")
 def health():
+    # lisää statistics serviceltä db testi
     return "PONG"
