@@ -1,4 +1,3 @@
-from sqlalchemy.exc import IntegrityError
 from utils.database import db
 from utils.exceptions import DatabaseException, NotExistingException
 
