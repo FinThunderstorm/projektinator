@@ -60,8 +60,7 @@
                             </form>     
                         </td>
                         <td>
-                            <form action="/users/remove" method="post">
-                                <input type="hidden" name="user_id" value="{{ user.user_id }}" />
+                            <form action="/users/remove/{{ user.user_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
                                     <i class="material-icons" id="remove{{ user.user_id }}">delete</i>
                                     <div class="mdl-tooltip" data-mdl-for="remove{{ user.user_id }}">

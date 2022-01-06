@@ -8,6 +8,8 @@ services:
       target: dev
     image: projektinator-dev
     container_name: projektinator-dev
+    env_file:
+      - ./.env
     depends_on:
       - db
     ports:

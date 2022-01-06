@@ -18,7 +18,7 @@ Sovelluksella voi luoda projekteja. Projekti voi sisältää useita erilaisia om
 Testaustunnukset:
 Pääkäyttäjä: admin/admin
 Tiimin vetäjä: leader/leader
-Peruskäyttäjä: user/user
+Peruskäyttäjä: project/project
 
 ## Tech stack
 
