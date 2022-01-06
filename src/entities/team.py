@@ -2,8 +2,8 @@ from entities.user import User
 
 
 class Team:
-    """Class Team resembles user as a object from the database.
-    """
+    '''Class Team resembles user as a object from the database.
+    '''
 
     def __init__(self,
                  teid: str,
@@ -11,7 +11,7 @@ class Team:
                  description: str,
                  tlid: str,
                  tlname: str,
-                 members: [User] = []):
+                 members: [User] = None):
         self.team_id = teid
         self.name = name
         self.description = description
@@ -20,18 +20,21 @@ class Team:
         self.members = members
 
     def __str__(self) -> str:
-        """Method for generating formatted string from object to be mainly used in debugging matters.
+        '''Method for generating formatted string from
+           object to be mainly used in debugging matters.
 
         Returns:
             str: team object in formatted string
-        """
-        members = ""
+        '''
+        members = ''
         if self.members:
             for member in self.members:
                 members += f'   › {member.fullname} ({member.user_id})\n'
 
-        return (
-            f'Team ”{self.name} ({self.team_id})”\n'
-            f" - description ”{self.description}”\n"
-            f' - team leader ”{self.team_leader_name} ({self.team_leader_name})”\n'
-            f' - members\n”{members}”')
+        tlid = self.team_leader_id
+        tlname = self.team_leader_name
+
+        return (f'Team ”{self.name} ({self.team_id})”\n'
+                f' - description ”{self.description}”\n'
+                f' - team leader ”{tlid} ({tlname})”\n'
+                f' - members\n”{members}”')

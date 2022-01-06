@@ -47,7 +47,7 @@ class TaskService:
             default_comment_service (CommentService, optional):
                 interaction module with comments.
                 Defaults to comment_service.
-            
+
         '''
         self._task_repository = default_task_repository
         self._feature_repository = default_feature_repository

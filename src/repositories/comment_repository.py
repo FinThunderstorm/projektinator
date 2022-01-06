@@ -1,7 +1,5 @@
-from entities.comment import Comment
 from utils.database import db
 from utils.exceptions import DatabaseException, NotExistingException
-from utils.helpers import fullname
 
 
 class CommentRepository:

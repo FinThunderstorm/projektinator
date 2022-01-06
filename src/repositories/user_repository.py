@@ -3,8 +3,6 @@ from sqlalchemy.exc import IntegrityError
 from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException, UsernameDuplicateException
 from utils.database import db
 
-from entities.user import User
-
 
 class UserRepository:
     '''Class used for handling users in the database

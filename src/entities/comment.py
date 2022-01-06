@@ -3,8 +3,8 @@ from markdown2 import markdown
 
 
 class Comment:
-    """Class Comment resembles comment and activity in features or in tasks.
-    """
+    '''Class Comment resembles comment and activity in features or in tasks.
+    '''
 
     def __init__(self,
                  cid: str,
@@ -19,7 +19,8 @@ class Comment:
                  fid: str = None,
                  fname: str = None,
                  mode: str = None):
-        """Initializes Comment with given values. Is optional to use with tasks or features.
+        '''Initializes Comment with given values.
+           Is optional to use with tasks or features.
 
         Args:
             cid (str): id of comment, uuid4 formatted by database
@@ -29,11 +30,15 @@ class Comment:
             comment (str): description of what have been done
             created (datetime): datetime when added into database
             updated_on (datetime): when comment were updated last time
-            tid (str, optional): id of task into which references. Defaults to None.
-            tname (str, optional): name of task into which references. Defaults to None.
-            fid (str, optional): id of feature into which references. Defaults to None.
-            tname (str, optional): name of task into which references. Defaults to None.
-        """
+            tid (str, optional): id of task into which
+                references. Defaults to None.
+            tname (str, optional): name of task into which
+                references. Defaults to None.
+            fid (str, optional): id of feature into which
+                references. Defaults to None.
+            tname (str, optional): name of task into which
+                references. Defaults to None.
+        '''
         self.comment_id = cid
         self.task_id = tid
         self.task_name = tname
@@ -49,12 +54,18 @@ class Comment:
         self.mode = mode
 
     def __str__(self) -> str:
-        """Method for generating formatted string from object to be mainly used in debugging matters.
+        '''Method for generating formatted string from object
+           to be mainly used in debugging matters.
 
         Returns:
             str: comment object in formatted string
-        """
-        relates = f"task ”{self.task_name} ({self.task_name})”" if self.task_id else f"feature ”{self.feature_name} ({self.feature_id})”"
+        '''
+
+        if self.task_id:
+            relates = f'task ”{self.task_name} ({self.task_name})”'
+        else:
+            relates = f'feature ”{self.feature_name} ({self.feature_id})”'
+
         return (f'Comment ”{self.comment_id}”: \n'
                 f' - is related to {relates}\n'
                 f' - mode {self.mode}\n'

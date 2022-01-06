@@ -1,5 +1,6 @@
 from app import app
 from flask import render_template, session, abort
+from sqlalchemy.exc import OperationalError
 from services.project_service import project_service
 from services.feature_service import feature_service
 from services.task_service import task_service
@@ -36,6 +37,6 @@ def index():
 def health():
     try:
         statistics_service.db_health()
-    except:
+    except OperationalError:
         abort(503)
     return "PONG"

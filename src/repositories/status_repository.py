@@ -3,6 +3,8 @@ from utils.exceptions import DatabaseException, NotExistingException
 
 
 class StatusRepository:
+    '''Class for handling Statuses in the database
+    '''
 
     def get_all(self) -> [tuple]:
         '''get_all is used to list of all statuses

@@ -1,7 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 from utils.database import db
 from utils.exceptions import DatabaseException, NotExistingException, UnvalidInputException
-from entities.team import Team
 
 
 class TeamRepository:
@@ -45,8 +44,8 @@ class TeamRepository:
         try:
             team_id = db.session.execute(sql_teams, values).fetchone()
             teid, user_id = db.session.execute(sql_teamsusers, {
-                "team_id": team_id[0],
-                "user_id": tlid
+                'team_id': team_id[0],
+                'user_id': tlid
             })
             db.session.commit()
         except IntegrityError as error:
@@ -230,8 +229,8 @@ class TeamRepository:
         try:
             team_id = db.session.execute(sql, values).fetchone()
             teid_s, user_id = db.session.execute(sql_teamsusers, {
-                "team_id": team_id[0],
-                "user_id": tlid
+                'team_id': team_id[0],
+                'user_id': tlid
             })
             db.session.commit()
         except IntegrityError as error:
@@ -244,8 +243,11 @@ class TeamRepository:
         if str(teid) != str(team_id):
             raise DatabaseException('While saving updated team')
 
+        if str(tlid) != str(user_id):
+            raise DatabaseException('While saving updated team')
+
         if str(teid) != str(teid_s):
-            raise DatabaseException("While saving updated team")
+            raise DatabaseException('While saving updated team')
 
         return team_id[0]
 

@@ -3,8 +3,8 @@ from entities.feature import Feature
 
 
 class Project:
-    """Class Project resembles project from the database as a object
-    """
+    '''Class Project resembles project from the database as a object
+    '''
 
     def __init__(self,
                  pid: str,
@@ -14,9 +14,9 @@ class Project:
                  description: str,
                  created: datetime,
                  updated_on: datetime,
-                 flags: str = "",
-                 features: [Feature] = []):
-        """initializes Project object
+                 flags: str = '',
+                 features: [Feature] = None):
+        '''initializes Project object
 
         Args:
             pid (str): id of project
@@ -26,9 +26,11 @@ class Project:
             description (str): description of project
             created (datetime): creation time of project
             updated_on (datetime): last time updated
-            flags ([str], optional): flags are used to filter projects. Defaults to None.
-            features ([Feature], optional): list of features referencing to project. Defaults to None.
-        """
+            flags ([str], optional): flags are used to filter
+                projects. Defaults to None.
+            features ([Feature], optional): list of features
+                referencing to project. Defaults to None.
+        '''
         self.project_id = pid
         self.project_owner_id = p_owner
         self.project_owner_name = p_owner_name
@@ -40,34 +42,39 @@ class Project:
         self.features = features
 
     def __str__(self) -> str:
-        """Method for generating formatted string from object to be mainly used in debugging matters.
+        '''Method for generating formatted string from object
+           to be mainly used in debugging matters.
 
         Returns:
             str: project object in formatted string
-        """
-        features = ""
+        '''
+
+        features = ''
         if self.features:
             for feature in self.features:
                 features += f'   › {feature.name} ({feature.feature_id})\n'
-        return (
-            f'Project ”{self.name}”: \n'
-            f' - id ”{self.project_id}”\n'
-            f' - product owner ”{self.project_owner_name} ({self.project_owner_id})”\n'
-            f' - description ”{self.description}”\n'
-            f' - created ”{self.created}”\n'
-            f' - updated on ”{self.updated_on}”\n'
-            f' - flags ”{self.flags}”\n'
-            f' - features:\n{features}')
+
+        poid = self.project_owner_id
+        poname = self.project_owner_name
+
+        return (f'Project ”{self.name}”: \n'
+                f' - id ”{self.project_id}”\n'
+                f' - product owner ”{poname} ({poid})”\n'
+                f' - description ”{self.description}”\n'
+                f' - created ”{self.created}”\n'
+                f' - updated on ”{self.updated_on}”\n'
+                f' - flags ”{self.flags}”\n'
+                f' - features:\n{features}')
 
     def __eq__(self, o: object) -> bool:
-        """Method for comparing if two objects are the same
+        '''Method for comparing if two objects are the same
 
         Args:
             o (object): object in comparisation
 
         Returns:
             bool: result are the two objects the same
-        """
+        '''
         for field, value in self.__dict__.items():
             if field not in o.__dict__.keys():
                 return False

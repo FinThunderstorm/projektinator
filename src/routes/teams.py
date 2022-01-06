@@ -1,20 +1,17 @@
-import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
-from services.feature_service import feature_service
 from services.user_service import user_service
 from services.team_service import team_service
-from services.task_service import task_service
-from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
+from utils.exceptions import NotExistingException, EmptyValueException, DatabaseException, UnvalidInputException
 
-baseUrl = '/teams'
+base_url = '/teams'
 
 
-@app.route(f'{baseUrl}', methods=['GET'])
+@app.route(f'{base_url}', methods=['GET'])
 def teams():
-    if session["user_role"] < 2:
-        flash("Not enough permissions.", 'is-danger')
-        return redirect("/")
+    if session['user_role'] < 2:
+        flash('Not enough permissions.', 'is-danger')
+        return redirect('/')
     try:
         all_teams = team_service.get_all()
     except DatabaseException as error:
@@ -24,7 +21,7 @@ def teams():
     return render_template('teams/teams.html', teams=all_teams)
 
 
-@app.route(f'{baseUrl}/<uuid:team_id>', methods=['GET'])
+@app.route(f'{base_url}/<uuid:team_id>', methods=['GET'])
 def view_team(team_id):
     try:
         team = team_service.get_by_id(team_id)
@@ -33,14 +30,14 @@ def view_team(team_id):
     except (NotExistingException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
     return render_template('teams/teams_view.html',
                            team=team,
                            team_leader_profile_image=team_leader_profile_image)
 
 
-@app.route(f'{baseUrl}/edit/<uuid:team_id>', methods=['GET', 'POST'])
+@app.route(f'{base_url}/edit/<uuid:team_id>', methods=['GET', 'POST'])
 def edit_team(team_id):
     try:
         team = team_service.get_by_id(team_id)
@@ -68,15 +65,15 @@ def edit_team(team_id):
 
             flash(f'Saved team {updated_team.team_id} successfully',
                   'is-success')
-            return redirect(baseUrl)
+            return redirect(base_url)
 
     except (NotExistingException, EmptyValueException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
 
-@app.route(f'{baseUrl}/edit/<uuid:team_id>/members', methods=['GET', 'POST'])
+@app.route(f'{base_url}/edit/<uuid:team_id>/members', methods=['GET', 'POST'])
 def edit_team_members(team_id):
     try:
         team = team_service.get_by_id(team_id)
@@ -112,15 +109,15 @@ def edit_team_members(team_id):
                 team_service.remove_member(team_id, user_id)
 
             flash('Saved team successfully', 'is-success')
-            return redirect(baseUrl)
+            return redirect(base_url)
 
     except (NotExistingException, EmptyValueException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
 
-@app.route(f'{baseUrl}/add', methods=['GET', 'POST'])
+@app.route(f'{base_url}/add', methods=['GET', 'POST'])
 def create_team():
     try:
         if session['user_role'] < 2:
@@ -151,15 +148,15 @@ def create_team():
 
             flash(f'New team {new_team.team_id} created successfully',
                   'is-success')
-            return redirect(baseUrl)
+            return redirect(base_url)
 
     except (NotExistingException, EmptyValueException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
 
-@app.route(f'{baseUrl}/remove', methods=['POST'])
+@app.route(f'{base_url}/remove', methods=['POST'])
 def remove_team():
     try:
         team = team_service.get_by_id(request.form['team_id'])
@@ -169,8 +166,8 @@ def remove_team():
 
         team_service.remove(team.team_id)
         flash(f'Team with id {team.team_id} removed successfully', 'is-success')
-        return redirect(baseUrl)
+        return redirect(base_url)
     except (NotExistingException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)

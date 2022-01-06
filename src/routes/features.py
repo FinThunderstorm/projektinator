@@ -1,4 +1,3 @@
-import os
 from flask import redirect, render_template, request, session, abort, flash
 from app import app
 from services.feature_service import feature_service
@@ -7,12 +6,12 @@ from services.status_service import status_service
 from services.type_service import type_service
 from services.user_service import user_service
 from services.statistics_service import statistics_service
-from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
+from utils.exceptions import NotExistingException, EmptyValueException, DatabaseException, UnvalidInputException
 
-baseUrl = '/features'
+base_url = '/features'
 
 
-@app.route(f'{baseUrl}', methods=['GET'])
+@app.route(f'{base_url}', methods=['GET'])
 def features():
     try:
         all_features = feature_service.get_all()
@@ -23,7 +22,7 @@ def features():
     return render_template('features/features.html', features=all_features)
 
 
-@app.route(f'{baseUrl}/<uuid:feature_id>', methods=['GET'])
+@app.route(f'{base_url}/<uuid:feature_id>', methods=['GET'])
 def view_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
@@ -33,7 +32,7 @@ def view_feature(feature_id):
     except (NotExistingException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
     return render_template(
         'features/features_view.html',
@@ -42,7 +41,7 @@ def view_feature(feature_id):
         feature_owner_profile_image=feature_owner_profile_image)
 
 
-@app.route(f'{baseUrl}/edit/<uuid:feature_id>', methods=['GET', 'POST'])
+@app.route(f'{base_url}/edit/<uuid:feature_id>', methods=['GET', 'POST'])
 def edit_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
@@ -53,10 +52,10 @@ def edit_feature(feature_id):
 
         # GET shows feature
         if request.method == 'GET':
-            if session["user_role"] == 1:
-                users = user_service.get_team_users(session["team_id"])
+            if session['user_role'] == 1:
+                users = user_service.get_team_users(session['team_id'])
                 if len(users) == 0:
-                    users = [(session["user"], session["username"])]
+                    users = [(session['user'], session['username'])]
             else:
                 users = user_service.get_users()
             projects = project_service.get_projects()
@@ -83,23 +82,23 @@ def edit_feature(feature_id):
                 request.form['priority'])
             flash(f'Saved feature {updated_feature.feature_id} successfully',
                   'is-success')
-            return redirect(baseUrl)
+            return redirect(base_url)
 
     except (NotExistingException, UnvalidInputException, DatabaseException,
             EmptyValueException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
 
-@app.route(f'{baseUrl}/add', methods=['GET', 'POST'])
+@app.route(f'{base_url}/add', methods=['GET', 'POST'])
 def create_feature():
     # GET shows creation page
     try:
         if request.method == 'GET':
-            if session["user_role"] == 1:
-                users = user_service.get_team_users(session["team_id"])
+            if session['user_role'] == 1:
+                users = user_service.get_team_users(session['team_id'])
                 if len(users) == 0:
-                    users = [(session["user"], session["username"])]
+                    users = [(session['user'], session['username'])]
             else:
                 users = user_service.get_users()
             projects = project_service.get_projects()
@@ -124,15 +123,15 @@ def create_feature():
                 request.form['priority'], request.form['flags'])
             flash(f'New feature {new_feature.feature_id} created successfully',
                   'is-success')
-            return redirect(baseUrl)
+            return redirect(base_url)
 
     except (NotExistingException, UnvalidInputException, DatabaseException,
             EmptyValueException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)
 
 
-@app.route(f'{baseUrl}/remove/<uuid:feature_id>', methods=['GET'])
+@app.route(f'{base_url}/remove/<uuid:feature_id>', methods=['GET'])
 def remove_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
@@ -144,8 +143,8 @@ def remove_feature(feature_id):
         feature_service.remove(feature_id)
         flash(f'Feature with id {feature_id} removed successfully',
               'is-success')
-        return redirect(baseUrl)
+        return redirect(base_url)
     except (NotExistingException, UnvalidInputException,
             DatabaseException) as error:
         flash(str(error), 'is-danger')
-        return redirect(baseUrl)
+        return redirect(base_url)

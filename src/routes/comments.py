@@ -1,15 +1,13 @@
 from flask import redirect, render_template, request, session, abort, flash, escape
 from app import app
-from services.feature_service import feature_service
-from services.task_service import task_service
 from services.comment_service import comment_service
 from utils.exceptions import NotExistingException, EmptyValueException, DatabaseException, UnvalidInputException
 from utils.validators import validate_uuid4
 
-baseUrl = '/comments'
+base_url = '/comments'
 
 
-@app.route(f'{baseUrl}/edit', methods=['GET', 'POST'])
+@app.route(f'{base_url}/edit', methods=['GET', 'POST'])
 def edit_comment():
     try:
         cid = request.args.get('id')
@@ -64,7 +62,7 @@ def edit_comment():
         return redirect('/')
 
 
-@app.route(f'{baseUrl}/add', methods=['GET', 'POST'])
+@app.route(f'{base_url}/add', methods=['GET', 'POST'])
 def create_comment():
     # GET shows creation page
     if request.method == 'GET':
@@ -114,7 +112,7 @@ def create_comment():
         return redirect('/')
 
 
-@app.route(f'{baseUrl}/remove/<uuid:comment_id>', methods=['GET'])
+@app.route(f'{base_url}/remove/<uuid:comment_id>', methods=['GET'])
 def remove_comment(comment_id):
     try:
         comment = comment_service.get_by_id(comment_id)

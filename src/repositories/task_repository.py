@@ -1,4 +1,3 @@
-from entities.task import Task
 from utils.database import db
 from utils.exceptions import DatabaseException, NotExistingException
 
