@@ -1,172 +1,301 @@
+from sqlalchemy.exc import IntegrityError
 from utils.database import db
-from utils.exceptions import DatabaseException, NotExistingException
+from utils.exceptions import DatabaseException, NotExistingException, UnvalidInputException
 from entities.team import Team
-from repositories.user_repository import user_repository
-from utils.helpers import fullname
 
 
 class TeamRepository:
+    '''Class for handling Teams in the database
+    '''
 
-    def new(self, name: str, description: str, tlid: str, tlname: str):
-        sql = """
-        INSERT INTO Teams
-        (name, description, team_leader)
-        VALUES (:name, :description, :team_leader)
-        RETURNING id
-        """
+    def new(self, name: str, description: str, tlid: str) -> str:
+        '''new is used to create new teams into the database
 
-        values = {"name": name, "description": description, "team_leader": tlid}
+        Args:
+            name (str): name of the team
+            description (str): description of the team
+            tlid (str): id of the team leader
+
+        Raises:
+            DatabaseException: raised if problems occurs while
+                saving into the database
+
+        Returns:
+            str: created team's id
+        '''
+
+        sql = '''
+            INSERT INTO Teams
+            (name, description, team_leader)
+            VALUES (:name, :description, :team_leader)
+            RETURNING id
+        '''
+
+        values = {'name': name, 'description': description, 'team_leader': tlid}
 
         try:
-            teid = db.session.execute(sql, values).fetchone()[0]
+            team_id = db.session.execute(sql, values).fetchone()
             db.session.commit()
         except Exception as error:
             raise DatabaseException(
                 'While saving new team into database') from error
 
-        if not teid:
+        if not team_id:
             raise DatabaseException(
                 'While saving new team into database') from error
 
-        new_team = Team(teid, name, description, tlid, tlname)
+        return team_id[0]
 
-        return new_team
+    def get_all(self) -> [tuple]:
+        '''get_all is used to list of all teams in the database
 
-    def get_all(self):
-        sql = """
+        If no teams found, returns empty list.
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+
+        Returns:
+            [tuple]: list of all teams
+        '''
+
+        sql = '''
             SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname
             FROM Teams T
             JOIN Users U ON T.team_leader = U.id
-        """
+        '''
+
         try:
             teams = db.session.execute(sql).fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all teams') from error
+            raise DatabaseException('While getting all teams') from error
 
-        return [
-            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]),
-                 user_repository.get_by_team(team[0])) for team in teams
-        ]
+        return [(team[0], team[1], team[2], team[3], team[4], team[5])
+                for team in teams]
 
-    def get_by_team_leader(self, tlid: str):
-        sql = """
+    def get_all_by_team_leader(self, tlid: str) -> [tuple]:
+        '''get_all_by_team_leader is used get all teams
+           associated with given team leader
+
+        If no features found, returns empty list.
+
+        Args:
+            tlid (str): id of the team leader
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+
+        Returns:
+            [tuple]: list of found teams
+        '''
+
+        sql = '''
             SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname
             FROM Teams T
             JOIN Users U ON T.team_leader = U.id
             WHERE T.team_leader=:id
-        """
+        '''
+
         try:
-            teams = db.session.execute(sql, {"id": tlid}).fetchall()
+            teams = db.session.execute(sql, {'id': tlid}).fetchall()
         except Exception as error:
-            raise DatabaseException('while getting all teams') from error
+            raise DatabaseException(
+                'While getting all teams by team leader') from error
 
-        return [
-            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]),
-                 user_repository.get_by_team(team[0])) for team in teams
-        ]
+        return [(team[0], team[1], team[2], team[3], team[4], team[5])
+                for team in teams]
 
-    def get_by_id(self, teid: str):
-        sql = """
+    def get_by_id(self, teid: str) -> tuple:
+        '''get_by_id is used to found team with given id
+
+        Args:
+            teid (str): id of the team
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if there is none teams with given id
+
+        Returns:
+            tuple: found team
+        '''
+
+        sql = '''
             SELECT T.id, T.name, T.description, T.team_leader, U.firstname, U.lastname
             FROM Teams T
             JOIN Users U ON T.team_leader = U.id
             WHERE T.id=:id
-        """
+        '''
+
         try:
-            team = db.session.execute(sql, {"id": teid}).fetchone()
+            team = db.session.execute(sql, {'id': teid}).fetchone()
         except Exception as error:
             raise DatabaseException('while getting team') from error
 
-        return Team(team[0], team[1], team[2], team[3],
-                    fullname(team[4], team[5]),
-                    user_repository.get_by_team(team[0]))
+        if not team:
+            raise NotExistingException('Team')
 
-    def get_name(self, teid: str):
-        sql = """
+        return (team[0], team[1], team[2], team[3], team[4], team[5])
+
+    def get_name(self, teid: str) -> str:
+        '''get_name is used to get name of team with given id
+
+        Args:
+            teid (str): id of the team
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if team is not
+                found with given id
+
+        Returns:
+            str: found name
+        '''
+
+        sql = '''
             SELECT name 
             FROM Teams T 
             WHERE id=:id
-        """
+        '''
+
         try:
-            team = db.session.execute(sql, {"id": teid}).fetchone()
+            name = db.session.execute(sql, {'id': teid}).fetchone()
         except Exception as error:
-            raise DatabaseException('while getting name for team') from error
+            raise DatabaseException("While getting team's name") from error
 
-        return team
+        return name[0]
 
-    def update(self, teid: str, name: str, description: str, tlid: str,
-               tlname: str):
+    def update(self, teid: str, name: str, description: str, tlid: str) -> str:
+        '''update is used to update team with given values into the database
+
+        Args:
+            teid (str): id of the team
+            name (str): name of the team
+            description (str): description of the team
+            tlid (str): id of the team leader
+
+        Raises:
+            DatabaseException: raised if problems occurs while
+                saving into the database
+
+        Returns:
+            str: updated team's id
+        '''
+
         values = {
-            "id": teid,
-            "name": name,
-            "description": description,
-            "team_leader": tlid
+            'id': teid,
+            'name': name,
+            'description': description,
+            'team_leader': tlid
         }
-        sql = """
+
+        sql = '''
             UPDATE Teams 
             SET name=:name, description=:description, team_leader=:team_leader
             WHERE id=:id 
             RETURNING id
-        """
+        '''
+
         try:
-            team_id = db.session.execute(sql, values).fetchone()[0]
+            team_id = db.session.execute(sql, values).fetchone()
             db.session.commit()
         except Exception as error:
-            print(error)
-            raise DatabaseException(
-                'While saving updated team into database') from error
+            raise DatabaseException('While saving updated team') from error
+
         if str(teid) != str(team_id):
-            print('h')
-            raise DatabaseException('While saving updated team into database')
+            raise DatabaseException('While saving updated team')
 
-        return Team(teid, name, description, tlid, tlname,
-                    user_repository.get_by_team(teid))
+        return team_id[0]
 
-    def add_member(self, teid: str, uid: str):
-        sql = """
+    def add_member(self, teid: str, uid: str) -> tuple:
+        '''add_member is used to add new members into team
+
+        Args:
+            teid (str): id of the team
+            uid (str): id of the user
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            UnvalidInputException: raised if user
+                is already in some team
+
+        Returns:
+            tuple: user and team ids
+        '''
+
+        sql = '''
             INSERT INTO Teamsusers
             (team_id, user_id)
             VALUES (:team_id, :user_id)
             RETURNING team_id, user_id
-        """
-        values = {"team_id": teid, "user_id": uid}
+        '''
+        values = {'team_id': teid, 'user_id': uid}
         try:
             team_id, user_id = db.session.execute(sql, values).fetchone()
             db.session.commit()
+        except IntegrityError as error:
+            raise UnvalidInputException('Given user is already in some team',
+                                        str='adding user to team') from error
         except Exception as error:
-            print(error)
             raise DatabaseException(
                 'While saving new user into team') from error
 
         if str(teid) != str(team_id) or str(uid) != str(user_id):
-            print('hh')
             raise DatabaseException('While saving new user into team')
 
         return (team_id, user_id)
 
     def remove_member(self, teid: str, uid: str):
-        sql = """
+        '''remove_member is used to remove members from the team
+
+        Args:
+            teid (str): id of the team
+            uid (str): id of the user
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+        '''
+
+        sql = '''
             DELETE FROM Teamsusers
             WHERE (team_id=:team_id and user_id=:user_id)
-        """
+        '''
+
         try:
-            db.session.execute(sql, {"team_id": teid, "user_id": uid})
+            db.session.execute(sql, {'team_id': teid, 'user_id': uid})
             db.session.commit()
         except Exception as error:
-            raise DatabaseException('team member remove') from error
+            raise DatabaseException(
+                'While removing members from team') from error
 
     def remove(self, teid: str):
-        sql = """
+        '''remove is used to remove feature from the database
+
+        Args:
+            fid (str): id of the feature to be removed
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+        '''
+
+        sql = '''
             DELETE FROM Teams
             WHERE id=:id
-        """
-        sql_tu = """
+        '''
+
+        sql_tu = '''
             DELETE FROM Teamsusers
             WHERE team_id=:id
-        """
+        '''
+
         try:
-            db.session.execute(sql, {"id": teid})
-            db.session.execute(sql_tu, {"id": teid})
+            db.session.execute(sql, {'id': teid})
+            db.session.execute(sql_tu, {'id': teid})
             db.session.commit()
         except Exception as error:
             raise DatabaseException('team remove') from error

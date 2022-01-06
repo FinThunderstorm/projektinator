@@ -1,11 +1,10 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, NotExistingException, UnvalidInputException
 from entities.user import User
 from repositories.user_repository import user_repository, UserRepository
-from repositories.team_repository import team_repository, TeamRepository
 from services.role_service import role_service, RoleService
 from utils.helpers import image_string, fullname
 from utils.validators import validate_uuid4
+from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, NotExistingException, UnvalidInputException
 
 
 class UserService:
@@ -14,7 +13,6 @@ class UserService:
 
     def __init__(self,
                  default_user_repository: UserRepository = user_repository,
-                 default_team_repository: TeamRepository = team_repository,
                  default_role_service: RoleService = role_service):
         '''Initializes UserService with default user repository
 
@@ -22,15 +20,11 @@ class UserService:
             default_user_repository (UserRepository, optional):
                 interaction module with database for users.
                 Defaults to user_repository.
-            default_team_repository (TeamRepository, optional):
-                interaction module with database for teams.
-                Defaults to team_repository.
             default_role_service (RoleService, optional):
                 interaction module with roles.
                 Defaults to role_service.
         '''
         self._user_repository = default_user_repository
-        self._team_repository = default_team_repository
         self._role_service = default_role_service
 
     def new(self, username: str, user_role: str, password: str, firstname: str,

@@ -439,7 +439,7 @@ class FeatureService:
         '''remove is used to remove feature
 
         Args:
-            fid (str): id of feature which is removed
+            fid (str): id of feature to be removed
 
         Raises:
             DatabaseException: raised if problems occurs
