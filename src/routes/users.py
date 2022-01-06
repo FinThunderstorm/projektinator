@@ -36,6 +36,10 @@ def logout():
 
 @app.route(f"{baseUrl}", methods=["GET"])
 def users():
+    if session["user_role"] < 2:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
+
     try:
         all_users = user_service.get_all()
     except DatabaseException as error:

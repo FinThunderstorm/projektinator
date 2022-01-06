@@ -65,6 +65,7 @@
                                 </button>
                             </form>     
                         </td>
+                        {% if session.user == feature.feature_owner or session.user_role > 1 %}
                         <td>
                             <form action="/features/edit/{{ feature.feature_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
@@ -84,8 +85,11 @@
                                     </div>
                                 </button>
                             </form>
-                            
                         </td>
+                        {% else %}
+                        <td></td>
+                        <td></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

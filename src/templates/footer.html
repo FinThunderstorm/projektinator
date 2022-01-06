@@ -7,8 +7,10 @@
             <li>| <a href="/projects">Projects</a></li>
             <li>| <a href="/features">Features</|a></li>
             <li>| <a href="/tasks">Tasks</a></li>
+            {% if session.user_role > 1 %}
             <li>| <a href="/users">Users</a></li>
             <li>| <a href="/teams">Teams</a></li>
+            {% endif %}
             <li>| <a href="/users/logout">Logout</a></li>
         </ul>
         {% endif %}

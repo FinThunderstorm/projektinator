@@ -19,30 +19,50 @@ class TeamRepository:
         Raises:
             DatabaseException: raised if problems occurs while
                 saving into the database
+            UnvalidInputException: raised if team leader
+                is already in some team
 
         Returns:
             str: created team's id
         '''
 
-        sql = '''
+        sql_teams = '''
             INSERT INTO Teams
             (name, description, team_leader)
             VALUES (:name, :description, :team_leader)
             RETURNING id
         '''
 
+        sql_teamsusers = '''
+            INSERT INTO Teamsusers
+            (team_id, user_id)
+            VALUES (:team_id, :user_id)
+            RETURNING team_id, user_id
+        '''
+
         values = {'name': name, 'description': description, 'team_leader': tlid}
 
         try:
-            team_id = db.session.execute(sql, values).fetchone()
+            team_id = db.session.execute(sql_teams, values).fetchone()
+            teid, user_id = db.session.execute(sql_teamsusers, {
+                "team_id": team_id[0],
+                "user_id": tlid
+            })
             db.session.commit()
+        except IntegrityError as error:
+            raise UnvalidInputException(
+                'Given team leader is already in some team',
+                source='adding team leader to team') from error
         except Exception as error:
-            raise DatabaseException(
-                'While saving new team into database') from error
+            raise DatabaseException('While saving new team') from error
 
         if not team_id:
-            raise DatabaseException(
-                'While saving new team into database') from error
+            raise DatabaseException('While saving new team') from error
+
+        if str(user_id) != str(tlid):
+            raise DatabaseException('While saving new team')
+        if str(team_id) != str(teid):
+            raise DatabaseException('While saving new team')
 
         return team_id[0]
 
@@ -179,6 +199,8 @@ class TeamRepository:
         Raises:
             DatabaseException: raised if problems occurs while
                 saving into the database
+            UnvalidInputException: raised if team leader
+                is already in some team
 
         Returns:
             str: updated team's id
@@ -198,14 +220,32 @@ class TeamRepository:
             RETURNING id
         '''
 
+        sql_teamsusers = '''
+            INSERT INTO Teamsusers
+            (team_id, user_id)
+            VALUES (:team_id, :user_id)
+            RETURNING team_id, user_id
+        '''
+
         try:
             team_id = db.session.execute(sql, values).fetchone()
+            teid_s, user_id = db.session.execute(sql_teamsusers, {
+                "team_id": team_id[0],
+                "user_id": tlid
+            })
             db.session.commit()
+        except IntegrityError as error:
+            raise UnvalidInputException(
+                'Given team leader is already in some team',
+                source='adding team leader to team') from error
         except Exception as error:
             raise DatabaseException('While saving updated team') from error
 
         if str(teid) != str(team_id):
             raise DatabaseException('While saving updated team')
+
+        if str(teid) != str(teid_s):
+            raise DatabaseException("While saving updated team")
 
         return team_id[0]
 
@@ -232,13 +272,15 @@ class TeamRepository:
             VALUES (:team_id, :user_id)
             RETURNING team_id, user_id
         '''
+
         values = {'team_id': teid, 'user_id': uid}
+
         try:
             team_id, user_id = db.session.execute(sql, values).fetchone()
             db.session.commit()
         except IntegrityError as error:
             raise UnvalidInputException('Given user is already in some team',
-                                        str='adding user to team') from error
+                                        source='adding user to team') from error
         except Exception as error:
             raise DatabaseException(
                 'While saving new user into team') from error

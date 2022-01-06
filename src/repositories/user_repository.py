@@ -254,10 +254,11 @@ class UserRepository:
                  user[7], user[8], user[9], user[10], user[11])
                 for user in users]
 
-    def get_by_team(self, teid: str) -> [tuple]:
-        '''get_all is used to list of all features in the database
+    def get_all_by_team(self, teid: str) -> [tuple]:
+        '''get_all_by_team is used to list of all users in the database
+           with given team id
 
-        If no features found, returns empty list.
+        If no users found, returns empty list.
 
         Args:
             teid (str): id of the team
@@ -267,7 +268,7 @@ class UserRepository:
                 while interacting with the database
 
         Returns:
-            [tuple]: list of all features
+            [tuple]: list of all users
         '''
 
         sql = '''

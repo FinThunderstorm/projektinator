@@ -1,7 +1,7 @@
 from entities.team import Team
 
-from repositories.team_repository import TeamRepository, team_repository
-from repositories.user_repository import UserRepository, user_repository
+from repositories.team_repository import team_repository, TeamRepository
+from services.user_service import user_service, UserService
 
 from utils.exceptions import NotExistingException, EmptyValueException, UnvalidInputException
 from utils.helpers import fullname
@@ -13,20 +13,20 @@ class TeamService:
 
     def __init__(self,
                  default_team_repository: TeamRepository = team_repository,
-                 default_user_repository: UserRepository = user_repository):
+                 default_user_service: UserService = user_service):
         '''Initializes TeamService
 
         Args:
             default_team_repository (TeamRepository, optional):
                 interaction module with database for teams.
                 Defaults to team_repository.
-            default_user_repository (UserRepository, optional):
-                interaction module with database for users.
-                Defaults to user_repository.
+            default_user_service (UserService, optional):
+                interaction module with users.
+                Defaults to user_service.
         '''
 
         self._team_repository = default_team_repository
-        self._user_repository = default_user_repository
+        self._user_service = default_user_service
 
     def new(self, name: str, description: str, tlid: str) -> Team:
         '''new is used to create new teams into the database
@@ -41,7 +41,8 @@ class TeamService:
                 saving into the database
             EmptyValueException: raised if any given values is empty
             UnvalidInputException: raised if formatting of given
-                input value is incorrect
+                input value is incorrect or team leader is already
+                in some team
             NotExistingException: raised if team leader
                 with given id is not found
 
@@ -57,7 +58,7 @@ class TeamService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='Team Leader ID')
 
-        tlname = self._user_repository.get_fullname(tlid)
+        tlname = self._user_service.get_fullname(tlid)
 
         if not tlname:
             raise NotExistingException('Team Leader')
@@ -81,7 +82,8 @@ class TeamService:
         '''
 
         teams = [
-            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]))
+            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]),
+                 self._user_service.get_all_by_team(team[0]))
             for team in self._team_repository.get_all()
         ]
         return teams
@@ -111,11 +113,12 @@ class TeamService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='Team Leader ID')
 
-        if not self._user_repository.get_by_id(tlid):
+        if not self._user_service.get_by_id(tlid):
             raise NotExistingException('Team Leader')
 
         teams = teams = [
-            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]))
+            Team(team[0], team[1], team[2], team[3], fullname(team[4], team[5]),
+                 self._user_service.get_all_by_team(team[0]))
             for team in self._team_repository.get_all_by_team_leader(tlid)
         ]
         return teams
@@ -143,7 +146,8 @@ class TeamService:
 
         team = self._team_repository.get_by_id(teid)
         return Team(team[0], team[1], team[2], team[3],
-                    fullname(team[4], team[5]))
+                    fullname(team[4], team[5]),
+                    self._user_service.get_all_by_team(team[0]))
 
     def get_name(self, teid: str) -> str:
         '''get_name is used to get name of team with given id
@@ -184,7 +188,8 @@ class TeamService:
                 saving into the database
             EmptyValueException: raised if any given values is empty
             UnvalidInputException: raised if formatting of given
-                input value is incorrect
+                input value is incorrect or team leader is already
+                in some team
             NotExistingException: raised if team leader
                 with given id is not found
 
@@ -203,7 +208,7 @@ class TeamService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='Team Leader ID')
 
-        tlname = self._user_repository.get_fullname(tlid)
+        tlname = self._user_service.get_fullname(tlid)
 
         if not tlname:
             raise NotExistingException('Team Leader')
@@ -242,7 +247,7 @@ class TeamService:
                                         source='User ID')
 
         self._team_repository.get_by_id(teid)
-        self._user_repository.get_by_id(uid)
+        self._user_service.get_by_id(uid)
 
         added = self._team_repository.add_member(teid, uid)
         return added
@@ -271,7 +276,7 @@ class TeamService:
                                         source='User ID')
 
         self._team_repository.get_by_id(teid)
-        self._user_repository.get_by_id(uid)
+        self._user_service.get_by_id(uid)
 
         self._team_repository.remove_member(teid, uid)
 

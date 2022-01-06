@@ -41,6 +41,7 @@
                                 </button>
                             </form>     
                         </td>
+                        {% if session.user == team.team_leader_id or session.user_role > 2 %}
                         <td>
                             <form action="/teams/edit/{{ team.team_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
@@ -71,8 +72,12 @@
                                     </div>
                                 </button>
                             </form>
-                            
                         </td>
+                        {% else %}
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

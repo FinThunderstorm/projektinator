@@ -65,6 +65,7 @@
                                 </button>
                             </form>     
                         </td>
+                        {% if session.user == task.assignee or session.user_role > 1 %}
                         <td>
                             <form action="/tasks/edit/{{ task.task_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
@@ -85,6 +86,10 @@
                                 </button>
                             </form>
                         </td>
+                        {% else %}
+                        <td></td>
+                        <td></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

@@ -2,10 +2,12 @@ from entities.task import Task
 
 from repositories.task_repository import task_repository, TaskRepository
 from repositories.feature_repository import feature_repository, FeatureRepository
+from repositories.user_repository import user_repository, UserRepository
+
 from services.type_service import type_service, TypeService
 from services.status_service import status_service, StatusService
-from services.user_service import user_service, UserService
 from services.comment_service import comment_service, CommentService
+
 from utils.exceptions import EmptyValueException, NotExistingException, UnvalidInputException
 from utils.validators import validate_flags, validate_uuid4
 from utils.helpers import fullname
@@ -19,10 +21,10 @@ class TaskService:
         self,
         default_task_repository: TaskRepository = task_repository,
         default_feature_repository: FeatureRepository = feature_repository,
+        default_user_repository: UserRepository = user_repository,
         default_status_service: StatusService = status_service,
         default_type_service: TypeService = type_service,
         default_comment_service: CommentService = comment_service,
-        default_user_service: UserService = user_service,
     ):
         '''Initializes FeatureService
 
@@ -33,6 +35,9 @@ class TaskService:
             default_feature_repository (FeatureRepository, optional):
                 interaction module with database for features.
                 Defaults to feature_repository.
+            default_user_repository (UserRepository, optional):
+                interaction module with database for users.
+                Defaults to user_repostory.
             default_status_service (StatusService, optional):
                 interaction module with statuses.
                 Defaults to status_service.
@@ -42,16 +47,14 @@ class TaskService:
             default_comment_service (CommentService, optional):
                 interaction module with comments.
                 Defaults to comment_service.
-            default_user_service (UserService, optional):
-                interaction module with users.
-                Defaults to user_service.
+            
         '''
         self._task_repository = default_task_repository
         self._feature_repository = default_feature_repository
+        self._user_repository = default_user_repository
         self._status_service = default_status_service
         self._type_service = default_type_service
         self._comment_service = default_comment_service
-        self._user_service = default_user_service
 
     def new(self,
             fid: str,
@@ -121,14 +124,14 @@ class TaskService:
                 reason='can not be converted into integer',
                 source='priority') from error
 
-        if 1 <= priority <= 3:
+        if not 1 <= priority <= 3:
             raise UnvalidInputException(reson='priority is not in scale 1-3',
                                         source='priority')
 
         fname = self._feature_repository.get_name(fid)
-        aname = self._user_service.get_fullname(aid)
-        sname = self._status_repository.get_name(status)
-        ttname = self._type_repository.get_name(ttype)
+        aname = self._user_repository.get_fullname(aid)
+        sname = self._status_service.get_name(status)
+        ttname = self._type_service.get_name(ttype)
 
         if not fname:
             raise NotExistingException('Feature')
@@ -163,7 +166,8 @@ class TaskService:
         tasks = [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
                  task[6], task[7], task[8], task[9], task[10], task[11],
-                 task[12], task[13], task[14], task[15])
+                 task[12], task[13], task[14], task[15],
+                 self._comment_service.get_all_by_task_id(task[0]))
             for task in self._task_repository.get_all()
         ]
 
@@ -200,7 +204,8 @@ class TaskService:
         tasks = [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
                  task[6], task[7], task[8], task[9], task[10], task[11],
-                 task[12], task[13], task[14], task[15])
+                 task[12], task[13], task[14], task[15],
+                 self._comment_service.get_all_by_task_id(task[0]))
             for task in self._task_repository.get_all_by_feature_id(fid)
         ]
 
@@ -231,13 +236,14 @@ class TaskService:
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source="assignee's id")
 
-        if not self._user_service.get_by_id(aid):
+        if not self._user_repository.get_by_id(aid):
             raise NotExistingException('Assignee')
 
         tasks = [
             Task(task[0], task[1], task[2], task[3], fullname(task[4], task[5]),
                  task[6], task[7], task[8], task[9], task[10], task[11],
-                 task[12], task[13], task[14], task[15])
+                 task[12], task[13], task[14], task[15],
+                 self._comment_service.get_all_by_task_id(task[0]))
             for task in self._task_repository.get_all_by_assignee(aid)
         ]
 
@@ -268,7 +274,8 @@ class TaskService:
         return Task(task[0], task[1], task[2], task[3],
                     fullname(task[4],
                              task[5]), task[6], task[7], task[8], task[9],
-                    task[10], task[11], task[12], task[13], task[14], task[15])
+                    task[10], task[11], task[12], task[13], task[14], task[15],
+                    self._comment_service.get_all_by_task_id(task[0]))
 
     def get_name(self, tid: str) -> str:
         '''get_name is used to get name of specific task
@@ -362,14 +369,14 @@ class TaskService:
                 reason='can not be converted into integer',
                 source='priority') from error
 
-        if 1 <= priority <= 3:
+        if not 1 <= priority <= 3:
             raise UnvalidInputException(reson='priority is not in scale 1-3',
                                         source='priority')
 
         fname = self._feature_repository.get_name(fid)
-        aname = self._user_service.get_fullname(aid)
-        sname = self._status_repository.get_name(status)
-        ttname = self._type_repository.get_name(ttype)
+        aname = self._user_repository.get_fullname(aid)
+        sname = self._status_service.get_name(status)
+        ttname = self._type_service.get_name(ttype)
 
         if not fname:
             raise NotExistingException('Feature')

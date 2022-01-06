@@ -5,11 +5,16 @@
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
             <hr />
+            {% if session.user_role > 1%}
             <a class="mdl-navigation__link" href="/teams">List all teams</a>
             <a class="mdl-navigation__link" href="/teams/add">Add new team</a>
+            {% endif%}
+            {% if session.user == team.team_leader_id or session.user_role > 2 %}
             <hr />
             <a class="mdl-navigation__link" href="/teams/{{ team.team_id }}">View current team</a>
+            <a class="mdl-navigation__link" href="/teams/edit/{{ team.team_id }}/members">Edit current team's members</a>
             <a class="mdl-navigation__link" href="/teams/remove/{{ team.team_id }}">Remove current team</a>
+            {% endif %}
         </nav>
     </div>
 {% endblock %}

@@ -4,9 +4,13 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
+            {% if session.user_role > 1%}
             <hr />
             <a class="mdl-navigation__link" href="/users">List all users</a>
+            {% endif %}
+            {% if session.user_role > 2%}
             <a class="mdl-navigation__link" href="/users/add">Add new user</a>
+            {% endif %}
         </nav>
     </div>
 {% endblock %}

@@ -7,9 +7,11 @@
             <hr />
             <a class="mdl-navigation__link" href="/tasks">List tasks</a>
             <a class="mdl-navigation__link" href="/tasks/add">Add new task</a>
+            {% if session.user == task.assignee or session.user_role > 1 %}
             <hr />
             <a class="mdl-navigation__link" href="/tasks/edit/{{ task.task_id }}">Edit current task</a>
             <a class="mdl-navigation__link" href="/tasks/remove/{{ task.task_id }}">Remove current task</a>
+            {% endif %}
             <hr />
             <a class="mdl-navigation__link" href="/comments/add?mode=tasks&id={{ task.task_id }}">Add new comment</a>
         </nav>
@@ -144,14 +146,17 @@
                     <thead>
                         <th class="mdl-data-table__cell--non-numeric">Comment</th>
                         <th>Time spent</th>
+                        {% if session.user == task.assignee or session.user_role > 1 %}
                         <th></th>
                         <th></th>
+                        {% endif %}
                     </thead>
                     <tbody>
                         {% for comment in task.comments %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
                             <td>{{ comment.time_spent }}</td>
+                            {% if session.user == task.assignee or session.user_role > 1 %}
                             <td>
                                 <form action="/comments/edit">
                                     <input type="hidden" name="id" value="{{ comment.comment_id }}" />
@@ -174,6 +179,7 @@
                                     </button>
                                 </form>
                             </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

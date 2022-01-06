@@ -130,8 +130,8 @@ class FeatureService:
                 reason='can not be converted into integer',
                 source='priority') from error
 
-        if 1 <= priority <= 3:
-            raise UnvalidInputException(reson='priority is not in scale 1-3',
+        if not 1 <= priority <= 3:
+            raise UnvalidInputException(reason='priority is not in scale 1-3',
                                         source='priority')
 
         pname = self._project_repository.get_name(pid)
@@ -411,8 +411,8 @@ class FeatureService:
                 reason='can not be converted into integer',
                 source='priority') from error
 
-        if 1 <= priority <= 3:
-            raise UnvalidInputException(reson='priority is not in scale 1-3',
+        if not 1 <= priority <= 3:
+            raise UnvalidInputException(reason='priority is not in scale 1-3',
                                         source='priority')
 
         pname = self._project_repository.get_name(pid)

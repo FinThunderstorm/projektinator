@@ -5,11 +5,17 @@
         <span class="mdl-layout-title">{{ title() }}</span>
         <nav class="mdl-navigation">
             <hr />
+            {% if session.user_role > 1%}
             <a class="mdl-navigation__link" href="/users">List all users</a>
+            {% endif %}
+            {% if session.user_role > 2 %}
             <a class="mdl-navigation__link" href="/users/add">Add new user</a>
+            {% endif %}
+            {% if session.user == user.user_id or session.user_role > 2%}
             <hr />
             <a class="mdl-navigation__link" href="/users/edit/{{ user.user_id }}">Edit current user</a>
             <a class="mdl-navigation__link" href="/users/remove/{{ user.user_id }}">Remove current user</a>
+            {% endif %}
         </nav>
     </div>
 {% endblock %}

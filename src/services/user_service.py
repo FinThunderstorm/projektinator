@@ -1,7 +1,12 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from entities.user import User
+
 from repositories.user_repository import user_repository, UserRepository
+from repositories.team_repository import team_repository, TeamRepository
+
 from services.role_service import role_service, RoleService
+
 from utils.helpers import image_string, fullname
 from utils.validators import validate_uuid4
 from utils.exceptions import ValueShorterThanException, EmptyValueException, LoginException, NotExistingException, UnvalidInputException
@@ -13,6 +18,7 @@ class UserService:
 
     def __init__(self,
                  default_user_repository: UserRepository = user_repository,
+                 default_team_repository: TeamRepository = team_repository,
                  default_role_service: RoleService = role_service):
         '''Initializes UserService with default user repository
 
@@ -25,6 +31,7 @@ class UserService:
                 Defaults to role_service.
         '''
         self._user_repository = default_user_repository
+        self._team_repository = default_team_repository
         self._role_service = default_role_service
 
     def new(self, username: str, user_role: str, password: str, firstname: str,
@@ -156,6 +163,40 @@ class UserService:
         ]
         return users
 
+    def get_all_by_team(self, teid: str) -> [User]:
+        '''get_all is used to list of all features in the database
+
+        If no features found, returns empty list.
+
+        Args:
+            teid (str): id of the team
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if team with given
+                id not found
+            UnvalidInputException: raised if unvalid
+                id is given
+
+        Returns:
+            [tuple]: list of all features
+        '''
+
+        if not validate_uuid4(teid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='Team ID')
+
+        if not self._team_repository.get_by_id(teid):
+            raise NotExistingException('Team')
+
+        users = [
+            User(user[0], user[1], user[2], user[3], user[4], user[5], user[6],
+                 user[7], image_string(user[8], user[9]), user[10], user[11])
+            for user in self._user_repository.get_all_by_team(teid)
+        ]
+        return users
+
     def get_users(self) -> [tuple]:
         '''get_users is used to get all users for
            selecting users in the frontend
@@ -206,6 +247,34 @@ class UserService:
                                     user[2]), image_string(user[3], user[4]))
                  for user in self._user_repository.get_team_users(teid)]
         return users
+
+    def get_fullname(self, uid: str) -> str:
+        '''get_fullname is used to get name of user with given id
+
+        Args:
+            uid (str): id of the user
+
+        Raises:
+            DatabaseException: raised if problems occur
+                while interacting with the database
+            NotExistingException: raised if user is not
+                found with given id
+            UnvalidInputException: raised if unvalid
+                id is given
+
+        Returns:
+            str: found name
+        '''
+
+        if not validate_uuid4(uid):
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='User ID')
+
+        if not self._user_repository.get_by_id(uid):
+            raise NotExistingException('User')
+
+        name = self._user_repository.get_fullname(uid)
+        return fullname(name[0], name[1])
 
     def get_profile_image(self, uid: str) -> str:
         '''get_profile_image is used to get profile image

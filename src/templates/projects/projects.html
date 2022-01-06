@@ -52,11 +52,12 @@
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
                                     <i class="material-icons" id="view{{ project.project_id }}">read_more</i>
                                     <div class="mdl-tooltip" data-mdl-for="view{{ project.project_id }}">
-                                        VIEW
+                                        View
                                     </div>
                                 </button>
                             </form>     
                         </td>
+                        {% if session.user == project.project_owner or session.user_role > 2 %}
                         <td>
                             <form action="/projects/edit/{{ project.project_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
@@ -78,6 +79,10 @@
                                 </button>
                             </form>
                         </td>
+                        {% else %}
+                        <td></td>
+                        <td></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

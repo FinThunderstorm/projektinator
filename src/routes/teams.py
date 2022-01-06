@@ -12,6 +12,9 @@ baseUrl = '/teams'
 
 @app.route(f'{baseUrl}', methods=['GET'])
 def teams():
+    if session["user_role"] < 2:
+        flash("Not enough permissions.", 'is-danger')
+        return redirect("/")
     try:
         all_teams = team_service.get_all()
     except DatabaseException as error:
@@ -138,13 +141,13 @@ def create_team():
                                         request.form['description'],
                                         request.form['team_leader'])
 
-            for member in request.form.getlist('members'):
-                added = team_service.add_member(new_team.team_id, member)
-
             if request.form['team_leader'] not in request.form.getlist(
                     'members'):
                 team_service.add_member(new_team.team_id,
                                         request.form['team_leader'])
+
+            for member in request.form.getlist('members'):
+                team_service.add_member(new_team.team_id, member)
 
             flash(f'New team {new_team.team_id} created successfully',
                   'is-success')

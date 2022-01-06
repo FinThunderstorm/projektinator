@@ -39,6 +39,7 @@
 
             <div class="mdl-cell--12-col">
                 <p>Status:</p>
+                <input type="radio" id="statusnone" class="mdl-radio__button" name="status" value="" hidden required>
                 {% for id, name in statuses %}
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
                         <input type="radio" id="{{ id }}" class="mdl-radio__button" name="status" value="{{ id }}" required>
@@ -49,6 +50,7 @@
 
             <div class="mdl-cell--12-col">
                 <p>Feature type:</p>
+                <input type="radio" id="featuretypenone" class="mdl-radio__button" name="feature_type" value="" hidden required>
                 {% for id, name in types %}
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
                         <input type="radio" id="{{ id }}" class="mdl-radio__button" name="feature_type" value="{{ id }}" required>
@@ -59,7 +61,7 @@
 
             <div class="mdl-cell--6-col">
                 <p>Feature owner</p>
-
+                <input type="radio" id="fonone" class="mdl-radio__button" name="feature_owner" value="" hidden required>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>
@@ -91,6 +93,7 @@
 
             <div class="mdl-cell--6-col">
                 <p>Project</p>
+                <input type="radio" id="pnone" class="mdl-radio__button" name="project" value="" hidden required>
                 <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                     <thead>
                         <tr>

@@ -7,9 +7,11 @@
             <hr />
             <a class="mdl-navigation__link" href="/features">List features</a>
             <a class="mdl-navigation__link" href="/features/add">Add new feature</a>
+            {% if session.user == feature.feature_owner or session.user_role > 1 %}
             <hr />
             <a class="mdl-navigation__link" href="/features/edit/{{ feature.feature_id }}">Edit current feature</a>
             <a class="mdl-navigation__link" href="/features/remove/{{ feature.feature_id }}">Remove current feature</a>
+            {% endif %}
             <hr />
             <a class="mdl-navigation__link" href="/comments/add?mode=features&id={{ feature.feature_id }}">Add new comment</a>
         </nav>
@@ -178,14 +180,17 @@
                     <thead>
                         <th class="mdl-data-table__cell--non-numeric">Comment</th>
                         <th>Time spent</th>
+                        {% if session.user == feature.feature_owner or session.user_role > 1 %}
                         <th></th>
                         <th></th>
+                        {% endif %}
                     </thead>
                     <tbody>
                         {% for comment in feature.comments %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
                             <td>{{ comment.time_spent }}</td>
+                            {% if session.user == feature.feature_owner or session.user_role > 1 %}
                             <td>
                                 <form action="/comments/edit">
                                     <input type="hidden" name="id" value="{{ comment.comment_id }}" />
@@ -208,6 +213,7 @@
                                     </button>
                                 </form>
                             </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
