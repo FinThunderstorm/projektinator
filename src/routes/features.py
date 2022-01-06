@@ -6,6 +6,7 @@ from services.project_service import project_service
 from services.status_service import status_service
 from services.type_service import type_service
 from services.user_service import user_service
+from services.statistics_service import statistics_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
 baseUrl = '/features'
@@ -26,6 +27,7 @@ def features():
 def view_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
+        time_spent = statistics_service.get_time_spent_by_feature(feature_id)
         feature_owner_profile_image = user_service.get_profile_image(
             feature.feature_owner)
     except (NotExistingException, UnvalidInputException,
@@ -36,6 +38,7 @@ def view_feature(feature_id):
     return render_template(
         'features/features_view.html',
         feature=feature,
+        time_spent=time_spent,
         feature_owner_profile_image=feature_owner_profile_image)
 
 

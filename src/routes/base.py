@@ -1,10 +1,11 @@
 from app import app
-from flask import render_template, session
+from flask import render_template, session, abort
 from services.project_service import project_service
 from services.feature_service import feature_service
 from services.task_service import task_service
 from services.comment_service import comment_service
 from services.team_service import team_service
+from services.statistics_service import statistics_service
 
 
 @app.route("/")
@@ -17,13 +18,15 @@ def index():
         tasks = task_service.get_all_by_assignee(user_id)
         comments = comment_service.get_all_by_assignee(user_id)
         teams = team_service.get_all_by_team_leader(user_id)
+        time_spent = statistics_service.get_time_spent_by_user(user_id)
 
         return render_template("index.html",
                                projects=projects,
                                features=features,
                                tasks=tasks,
                                comments=comments,
-                               teams=teams)
+                               teams=teams,
+                               time_spent=time_spent)
     except KeyError:
 
         return render_template("index.html")
@@ -31,5 +34,8 @@ def index():
 
 @app.route("/health")
 def health():
-    # lisää statistics serviceltä db testi
+    try:
+        statistics_service.db_health()
+    except:
+        abort(503)
     return "PONG"

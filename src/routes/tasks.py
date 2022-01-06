@@ -6,6 +6,7 @@ from services.user_service import user_service
 from services.task_service import task_service
 from services.type_service import type_service
 from services.status_service import status_service
+from services.statistics_service import statistics_service
 from utils.exceptions import NotExistingException, UsernameDuplicateException, ValueShorterThanException, EmptyValueException, DatabaseException, UnvalidInputException
 
 baseUrl = "/tasks"
@@ -25,6 +26,7 @@ def tasks():
 def view_task(task_id):
     try:
         task = task_service.get_by_id(task_id)
+        time_spent = statistics_service.get_time_spent_by_task(task_id)
         assignee_profile_image = user_service.get_profile_image(
             task.assignee_id)
     except (NotExistingException, UnvalidInputException,
@@ -34,7 +36,8 @@ def view_task(task_id):
 
     return render_template('tasks/tasks_view.html',
                            task=task,
-                           assignee_profile_image=assignee_profile_image)
+                           assignee_profile_image=assignee_profile_image,
+                           time_spent=time_spent)
 
 
 @app.route(f"{baseUrl}/edit/<uuid:task_id>", methods=["GET", "POST"])

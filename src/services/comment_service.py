@@ -172,7 +172,8 @@ class CommentService:
                     comment[7],
                     comment[8],
                     fid=comment[9],
-                    fname=comment[10])
+                    fname=comment[10],
+                    mode=comment[0])
             for comment in self._comment_repository.get_all_by_feature_id(fid)
         ]
 
@@ -208,7 +209,8 @@ class CommentService:
                     comment[7],
                     comment[8],
                     tid=comment[9],
-                    tname=comment[10])
+                    tname=comment[10],
+                    mode=comment[0])
             for comment in self._comment_repository.get_all_by_task_id(tid)
         ]
         return comments
@@ -244,18 +246,21 @@ class CommentService:
                     comment[7],
                     comment[8],
                     fid=comment[9],
-                    fname=comment[10])
-            if comment[0] else Comment(comment[1],
-                                       comment[2],
-                                       fullname(comment[3], comment[4]),
-                                       comment[5],
-                                       comment[6],
-                                       comment[7],
-                                       comment[8],
-                                       tid=comment[9],
-                                       tname=comment[10])
+                    fname=comment[10],
+                    mode=comment[0]) if comment[0] == "features" else Comment(
+                        comment[1],
+                        comment[2],
+                        fullname(comment[3], comment[4]),
+                        comment[5],
+                        comment[6],
+                        comment[7],
+                        comment[8],
+                        tid=comment[9],
+                        tname=comment[10],
+                        mode=comment[0])
             for comment in self._comment_repository.get_all_by_assignee(aid)
         ]
+        print(comments)
         return comments
 
     def get_by_id(self, cid: str) -> Comment:

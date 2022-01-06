@@ -202,8 +202,8 @@ class CommentRepository:
             SELECT C.id, C.assignee, U.firstname, U.lastname, C.time_spent, C.comment, C.created, C.updated_on, C.feature_id, F.name, C.task_id, T.name
             FROM Comments C
             JOIN Users U ON C.assignee = U.id
-            JOIN Features F ON C.feature_id = F.id
-            JOIN Tasks T ON C.task_id = T.id
+            LEFT JOIN Features F ON C.feature_id = F.id
+            LEFT JOIN Tasks T ON C.task_id = T.id
             WHERE C.assignee=:id
         '''
         try:

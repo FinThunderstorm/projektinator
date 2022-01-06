@@ -109,14 +109,28 @@
                     <thead>
                         <th class="mdl-data-table__cell--non-numeric">Comment</th>
                         <th>Time spent</th>
+                        <th>Relates:</th>
                         <th></th>
                         <th></th>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td><b>Features:</b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                         {% for comment in comments %}
+                        {% if comment.mode == "features" %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
                             <td>{{ comment.time_spent }}</td>
+                            <td>
+                                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/tasks/{{ comment.feature_id }}">
+                                    {{ comment.feature_name }}
+                                </a>
+                            </td>
                             <td>
                                 <form action="/comments/edit">
                                     <input type="hidden" name="id" value="{{ comment.comment_id }}" />
@@ -140,7 +154,57 @@
                                 </form>
                             </td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
+                        
+                        <tr>
+                            <td><b>Tasks:</b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        {% for comment in comments %}
+                        {% if comment.mode == "tasks" %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">{{ comment.comment_html|safe }}</td>
+                            <td>{{ comment.time_spent }}</td>
+                            <td>
+                                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/tasks/{{ comment.task_id }}">
+                                    {{ comment.task_name }}
+                                </a>
+                            </td>
+                            <td>
+                                <form action="/comments/edit">
+                                    <input type="hidden" name="id" value="{{ comment.comment_id }}" />
+                                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
+                                        <i class="material-icons" id="edit{{ comment.comment_id }}">edit</i>
+                                        <div class="mdl-tooltip" data-mdl-for="edit{{ comment.comment_id }}">
+                                            Edit
+                                        </div>
+                                    </button>
+                                </form>  
+                            </td>
+                            <td>
+                                <form action="/comments/remove/{{ comment.comment_id }}">
+                                    <input type="hidden" name="came_from" value="/" />
+                                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">
+                                        <i class="material-icons" id="remove{{ comment.comment_id }}">delete</i>
+                                        <div class="mdl-tooltip" data-mdl-for="remove{{ comment.comment_id }}">
+                                            Remove
+                                        </div>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+
+                        <tr>
+                            <td></td>
+                            <td><b>Total:</b> {{ time_spent }} hours</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
