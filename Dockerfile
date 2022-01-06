@@ -11,6 +11,7 @@ RUN python3 -m pip install --upgrade pip setuptools wheel invoke
 # Install Poetry for managing Python packages
 RUN curl -sSL https://install.python-poetry.org | python3 -
 RUN poetry --version
+RUN poetry config virtualenvs.create false
 
 RUN mkdir /projektinator && chmod a+rw /projektinator 
 WORKDIR /projektinator
@@ -25,7 +26,7 @@ FROM base AS production
 ENV FLASK_ENV production
 ENV MODE production
 
-RUN poetry config virtualenvs.create false
+
 RUN poetry install --no-dev --no-interaction -vvv
 RUN poetry run pip install -U setuptools
 

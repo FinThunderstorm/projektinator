@@ -15,4 +15,4 @@ jobs:
         run: docker-compose -f docker-compose.test.yml build
 
       - name: Run pylint on src
-        run: docker-compose -f docker-compose.test.yml run --no-deps --rm testapp poetry run invoke pylint
+        run: docker-compose -f docker-compose.test.yml run --no-deps --rm testapp run invoke lint
