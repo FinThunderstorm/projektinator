@@ -14,7 +14,8 @@
     </div>
 {% endblock %}
 {% block content %}
-<form action="/projects/{{ project.project_id }}" method="POST">
+{% include 'projects/projects_form_validation.html' %}
+<form name="project" onsubmit="return validateForm()" action="/projects/edit/{{ project.project_id }}" method="POST">
     <div class="mdl-grid">
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="project_id_show" name="project_id_show" value="{{ project.project_id }}" disabled>
@@ -24,25 +25,25 @@
         <input type="hidden" id="project_id" name="project_id" value="{{ project.project_id }}" required>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ project.name }}" required>
+            <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ project.name }}">
             <label class="mdl-textfield__label" for="name">Name</label>
             <span class="mdl-textfield__error">Field ”Name” can't be empty</span>
         </div>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{ project.description }}" required>
+            <input class="mdl-textfield__input" type="text" id="description" name="description" value="{{ project.description }}">
             <label class="mdl-textfield__label" for="description">Description</label>
             <span class="mdl-textfield__error">Field ”Description” can't be empty</span>
         </div>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="flags" name="flags" pattern="(.*;)*" value="{{ project.flags }}" required>
+            <input class="mdl-textfield__input" type="text" id="flags" name="flags" pattern="(.*;)*" value="{{ project.flags }}">
             <label class="mdl-textfield__label" for="flags">Flags</label>
             <span class="mdl-textfield__error">Flags needs to be given in format <em>first;second;third;</em> separated by semicolons.</span>
         </div>
 
         <div class="mdl-cell--12-col">
-            <p>Project owner</p>
+            <p>Project owner:</p>
             <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
                 <thead>
                     <tr>
@@ -61,9 +62,9 @@
                                 {% endif %}
                             <td class="mdl-data-table__cell--non-numeric">{{ fullname }}</td>
                             <td>
-                                <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
+                                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
                                     {% if id == project.project_owner_id %}
-                                    <input type="radio" id="{{ id }}" class="mdl-radio__button" name="project_owner" value="{{ id }}" checked required>
+                                    <input type="radio" id="{{ id }}" class="mdl-radio__button" name="project_owner" value="{{ id }}" checked>
                                     {% else %}
                                     <input type="radio" id="{{ id }}" class="mdl-radio__button" name="project_owner" value="{{ id }}" required>
                                     {% endif %}
@@ -78,7 +79,7 @@
 
         <input type="hidden" name="token" value="{{ session.token }}">
         
-        <div class="mdl-cell--12-col">
+        <div class="mdl-cell--12-col" style="margin-top: 16px;">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                 Save
             </button>

@@ -8,7 +8,7 @@
             <a class="mdl-navigation__link" href="/projects">List projects</a>
             <a class="mdl-navigation__link" href="/projects/add">Add new project</a>
             <hr />
-            {% if session.user == project.project_owner or session.user_role > 2 %}
+            {% if session.user == project.project_owner_id or session.user_role > 2 %}
             <a class="mdl-navigation__link" href="/projects/edit/{{ project.project_id }}">Edit current project</a>
             <a class="mdl-navigation__link" href="/projects/remove/{{ project.project_id }}">Remove current project</a>
             {% endif %}

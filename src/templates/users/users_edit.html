@@ -21,7 +21,7 @@
 {% endblock %}
 {% block content %}
 {% include 'users/users_form_validation.html' %}
-<form action="/users/edit/{{ user.user_id }}" method="POST" enctype="multipart/form-data" onsubmit="return checkPasswords()">
+<form action="/users/edit/{{ user.user_id }}" method="POST" enctype="multipart/form-data" name="project" onsubmit="return validateForm()">
     <div class="mdl-grid">
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="user_id_show" name="user_id_show" value="{{user.user_id}}" disabled>
@@ -31,42 +31,45 @@
 
         {% if session.user_role < 2%}
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="username_show" name="username_show" value="{{user.username}}" disabled>
+            <input class="mdl-textfield__input" type="text" id="username_show" name="username_show" value="{{ user.username }}" disabled>
             <label class="mdl-textfield__label" for="username_show">Username</label>
         </div>
         <input type="hidden" id="username" name="username" value="{{user.username}}">
         {% endif %}
         {% if session.user_role == 3 %}
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="username_show" name="username_show" value="{{user.username}}">
-            <label class="mdl-textfield__label" for="username_show">Username</label>
+            <input class="mdl-textfield__input" type="text" minlength="5" id="username" name="username" value="{{ user.username }}">
+            <label class="mdl-textfield__label" for="username">Username</label>
+            <span class="mdl-textfield__error">Field ”Username” needs to be atleast 5 characters</span>
         </div>
         {% endif %}
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password" name="password">
+            <input class="mdl-textfield__input" type="password" minlength="5" id="password" name="password">
             <label class="mdl-textfield__label" for="password">Password</label>
+            <span class="mdl-textfield__error">Field ”Password” needs to be atleast 5 characters</span>
         </div>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password_confirm" name="password_confirm">
+            <input class="mdl-textfield__input" type="password" minlength="5" id="password_confirm" name="password_confirm">
             <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
+            <span class="mdl-textfield__error">Field ”Confirm password” needs to be atleast 5 characters</span>
         </div>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="firstname" name="firstname" value="{{user.firstname}}" required>
+            <input class="mdl-textfield__input" type="text" id="firstname" name="firstname" value="{{user.firstname}}">
             <label class="mdl-textfield__label" for="firstname">Firstname</label>
             <span class="mdl-textfield__error">Field ”Firstname” can't be empty</span>
         </div>
         
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="lastname" name="lastname" value="{{user.lastname}}" required>
+            <input class="mdl-textfield__input" type="text" id="lastname" name="lastname" value="{{user.lastname}}">
             <label class="mdl-textfield__label" for="lastname">Lastname</label>
             <span class="mdl-textfield__error">Field ”Lastname” can't be empty</span>
         </div>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="email" id="email" name="email" value="{{user.email}}" required>
+            <input class="mdl-textfield__input" type="email" id="email" name="email" value="{{user.email}}">
             <label class="mdl-textfield__label" for="email">Email</label>
             <span class="mdl-textfield__error">Field ”Email” needs to be correct email</span>
         </div>
@@ -82,16 +85,16 @@
                 <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="{{ id }}">
                     {% if session.user != user.user_id and session.user_role > 2 %}
                         {% if id == user.user_role %}
-                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role" value="{{ id }}" checked required>
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role" value="{{ id }}" checked>
                         {% else %}
-                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role" value="{{ id }}" required>
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role" value="{{ id }}">
                         {% endif %}
                         <span class="mdl-radio__label">{{ name }}</span>
                     {% else %}
                         {% if id == user.user_role %}
-                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role_show" value="{{ id }}" checked required disabled>
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role_show" value="{{ id }}" checked disabled>
                         {% else %}
-                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role_show" value="{{ id }}" required disabled>
+                        <input type="radio" id="{{ id }}" class="mdl-radio__button" name="user_role_show" value="{{ id }}" disabled>
                         {% endif %}
                         <span class="mdl-radio__label">{{ name }}</span>
                         <input type="hidden" id="user_role" name="user_role" value="{{ user.user_role }}">

@@ -2,39 +2,47 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-    <form action="/users/register" method="POST">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="username" name="username">
-            <label class="mdl-textfield__label" for="username">Username</label>
-        </div>
+{% include 'users/users_form_validation.html' %}
+    <form action="/users/register" method="POST" name="user" onsubmit="return validateForm()">
+        <div class="mdl-grid">
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" minlength="5" id="username" name="username">
+                <label class="mdl-textfield__label" for="username">Username</label>
+                <span class="mdl-textfield__error">Field ”Username” needs to be atleast 5 characters</span>
+            </div>
 
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password" name="password">
-            <label class="mdl-textfield__label" for="password">Password</label>
-        </div>
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" minlength="5" id="password" name="password">
+                <label class="mdl-textfield__label" for="password">Password</label>
+                <span class="mdl-textfield__error">Field ”Password” needs to be atleast 5 characters</span>
+            </div>
 
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password_confirm" name="password_confirm">
-            <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
-        </div>
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" minlength="5" id="password_confirm" name="password_confirm">
+                <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
+                <span class="mdl-textfield__error">Field ”Password” needs to be atleast 5 characters</span>
+            </div>
 
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="firstname" name="firstname">
-            <label class="mdl-textfield__label" for="firstname">Firstname</label>
-        </div>
-        
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="lastname" name="lastname">
-            <label class="mdl-textfield__label" for="lastname">Lastname</label>
-        </div>
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="firstname" name="firstname">
+                <label class="mdl-textfield__label" for="firstname">Firstname</label>
+            </div>
+            
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="lastname" name="lastname">
+                <label class="mdl-textfield__label" for="lastname">Lastname</label>
+            </div>
 
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="email" name="email">
-            <label class="mdl-textfield__label" for="email">Email</label>
-        </div>
+            <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="email" id="email" name="email">
+                <label class="mdl-textfield__label" for="email">Email</label>
+            </div>
 
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-            Add
-        </button>
+            <div class="mdl-cell--12-col">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    Add
+                </button>
+            </div>
+        </div>
     </form>
 {% endblock %}

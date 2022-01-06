@@ -1,0 +1,75 @@
+<script>
+    const showNotification = (msg) => {
+        const notificationContainer = document.querySelector('#notification')
+        const data = {message: msg}
+        notificationContainer.MaterialSnackbar.showSnackbar(data)
+    }
+
+    const validateForm = () => {
+        const form = document.forms["task"]
+
+        if (form["name"].value === "") {
+            form["name"].required = true
+            showNotification("❌ Field ”Name” can't be empty")
+            return false
+        } 
+
+        if (form["description"].value === "") {
+            form["description"].required = true
+            showNotification("❌ Field ”Description” can't be empty")
+            return false
+        }
+
+        if (form["priority"].value === "") {
+            form["priority"].required = true
+            showNotification("❌ Field ”Priority” can't be empty")
+            return false
+        }
+
+        let status = false
+        form["status"].forEach((input) => {
+            if (input.checked === true) {
+                status = true
+            }
+        })
+        if (status === false) {
+            showNotification("❌ Field ”Status” can't be left unchecked")
+            return false
+        }
+
+        let task_type = false
+        form["task_type"].forEach((input) => {
+            if (input.checked === true) {
+                task_type = true
+            }
+        })
+        if (task_type === false) {
+            showNotification("❌ Field ”Task type” can't be left unchecked")
+            return false
+        }
+        
+        let assignee_id = false
+        form["assignee_id"].forEach((input) => {
+            if (input.checked === true) {
+                assignee_id = true
+            }
+        })
+        if (assignee_id === false) {
+            showNotification("❌ Field ”Assignee” can't be left unchecked")
+            return false
+        }
+
+        let feature_id = false
+        form["feature_id"].forEach((input) => {
+            if (input.checked === true) {
+                feature_id = true
+            }
+        })
+        if (feature_id === false) {
+            showNotification("❌ Field ”Feature” can't be left unchecked")
+            return false
+        }
+        return true
+    }
+
+</script>

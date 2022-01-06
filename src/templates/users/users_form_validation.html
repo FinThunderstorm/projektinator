@@ -9,4 +9,64 @@
             return false
         }
     }
+    const showNotification = (msg) => {
+        const notificationContainer = document.querySelector('#notification')
+        const data = {message: msg}
+        notificationContainer.MaterialSnackbar.showSnackbar(data)
+    }
+
+    const validateForm = () => {
+        const form = document.forms["user"]
+
+        if (form["username"].value === "") {
+            showNotification("❌ Field ”Username” can't be empty")
+            return false
+        } 
+
+        if (form["password"].value === "") {
+            showNotification("❌ Field ”Password” can't be empty")
+            return false
+        } 
+
+        if (form["password_confirm"].value === "") {
+            showNotification("❌ Field ”Confirm password” can't be empty")
+            return false
+        }
+
+        if (form["password_confirm"].value !== form["password"].value) {
+            console.log()
+            showNotification("❌ Passwords needs to be matching")
+            return false
+        }
+
+        if (form["firstname"].value === "") {
+            showNotification("❌ Field ”Firstname” can't be empty")
+            return false
+        }
+
+        if (form["lastname"].value === "") {
+            showNotification("❌ Field ”Lastname” can't be empty")
+            return false
+        }
+
+        if (form["email"].value === "") {
+            showNotification("❌ Field ”Email” can't be empty")
+            return false
+        }
+
+        let user_role = false
+        form["user_role"].forEach((input) => {
+            if (input.type === "hidden") {
+                user_role = true
+            }
+            if (input.checked === true) {
+                user_role = true
+            }
+        })
+        if (user_role === false) {
+            showNotification("❌ Field ”User role” can't be left unchecked")
+            return false
+        }
+        return true
+    }
 </script>

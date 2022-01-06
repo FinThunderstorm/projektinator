@@ -1,17 +1,18 @@
 <footer class="mdl-mini-footer">
     <div class="mdl-mini-footer__left-section">
-        <div class="mdl-logo">Projektinator | Made by 🍐&nbsp;&nbsp;&nbsp;</div>
+        <div class="mdl-logo">Projektinator&nbsp;&nbsp;|&nbsp;&nbsp;Made by 🍐&nbsp;&nbsp;&nbsp;</div>
         {% if session.user %}
         <ul class="mdl-mini-footer__link-list">
-            <li>| <a href="/">Home</a></li>
-            <li>| <a href="/projects">Projects</a></li>
-            <li>| <a href="/features">Features</|a></li>
-            <li>| <a href="/tasks">Tasks</a></li>
+            <li>|&nbsp;&nbsp;<a href="/">Home</a></li>
+            <li>|&nbsp;&nbsp;<a href="/projects">Projects</a></li>
+            <li>|&nbsp;&nbsp;<a href="/features">Features</|a></li>
+            <li>|&nbsp;&nbsp;<a href="/tasks">Tasks</a></li>
             {% if session.user_role > 1 %}
-            <li>| <a href="/users">Users</a></li>
-            <li>| <a href="/teams">Teams</a></li>
+            <li>|&nbsp;&nbsp;<a href="/users">Users</a></li>
+            <li>|&nbsp;&nbsp;<a href="/teams">Teams</a></li>
             {% endif %}
-            <li>| <a href="/users/logout">Logout</a></li>
+            <li>|&nbsp;&nbsp;<a href="/users/{{ session.user }}">Profile</a></li>
+            <li>|&nbsp;&nbsp;<a href="/users/logout">Logout</a></li>
         </ul>
         {% endif %}
     </div>

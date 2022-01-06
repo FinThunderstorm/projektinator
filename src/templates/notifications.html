@@ -1,3 +1,7 @@
+<div id="notification" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"><i class="material-icons">delete</i></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
 {% with notifications = get_flashed_messages(with_categories=true) %}
     {% if notifications %}
         {% for type, notification in notifications %}
@@ -8,11 +12,6 @@
                 {% if type == "is-danger" %}
                     {% set notification = '❌ '+notification%}
                 {% endif %}
-
-                <div id="notification" class="mdl-js-snackbar mdl-snackbar">
-                    <div class="mdl-snackbar__text"><i class="material-icons">delete</i></div>
-                    <button class="mdl-snackbar__action" type="button"></button>
-                </div>
                 <script>
                     const handleNotification = () => {
                         const notificationContainer = document.querySelector('#notification')

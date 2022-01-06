@@ -57,7 +57,7 @@
                                 </button>
                             </form>     
                         </td>
-                        {% if session.user == project.project_owner or session.user_role > 2 %}
+                        {% if session.user == project.project_owner_id or session.user_role > 2 %}
                         <td>
                             <form action="/projects/edit/{{ project.project_id }}">
                                 <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--accent" type="submit">

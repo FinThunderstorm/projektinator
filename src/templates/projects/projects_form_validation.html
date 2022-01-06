@@ -1,0 +1,34 @@
+<script>
+    const showNotification = (msg) => {
+        const notificationContainer = document.querySelector('#notification')
+        const data = {message: msg}
+        notificationContainer.MaterialSnackbar.showSnackbar(data)
+    }
+
+    const validateForm = () => {
+        const form = document.forms["project"]
+
+        if (form["name"].value === "") {
+            form["name"].required = true
+            showNotification("❌ Field ”Name” can't be empty")
+            return false
+        }  
+        if (form["description"].value === "") {
+            form["description"].required = true
+            showNotification("❌ Field ”Description” can't be empty")
+            return false
+        }
+        let project_owner = false
+        form["project_owner"].forEach((input) => {
+            if (input.checked === true) {
+                project_owner = true
+            }
+        })
+        if (project_owner === false) {
+            showNotification("❌ Field ”Project owner” can't be left unchecked")
+            return false
+        }
+        return true
+    }
+
+</script>

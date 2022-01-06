@@ -1,0 +1,75 @@
+<script>
+    const showNotification = (msg) => {
+        const notificationContainer = document.querySelector('#notification')
+        const data = {message: msg}
+        notificationContainer.MaterialSnackbar.showSnackbar(data)
+    }
+
+    const validateForm = () => {
+        const form = document.forms["feature"]
+
+        if (form["name"].value === "") {
+            form["name"].required = true
+            showNotification("❌ Field ”Name” can't be empty")
+            return false
+        } 
+
+        if (form["description"].value === "") {
+            form["description"].required = true
+            showNotification("❌ Field ”Description” can't be empty")
+            return false
+        }
+
+        if (form["priority"].value === "") {
+            form["priority"].required = true
+            showNotification("❌ Field ”Priority” can't be empty")
+            return false
+        }
+
+        let status = false
+        form["status"].forEach((input) => {
+            if (input.checked === true) {
+                status = true
+            }
+        })
+        if (status === false) {
+            showNotification("❌ Field ”Status” can't be left unchecked")
+            return false
+        }
+
+        let feature_type = false
+        form["feature_type"].forEach((input) => {
+            if (input.checked === true) {
+                feature_type = true
+            }
+        })
+        if (feature_type === false) {
+            showNotification("❌ Field ”Feature type” can't be left unchecked")
+            return false
+        }
+        
+        let feature_owner = false
+        form["feature_owner"].forEach((input) => {
+            if (input.checked === true) {
+                feature_owner = true
+            }
+        })
+        if (feature_owner === false) {
+            showNotification("❌ Field ”Feature owner” can't be left unchecked")
+            return false
+        }
+
+        let project = false
+        form["project"].forEach((input) => {
+            if (input.checked === true) {
+                project = true
+            }
+        })
+        if (project === false) {
+            showNotification("❌ Field ”Project” can't be left unchecked")
+            return false
+        }
+        return true
+    }
+
+</script>
