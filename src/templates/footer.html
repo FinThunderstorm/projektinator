@@ -1,6 +1,8 @@
 <footer class="mdl-mini-footer">
     <div class="mdl-mini-footer__left-section">
-        <div class="mdl-logo">Projektinator&nbsp;&nbsp;|&nbsp;&nbsp;Made by 🍐&nbsp;&nbsp;&nbsp;</div>
+        <div class="mdl-logo">
+            <a href="/"><img src="{{ url_for('static', filename='media/logo_eng.svg') }}" style="height: 3vh;"/></a>
+        </div>
         {% if session.user %}
         <ul class="mdl-mini-footer__link-list">
             <li>|&nbsp;&nbsp;<a href="/projects">Projects</a></li>
