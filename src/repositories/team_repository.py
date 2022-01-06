@@ -42,13 +42,14 @@ class TeamRepository:
         values = {'name': name, 'description': description, 'team_leader': tlid}
 
         try:
-            team_id = db.session.execute(sql_teams, values).fetchone()
+            team_id = db.session.execute(sql_teams, values).fetchone()[0]
             teid, user_id = db.session.execute(sql_teamsusers, {
-                'team_id': team_id[0],
+                'team_id': str(team_id),
                 'user_id': tlid
-            })
+            }).fetchone()
             db.session.commit()
         except IntegrityError as error:
+
             raise UnvalidInputException(
                 'Given team leader is already in some team',
                 source='adding team leader to team') from error
@@ -58,12 +59,13 @@ class TeamRepository:
         if not team_id:
             raise DatabaseException('While saving new team') from error
 
-        if str(user_id) != str(tlid):
-            raise DatabaseException('While saving new team')
-        if str(team_id) != str(teid):
-            raise DatabaseException('While saving new team')
+        if str(teid) != str(team_id):
+            raise DatabaseException('While saving updated team')
 
-        return team_id[0]
+        if str(tlid) != str(user_id):
+            raise DatabaseException('While saving updated team')
+
+        return team_id
 
     def get_all(self) -> [tuple]:
         '''get_all is used to list of all teams in the database
@@ -227,11 +229,11 @@ class TeamRepository:
         '''
 
         try:
-            team_id = db.session.execute(sql, values).fetchone()
+            team_id = db.session.execute(sql, values).fetchone()[0]
             teid_s, user_id = db.session.execute(sql_teamsusers, {
-                'team_id': team_id[0],
+                'team_id': str(team_id),
                 'user_id': tlid
-            })
+            }).fetchone()
             db.session.commit()
         except IntegrityError as error:
             raise UnvalidInputException(
@@ -249,7 +251,7 @@ class TeamRepository:
         if str(teid) != str(teid_s):
             raise DatabaseException('While saving updated team')
 
-        return team_id[0]
+        return team_id
 
     def add_member(self, teid: str, uid: str) -> tuple:
         '''add_member is used to add new members into team
@@ -332,14 +334,8 @@ class TeamRepository:
             WHERE id=:id
         '''
 
-        sql_tu = '''
-            DELETE FROM Teamsusers
-            WHERE team_id=:id
-        '''
-
         try:
             db.session.execute(sql, {'id': teid})
-            db.session.execute(sql_tu, {'id': teid})
             db.session.commit()
         except Exception as error:
             raise DatabaseException('team remove') from error

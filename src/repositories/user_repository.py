@@ -74,7 +74,7 @@ class UserRepository:
         if not user_id:
             raise DatabaseException('While saving new user into database')
 
-        return user_id[0]
+        return user_id
 
     def get_by_id(self, uid: str) -> tuple:
         '''get_by_id is used to found user with given id

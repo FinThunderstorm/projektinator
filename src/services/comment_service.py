@@ -260,7 +260,7 @@ class CommentService:
                         mode=comment[0])
             for comment in self._comment_repository.get_all_by_assignee(aid)
         ]
-        print(comments)
+
         return comments
 
     def get_by_id(self, cid: str) -> Comment:

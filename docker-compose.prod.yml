@@ -12,10 +12,10 @@ services:
       - proddb
     ports:
       - 8000:8000
-    env_file:
-      - ./.env
     environment:
       - PORT=8000
+      - SECRET=example
+      - DATABASE_URL=postgresql://example:example@projektinator-prod-db:5432/projektinator
     volumes:
       - ./:/projektinator
 
@@ -25,8 +25,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data/
       - ./database_structure.sql:/docker-entrypoint-initdb.d/database_structure.sql
-    env_file:
-      - ./.env
+    environment:
+      - POSTGRES_USER=example
+      - POSTGRES_DB=projektinator
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_PORT=5432
 
 volumes:
   postgres-data: null

@@ -213,8 +213,7 @@ class TeamService:
         if not tlname:
             raise NotExistingException('Team Leader')
 
-        team_id = self._team_repository.update(teid, name, description, tlid,
-                                               tlname)
+        team_id = self._team_repository.update(teid, name, description, tlid)
 
         updated_team = Team(team_id, name, description, tlid, tlname)
         return updated_team

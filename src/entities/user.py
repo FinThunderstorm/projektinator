@@ -5,10 +5,18 @@ class User:
     '''Class User resembles user as a object from the database.
     '''
 
-    def __init__(self, uid: str, username: str, user_role: int,
-                 user_role_name: str, password_hash: str, firstname: str,
-                 lastname: str, email: str, profile_image: str, teid: str,
-                 tename: str):
+    def __init__(self,
+                 uid: str,
+                 username: str,
+                 user_role: int,
+                 user_role_name: str,
+                 password_hash: str,
+                 firstname: str,
+                 lastname: str,
+                 email: str,
+                 profile_image: str = None,
+                 teid: str = None,
+                 tename: str = None):
         '''Initializes User object with given values
 
         Args:
@@ -21,10 +29,10 @@ class User:
             firstname (str): holds user's firstname
             lastname (str): holds user's lastname
             email (str): holds user's email
-            profile_image (str): holds user's profile image as base64
+            profile_image (str, optional): holds user's profile image as base64
                 encoded string or default value
-            teid (str): id of the team if belongs to
-            tename (str): name of the team if belongs to
+            teid (str, optional): id of the team if belongs to
+            tename (str, optional): name of the team if belongs to
         '''
         self.user_id = uid
         self.username = username

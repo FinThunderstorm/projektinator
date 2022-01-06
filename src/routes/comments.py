@@ -17,7 +17,8 @@ def edit_comment():
 
         comment = comment_service.get_by_id(cid)
 
-        if comment.assignee_id != session['user'] or session['user_role'] < 2:
+        if (comment.assignee_id != session['user']
+                and session['user_role'] < 2) or session['user_role'] < 2:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
@@ -117,7 +118,8 @@ def remove_comment(comment_id):
     try:
         comment = comment_service.get_by_id(comment_id)
 
-        if comment.assignee_id != session['user'] or session['user_role'] < 2:
+        if (comment.assignee_id != session['user']
+                and session['user_role'] < 2) or session['user_role'] < 2:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 

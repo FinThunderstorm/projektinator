@@ -63,7 +63,8 @@ def view_user(user_id):
 @app.route(f'{base_url}/edit/<uuid:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
     try:
-        if user_id != session['user'] or session['user_role'] < 3:
+        if (user_id != session['user']
+                and session['user_role'] < 3) or session['user_role'] < 3:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
@@ -161,7 +162,8 @@ def register_user():
 
 @app.route(f'{base_url}/remove/<uuid:user_id>', methods=['GET'])
 def remove_user(user_id):
-    if user_id != session['user'] or session['user_role'] < 3:
+    if (user_id != session['user']
+            and session['user_role'] < 3) or session['user_role'] < 3:
         flash('Not enough permissions.', 'is-danger')
         return redirect('/')
 

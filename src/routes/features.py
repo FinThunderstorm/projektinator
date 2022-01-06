@@ -46,16 +46,19 @@ def edit_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
 
-        if feature.feature_owner != session['user'] or session['user_role'] < 2:
+        if (feature.feature_owner != session['user']
+                and session['user_role'] < 2) or session['user_role'] < 2:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
         # GET shows feature
         if request.method == 'GET':
             if session['user_role'] == 1:
-                users = user_service.get_team_users(session['team_id'])
-                if len(users) == 0:
-                    users = [(session['user'], session['username'])]
+                try:
+                    users = user_service.get_team_users(session['team_id'])
+                except (UnvalidInputException, NotExistingException):
+                    users = [(session['user'], session['username'],
+                              user_service.get_profile_image(session['user']))]
             else:
                 users = user_service.get_users()
             projects = project_service.get_projects()
@@ -96,9 +99,11 @@ def create_feature():
     try:
         if request.method == 'GET':
             if session['user_role'] == 1:
-                users = user_service.get_team_users(session['team_id'])
-                if len(users) == 0:
-                    users = [(session['user'], session['username'])]
+                try:
+                    users = user_service.get_team_users(session['team_id'])
+                except (UnvalidInputException, NotExistingException):
+                    users = [(session['user'], session['username'],
+                              user_service.get_profile_image(session['user']))]
             else:
                 users = user_service.get_users()
             projects = project_service.get_projects()
@@ -136,7 +141,8 @@ def remove_feature(feature_id):
     try:
         feature = feature_service.get_by_id(feature_id)
 
-        if feature.feature_owner != session['user'] or session['user_role'] < 2:
+        if (feature.feature_owner != session['user']
+                and session['user_role'] < 2) or session['user_role'] < 2:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 

@@ -31,8 +31,8 @@ RUN poetry run pip install -U setuptools
 
 EXPOSE 8000
 
-# RUN useradd -u 8877 projektinator
-# USER projektinator
+RUN useradd -u 8877 projektinator
+USER projektinator
 
 CMD ["run","invoke","start-production"]
 

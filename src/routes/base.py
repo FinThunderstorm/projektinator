@@ -7,6 +7,7 @@ from services.task_service import task_service
 from services.comment_service import comment_service
 from services.team_service import team_service
 from services.statistics_service import statistics_service
+from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException
 
 
 @app.route("/")
@@ -28,9 +29,10 @@ def index():
                                comments=comments,
                                teams=teams,
                                time_spent=time_spent)
-    except KeyError:
-
+    except (KeyError, NotExistingException, UnvalidInputException):
         return render_template("index.html")
+    except DatabaseException:
+        abort(503)
 
 
 @app.route("/health")

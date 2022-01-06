@@ -139,8 +139,8 @@ class ProjectService:
                 'Unvalid formatting',
                 'not being in "one;two;three;flags;" format', 'flags')
 
-        project_id, created, updated_on = self._project_repository.new(
-            poid, name, description, flags)
+        project_id, created, updated_on = self._project_repository.update(
+            pid, poid, name, description, flags)
 
         updated_project = Project(project_id, poid, poname, name, description,
                                   created, updated_on)

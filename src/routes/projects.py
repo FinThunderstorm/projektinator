@@ -40,17 +40,19 @@ def edit_project(project_id):
     try:
         project = project_service.get_by_id(project_id)
 
-        if project.project_owner_id != session['user'] or session[
-                'user_role'] < 3:
+        if (project.project_owner_id != session['user']
+                and session['user_role'] < 3) or session['user_role'] < 3:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
         # GET shows edit page
         if request.method == 'GET':
             if session['user_role'] == 1:
-                users = user_service.get_team_users(session['team_id'])
-                if len(users) == 0:
-                    users = [(session['user'], session['username'])]
+                try:
+                    users = user_service.get_team_users(session['team_id'])
+                except (UnvalidInputException, NotExistingException):
+                    users = [(session['user'], session['username'],
+                              user_service.get_profile_image(session['user']))]
             else:
                 users = user_service.get_users()
 
@@ -63,7 +65,7 @@ def edit_project(project_id):
                 abort(403)
 
             project_service.update(request.form['project_id'],
-                                   request.form['project_owner_id'],
+                                   request.form['project_owner'],
                                    request.form['name'],
                                    request.form['description'],
                                    request.form['flags'])
@@ -84,9 +86,11 @@ def create_project():
         if request.method == 'GET':
 
             if session['user_role'] == 1:
-                users = user_service.get_team_users(session['team_id'])
-                if len(users) == 0:
-                    users = [(session['user'], session['username'])]
+                try:
+                    users = user_service.get_team_users(session['team_id'])
+                except (UnvalidInputException, NotExistingException):
+                    users = [(session['user'], session['username'],
+                              user_service.get_profile_image(session['user']))]
             else:
                 users = user_service.get_users()
 
@@ -116,8 +120,8 @@ def create_project():
 def remove_project(project_id):
     try:
         project = project_service.get_by_id(project_id)
-        if project.project_owner_id != session['user'] or session[
-                'user_role'] < 3:
+        if (project.project_owner_id != session['user']
+                and session['user_role'] < 3) or session['user_role'] < 3:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 

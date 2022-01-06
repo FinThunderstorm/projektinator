@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from utils.database import db
 from utils.exceptions import DatabaseException, NotExistingException
 
@@ -271,7 +272,7 @@ class ProjectRepository:
             db.session.execute(sql, {'id': pid})
             db.session.commit()
         except Exception as error:
-            raise DatabaseException('project remove') from error
+            raise DatabaseException('While removing the project') from error
 
 
 project_repository = ProjectRepository()

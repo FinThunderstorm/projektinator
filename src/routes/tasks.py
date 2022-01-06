@@ -44,16 +44,19 @@ def edit_task(task_id):
     try:
         task = task_service.get_by_id(task_id)
 
-        if task.assignee_id != session['user'] or session['user_role'] < 2:
+        if (task.assignee_id != session['user']
+                and session['user_role'] < 2) or session['user_role'] < 2:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
         # GET shows task
         if request.method == 'GET':
             if session['user_role'] == 1:
-                users = user_service.get_team_users(session['team_id'])
-                if len(users) == 0:
-                    users = [(session['user'], session['username'])]
+                try:
+                    users = user_service.get_team_users(session['team_id'])
+                except (UnvalidInputException, NotExistingException):
+                    users = [(session['user'], session['username'],
+                              user_service.get_profile_image(session['user']))]
             else:
                 users = user_service.get_users()
             features = feature_service.get_features()
@@ -95,9 +98,11 @@ def create_task():
         # GET shows creation page
         if request.method == 'GET':
             if session['user_role'] == 1:
-                users = user_service.get_team_users(session['team_id'])
-                if len(users) == 0:
-                    users = [(session['user'], session['username'])]
+                try:
+                    users = user_service.get_team_users(session['team_id'])
+                except (UnvalidInputException, NotExistingException):
+                    users = [(session['user'], session['username'],
+                              user_service.get_profile_image(session['user']))]
             else:
                 users = user_service.get_users()
             features = feature_service.get_features()
@@ -136,7 +141,8 @@ def remove_task(task_id):
     try:
         task = task_service.get_by_id(task_id)
 
-        if task.assignee_id != session['user'] or session['user_role'] < 2:
+        if (task.assignee_id != session['user']
+                and session['user_role'] < 2) or session['user_role'] < 2:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 

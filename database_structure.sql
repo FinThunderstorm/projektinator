@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Users(
 );
 CREATE TABLE IF NOT EXISTS ProfileImages(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  user_id uuid REFERENCES Users NOT NULL,
+  user_id uuid REFERENCES Users ON DELETE CASCADE NOT NULL,
   image_type TEXT NOT NULL,
   image_data BYTEA NOT NULL,
   UNIQUE(user_id)
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Projects(
 );
 CREATE TABLE IF NOT EXISTS Features(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  project_id uuid REFERENCES Projects NOT NULL,
+  project_id uuid REFERENCES Projects ON DELETE CASCADE NOT NULL,
   feature_owner uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS Features(
 );
 CREATE TABLE IF NOT EXISTS Tasks(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  feature_id uuid REFERENCES Features NOT NULL,
+  feature_id uuid REFERENCES Features ON DELETE CASCADE NOT NULL,
   assignee uuid REFERENCES Users NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS Tasks(
 );
 CREATE TABLE IF NOT EXISTS Comments(
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  feature_id uuid REFERENCES Features,
-  task_id uuid REFERENCES Tasks,
+  feature_id uuid REFERENCES Features ON DELETE CASCADE,
+  task_id uuid REFERENCES Tasks ON DELETE CASCADE,
   comment TEXT NOT NULL,
   time_spent NUMERIC NOT NULL,
   assignee uuid REFERENCES Users,
@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS Comments(
   updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS Teamsusers(
-  user_id uuid NOT NULL PRIMARY KEY REFERENCES Users,
-  team_id uuid NOT NULL REFERENCES Teams,
+  user_id uuid NOT NULL PRIMARY KEY REFERENCES Users ON DELETE CASCADE,
+  team_id uuid NOT NULL REFERENCES Teams ON DELETE CASCADE,
   UNIQUE(user_id)
 );
 

@@ -42,7 +42,8 @@ def edit_team(team_id):
     try:
         team = team_service.get_by_id(team_id)
 
-        if team.team_leader_id != session['user'] or session['user_role'] < 3:
+        if (team.team_leader_id != session['user']
+                and session['user_role'] < 3) or session['user_role'] < 3:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
@@ -78,7 +79,8 @@ def edit_team_members(team_id):
     try:
         team = team_service.get_by_id(team_id)
 
-        if team.team_leader_id != session['user'] or session['user_role'] < 3:
+        if (team.team_leader_id != session['user']
+                and session['user_role'] < 3) or session['user_role'] < 3:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
@@ -138,13 +140,9 @@ def create_team():
                                         request.form['description'],
                                         request.form['team_leader'])
 
-            if request.form['team_leader'] not in request.form.getlist(
-                    'members'):
-                team_service.add_member(new_team.team_id,
-                                        request.form['team_leader'])
-
             for member in request.form.getlist('members'):
-                team_service.add_member(new_team.team_id, member)
+                if member != request.form['team_leader']:
+                    team_service.add_member(new_team.team_id, member)
 
             flash(f'New team {new_team.team_id} created successfully',
                   'is-success')
@@ -160,7 +158,8 @@ def create_team():
 def remove_team():
     try:
         team = team_service.get_by_id(request.form['team_id'])
-        if team.team_leader_id != session['user'] or session['user_role'] < 3:
+        if (team.team_leader_id != session['user']
+                and session['user_role'] < 3) or session['user_role'] < 3:
             flash('Not enough permissions.', 'is-danger')
             return redirect('/')
 
