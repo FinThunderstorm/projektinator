@@ -389,7 +389,7 @@ class UserService:
         elif len(username) < 5:
             raise ValueShorterThanException('username', 5)
 
-        if password != "":
+        if password != '':
             if len(password) < 5:
                 raise ValueShorterThanException('password', 5)
 
@@ -404,7 +404,10 @@ class UserService:
             raise UnvalidInputException('Unvalid input', 'unexpected value',
                                         'user role') from error
 
-        password_hash = generate_password_hash(password)
+        if password != '':
+            password_hash = generate_password_hash(password)
+        else:
+            password_hash = current_user.password_hash
 
         user_role_name = self._role_service.get_by_id(user_role)
         if not user_role_name:
