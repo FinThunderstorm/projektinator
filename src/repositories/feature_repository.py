@@ -293,6 +293,7 @@ class FeatureRepository:
         '''
 
         values = {
+            'id': fid,
             'project_id': pid,
             'feature_owner': foid,
             'name': name,
