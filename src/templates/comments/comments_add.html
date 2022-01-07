@@ -23,8 +23,9 @@
               </div>
 
             <div class="mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="number" id="tspent" name="tspent" value="0.0">
+                <input class="mdl-textfield__input" type="number" id="tspent" name="tspent" value="0.0" step="0.1">
                 <label class="mdl-textfield__label" for="tspent">Time spent (in hours)</label>
+                <span class="mdl-textfield__error">Field ”Time spent” needs to be formatted in "2.3" format</span>
             </div>
 
             <input type="hidden" name="assignee" value="{{ session.user }}" />

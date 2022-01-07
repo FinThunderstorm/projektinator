@@ -433,7 +433,7 @@ class UserRepository:
         except IntegrityError as error:
             raise UsernameDuplicateException() from error
         except Exception as error:
-            raise DatabaseException('user update') from error
+            raise DatabaseException('While saving updated user') from error
 
         return user_id[0]
 
