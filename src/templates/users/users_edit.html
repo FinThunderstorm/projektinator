@@ -45,14 +45,14 @@
         {% endif %}
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" minlength="5" id="password" name="password">
-            <label class="mdl-textfield__label" for="password">Password</label>
+            <input class="mdl-textfield__input" type="password" minlength="5" id="password_edit" name="password_edit">
+            <label class="mdl-textfield__label" for="password_edit">Password</label>
             <span class="mdl-textfield__error">Field ”Password” needs to be atleast 5 characters</span>
         </div>
 
         <div class="mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" minlength="5" id="password_confirm" name="password_confirm">
-            <label class="mdl-textfield__label" for="password_confirm">Confirm password</label>
+            <input class="mdl-textfield__input" type="password" minlength="5" id="password_confirm_edit" name="password_confirm_edit">
+            <label class="mdl-textfield__label" for="password_confirm_edit">Confirm password</label>
             <span class="mdl-textfield__error">Field ”Confirm password” needs to be atleast 5 characters</span>
         </div>
 
@@ -105,7 +105,7 @@
         
         <input type="hidden" name="token" value="{{ session.token }}">
 
-        <div class="mdl-cell--12-col">
+        <div class="mdl-cell--12-col" style="margin-top: 16px;">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                 Save
             </button>

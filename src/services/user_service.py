@@ -389,10 +389,9 @@ class UserService:
         elif len(username) < 5:
             raise ValueShorterThanException('username', 5)
 
-        if password == '':
-            raise EmptyValueException('password')
-        elif len(password) < 5:
-            raise ValueShorterThanException('password', 5)
+        if password != "":
+            if len(password) < 5:
+                raise ValueShorterThanException('password', 5)
 
         if firstname == '' or lastname == '':
             raise EmptyValueException('name')
@@ -411,8 +410,9 @@ class UserService:
         if not user_role_name:
             raise NotExistingException('Role')
 
-        user_id = self._user_repository.new(username, user_role, password_hash,
-                                            firstname, lastname, email)
+        user_id = self._user_repository.update(uid, username, user_role,
+                                               password_hash, firstname,
+                                               lastname, email)
 
         updated_user = User(user_id, username, user_role, user_role_name,
                             password_hash, firstname, lastname, email)

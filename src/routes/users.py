@@ -85,7 +85,7 @@ def edit_user(user_id):
             user_service.update(request.form['user_id'],
                                 request.form['username'],
                                 request.form['user_role'],
-                                request.form['password'],
+                                request.form['password_edit'],
                                 request.form['firstname'],
                                 request.form['lastname'], request.form['email'])
 
