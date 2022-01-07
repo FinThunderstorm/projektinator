@@ -1,7 +1,11 @@
-# Projektinator - Your project's best friend
+# <img src="./docs/media/logo_eng.svg" style="width: 50vw;" alt="Projektinator - Your project's best friend">
+
+[![CI-pipe](https://github.com/FinThunderstorm/projektinator/actions/workflows/ci.yml/badge.svg)](https://github.com/FinThunderstorm/projektinator/actions/workflows/ci.yml) [![CD-pipe](https://github.com/FinThunderstorm/projektinator/actions/workflows/cd.yml/badge.svg)](https://github.com/FinThunderstorm/projektinator/actions/workflows/cd.yml) [![Maintainability](https://api.codeclimate.com/v1/badges/de171efa89a8a018acfe/maintainability)](https://codeclimate.com/github/FinThunderstorm/projektinator/maintainability)
+
+![Projektinator](./docs/media/dashboard.png)
 
 Kurssisuoritus Helsingin yliopiston [tietokantasovelluskurssille](https://hy-tsoha.github.io/materiaali/index).
-Sovellus pyörii osoitteessa [projektinator.herokuapp.com](https://projektinator.herokuapp.com).
+Sovellus pyörii osoitteessa [https://projektinator.herokuapp.com](https://projektinator.herokuapp.com).
 
 ## Idea
 
@@ -106,5 +110,8 @@ DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOSTNAM
 
 ## Tyylittely
 
-- Logo: öljylamppu: <https://publicdomainvectors.org/en/free-clipart/Oil-lamp-image/71630.html>, fontti: <https://ianbarnard.co/products/montebello-cursive-script-typeface>
-- Taustakuva-kirjautuminen: <https://www.pexels.com/fi-fi/kuva/ihmiset-kuppi-muki-toissa-3183150>, Kuvaaja fauxels palvelusta Pexels
+- Logo:
+  - Öljylamppu: Tuntematon, 2018, "Oil lamp image". Saatavilla: <https://publicdomainvectors.org/en/free-clipart/Oil-lamp-image/71630.html>
+  - Fontti: Barnard I, vuosi tuntematon, "Montebello - Cursive Script Typeface". Saatavilla: <https://ianbarnard.co/products/montebello-cursive-script-typeface>
+- Kirjautumisen taustakuva:
+  - fauxels, 2019, "Ilmainen kuvapankkikuva aiheesta Aikuiset, aivoriihi, ajatukset". Saatavilla: <https://www.pexels.com/fi-fi/kuva/ihmiset-kuppi-muki-toissa-3183150>
