@@ -395,7 +395,7 @@ class TaskService:
             raise NotExistingException('Type')
 
         task_id, created, updated_on = self._task_repository.update(
-            fid, aid, name, description, status, ttype, priority, flags)
+            tid, fid, aid, name, description, status, ttype, priority, flags)
 
         updated_task = Task(task_id, fid, fname, aid, aname, name, description,
                             status, sname, ttype, ttname, priority, created,

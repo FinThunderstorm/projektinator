@@ -1,62 +1,110 @@
-# Projektinator
+# Projektinator - Your project's best friend
 
 Kurssisuoritus Helsingin yliopiston [tietokantasovelluskurssille](https://hy-tsoha.github.io/materiaali/index).
 Sovellus pyörii osoitteessa [projektinator.herokuapp.com](https://projektinator.herokuapp.com).
 
 ## Idea
 
-Tarkoitus on toteuttaa projektinhallintatyökalu, jolla voidaan seurata projektin edistymistä ja ajankäyttöä, sekä hallita niitä.
+Projektinator on ketterän kehityksen projektinhallintatyökalu, jolla voidaan tehdä projektien tilaseurantaa sekä seurata käytettyjä työtunteja.
 
-Käyttäjätasoja on kolme:
+### Projekti
 
-- admin = käyttöoikeus kaikkeen
-- leader = peruskäyttäjä, joka pystyy hallinnoimaan projektien asetuksia
+Sovelluksen toiminnan perusykskkö on projekti. Projekti koostuu useita toiminnallisuuksista. Projektilla on projektin omistaja, kuka vastaa projektista.
+
+#### Oikeudet
+
+- katsella: kaikki käyttäjät
+- luoda: kaikki käyttäjät, peruskäyttäjä ei voi lisätä projektiomistajaksi kuin itsensä tai tiiminsä jäsenen.
+- muokata: vain projektin omistaja tai pääkäyttäjäoikeudellinen
+- poistaa: vain projektin omistaja tai pääkäyttäjäoikeudellinen
+
+### Ominaisuus
+
+Projekti koostuu ominaisuuksista. Ominaisuus kuvaa jotain projektin toteutettavaa osa-aluetta. Ominaisuuteen voi liittyä tehtäviä sekä työ-aikaa seuraavia kommentteja.
+
+#### Oikeudet
+
+- katsella: kaikki käyttäjät
+- luoda: kaikki käyttäjät, peruskäyttäjä ei voi lisätä ominaisuuden omistajaksi kuin itsensä tai tiiminsä jäsenen.
+- muokata: vain ominaisuuden omistaja tai tiiminvetäjäoikeudellinen
+- poistaa: vain ominaisuuden omistaja tai tiiminvetäjäoikeudellinen
+
+### Tehtävä
+
+Ominaisuus koostuu tehtävistä. Tehtävä kuvaa jotain projektin toteutettavaa ominaisuutta. Tehtävään voi liittyä tehtäviä työ-aikaa seuraavia kommentteja.
+
+#### Oikeudet
+
+- katsella: kaikki käyttäjät
+- luoda: kaikki käyttäjät, peruskäyttäjä ei voi lisätä tehtävän hoitajaksi kuin itsensä tai tiiminsä jäsenen.
+- muokata: vain tehtävän hoitaja tai tiiminvetäjäoikeudellinen
+- poistaa: vain tehtävän hoitaja tai tiiminvetäjäoikeudellinen
+
+### Kommentti
+
+Ominaisuus tai tehtävä voi koostua kommenteista. Kommentti kertoo niihin liittyvä havaintoja sekä niihin käytettyä työaikaa.
+
+#### Oikeudet
+
+- katsella: kaikki käyttäjät
+- luoda: kaikki käyttäjät
+- muokata: vain kommentin luoja tai tiiminvetäjäoikeudellinen
+- poistaa: vain kommentin luoja tai tiiminvetäjäoikeudellinen
+
+### Tiimi
+
+Käyttäjä voi kuulua tiimiin, ja tiimi määrittelee peruskäyttäjän näkemät henkilöt niitä valittaessa
+
+#### Oikeudet
+
+- katsella: kaikki käyttäjät
+- luoda: tiiminvetäjäoikeudelliset
+- muokata: vain tiimin vetäjä tai pääkäyttäjäoikeudellinen
+- poistaa: vain tiimin vetäjä tai pääkäyttäjäoikeudellinen
+
+### Käyttäjätasoja on kolme:
+
+Vain pääkäyttäjäoikeudellinen voi korottaa eri käyttäjien oikeustasoja. Käyttäjä ei voi itse muuttaa oikeustasoaan, vaikka olisi pääkäyttäjä.
+
+- admin = pääkäyttäjäoikeus
+- leader = käyttäjä, jolla on tiimin hallintaoikeudet
 - user = peruskäyttäjä
 
-Sovelluksella voi luoda projekteja. Projekti voi sisältää useita erilaisia ominaisuuksia. Ominaisuudet voi sisältää erilaisia tehtäviä. Tehtäville voidaan antaa kuvaus, mitä pitää tehdä ja merkitä kauan siihen on käytetty aikaa. Tehtäville, ominaisuuksille ja projekteille voi antaa erilaisia lippuja kuvaamaan niiden luonnetta ja tehtäviä sekä ominaisuuksia voi kommentoida = kerätä tietoa edistymisestä. Tehtäville ja ominaisuuksille voi antaa kiireellisyysluokituksen. Ominaisuuksia ja tehtäviä voidaan seurata ns. **dashboardin** avulla projektikohtaisesti.
+## Testaustunnukset:
 
-Testaustunnukset:
-Pääkäyttäjä: admin/admin
-Tiimin vetäjä: leader/leader
-Peruskäyttäjä: project/project
+- Pääkäyttäjä: `admin / admin`
+- Tiimin vetäjä: `leader / leader`
+- Peruskäyttäjä: `project / project`
 
 ## Tech stack
 
-- Python & Flask
-- Material Design Lite käyttöliittymäkirjasto
+- Python 3.10
+- Flask
+- Material Design Lite -käyttöliittymäkirjasto
 - PostgreSQL
-- Suoritetaan Docker-kontitettuna.
+- Docker
 
-## Kehitettäessä sovellusta muistettavia käytännöllisiä komentoja
+## Huomioitavaa kehitettäessä
 
-- Flask hot reload: ensin anna komento **export FLASK_ENV=development** ja tämän jälkeen suorita normaalisti **flask run**
-- Postgresin dev-konttiin pääsee seuraavalla komennolla **docker exec -it projektinator-db psql -U example -d projektinator**
+- Kehitysaikaisen sovellusympäristön saa käyntiin komennolla `docker-compose up -d`
+- Sovelluksen logeja voi katsoa komennolla `docker-compose logs -f app`
+- Tuotantoympäristöä vastaavan sovellusympäristön saa käyntiin komennolla `docker-compose -f docker-compose.prod.yml up -d`
+- Postgresin dev-konttiin pääsee seuraavalla komennolla `docker exec -it projektinator-db psql -U example -d projektinator`
 
-## Todo
+Sovelluskehitysympärstö tarvitsee `.env`-tiedoston, jonka sisältö on seuraava. Postgresin hostnamen täytyy vastata docker-composesta sille tulevaa. Oletuksena `projektinator-db`.
 
-Tilojen kuvaus: ✅ = valmis, 🏃 = työn alla, ❌ = aloittamatta
+```
+POSTGRES_USER=example
+POSTGRES_DB=projektinator
+POSTGRES_PASSWORD=example
+POSTGRES_HOSTNAME=projektinator-db
+POSTGRES_PORT=5432
 
-- korjaa projektireposta ei olemassa olon tarkastus serviceen
-- korjaa kaikki repojen yksi alaviiva kahdeksi alaviivaksi
-- muuta repot palauttamaan arvot tuplessa tms ja luo objektiksi vasta servicessä
+SECRET=example
+DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOSTNAME}:${POSTGRES_PORT}/${POSTGRES_DB}
+```
 
 ## Tyylittely
 
 - Logo: öljylamppu: <https://publicdomainvectors.org/en/free-clipart/Oil-lamp-image/71630.html>, fontti: <https://ianbarnard.co/products/montebello-cursive-script-typeface>
 - Taustakuva-kirjautuminen: <https://www.pexels.com/fi-fi/kuva/ihmiset-kuppi-muki-toissa-3183150>, Kuvaaja fauxels palvelusta Pexels
-- Taustaväri-tumma: #780252, korostusväri-kirkas: #FF0064
-- Käytetty kirjasto: Bulma & scss-installaatio
-
-## Projektin aikana tapahtunutta tulevaisuuden varalle muistiin
-
-### Ongelma #1
-
-Mac ei halunnut antaa suorittaa pip3-paketinhallinnan asennuksia ilman sudoja. Oletettavasti aiemmin käytetty virheellisesti sudo-oikeuksia käytettäessä pip3:a. _Ratkaisu:_ rakennetaan kehitysympäristö VSCoden devcontainereiden avustuksella.
-
-### Ongelma #2
-
-VSCoden devcontainer.json ei tue **settings** osioon tietojen hakemista .env tiedostosta, liittyy [GitHub Issue #2809 @ microsoft/vscode](https://github.com/microsoft/vscode/issues/2809) - asiaa ei ole neljän vuoden aikana saatettu korjatuksi. _Ratkaisu:_ tehdään geneeriset tunnukset kehityksen ajaksi ja välitetään ne käyttäen .env-tiedostoa ja asetetaan tuotantoon erikseen vastaavat ympäristömuuttujat vahvennetuilla tunnuksilla.
-
-### Ongelma #3
-
-PostgreSQL:n Docker image ei ottanut oikeita käyttäjätietoja sisälle, tietokantaan ei päässyt käsiksi millään käyttäjällä. _Ratkaisu:_ poista käytössä oleva Docker-kontti ja tämän jälkeen poista kaikki käyttämättä olevat volumet **docker volume prune** komennolla. Lähde: [https://github.com/docker-library/postgres/issues/453#issuecomment-393939412](https://github.com/docker-library/postgres/issues/453#issuecomment-393939412)
