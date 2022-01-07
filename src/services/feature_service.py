@@ -100,6 +100,9 @@ class FeatureService:
             Feature: created feature
         '''
 
+        if len(name) > 100 or len(description) > 1000 or len(flags) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if (not pid or not foid or not name or not description or not status
                 or not ftype or not priority):
             raise EmptyValueException(
@@ -373,6 +376,10 @@ class FeatureService:
         Returns:
             Project: updated feature as Feature object
         '''
+
+        if len(name) > 100 or len(description) > 1000 or len(flags) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if (not fid or not pid or not foid or not name or not description
                 or not status or not ftype or not priority):
             raise EmptyValueException(

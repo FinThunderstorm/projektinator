@@ -49,6 +49,8 @@ class TeamService:
         Returns:
             Team: created team
         '''
+        if len(name) > 100 or len(description) > 1000:
+            raise UnvalidInputException('Input values too long')
 
         if (not name or not description or not tlid):
             raise EmptyValueException(
@@ -196,6 +198,8 @@ class TeamService:
         Returns:
             Team: updated team
         '''
+        if len(name) > 100 or len(description) > 1000:
+            raise UnvalidInputException('Input values too long')
 
         if (not teid or not name or not description or not tlid):
             raise EmptyValueException(

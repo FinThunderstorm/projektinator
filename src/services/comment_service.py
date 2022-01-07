@@ -69,6 +69,9 @@ class CommentService:
             Comment: created comment
         """
 
+        if len(comment) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if not aid or not comment or not tspent:
             raise EmptyValueException(
                 "One of given values is empty, all values need to have value")
@@ -340,6 +343,9 @@ class CommentService:
         Returns:
             Comment: updated comment
         """
+        if len(comment_text) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if not cid or not aid or not comment_text or not tspent:
             raise EmptyValueException(
                 "One of given values is empty, all values need to have value")

@@ -1,7 +1,9 @@
 from flask import Flask
+from flask_talisman import Talisman
 import utils.config as configs
 
 app = Flask(__name__)
+Talisman(app, content_security_policy=configs.csp)
 app.secret_key = configs.secret
 
 if configs.mode != 'TEST':

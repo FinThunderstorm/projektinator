@@ -94,6 +94,9 @@ class TaskService:
             Task: created task
         '''
 
+        if len(name) > 100 or len(description) > 1000 or len(flags) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if (not fid or not aid or not name or not description or not status
                 or not ttype or not priority):
             raise EmptyValueException(
@@ -333,6 +336,10 @@ class TaskService:
         Returns:
             Task: updated task
         '''
+
+        if len(name) > 100 or len(description) > 1000 or len(flags) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if (not tid or not fid or not aid or not name or not description
                 or not status or not ttype or not priority):
             raise EmptyValueException(

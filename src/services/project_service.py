@@ -60,6 +60,9 @@ class ProjectService:
             Project: created project
         '''
 
+        if len(name) > 100 or len(description) > 1000 or len(flags) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if not poid or not name or not description:
             raise EmptyValueException(
                 'One of given values is empty, all values need to have value')
@@ -111,6 +114,10 @@ class ProjectService:
         Returns:
             Project: updated project
         '''
+
+        if len(name) > 100 or len(description) > 1000 or len(flags) > 1000:
+            raise UnvalidInputException('Input values too long')
+
         if not validate_uuid4(pid):
             raise UnvalidInputException('Unvalid formatting',
                                         'not being in correct format of uuid4',

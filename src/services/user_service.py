@@ -62,6 +62,9 @@ class UserService:
         Returns:
             User: created user
         '''
+        if len(username) > 100 or len(password) > 100 or len(
+                firstname) > 100 or len(lastname) > 100 or len(email) > 100:
+            raise UnvalidInputException('Input values too long')
 
         if username == '':
             raise EmptyValueException('username')
@@ -369,6 +372,9 @@ class UserService:
         Returns:
             User: updated user as user object
         '''
+        if len(username) > 100 or len(password) > 100 or len(
+                firstname) > 100 or len(lastname) > 100 or len(email) > 100:
+            raise UnvalidInputException('Input values too long')
 
         if not validate_uuid4(uid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',

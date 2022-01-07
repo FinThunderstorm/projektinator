@@ -1,6 +1,6 @@
 [[package]]
 name = "astroid"
-version = "2.9.1"
+version = "2.9.2"
 description = "An abstract syntax tree for Python with inference support."
 category = "dev"
 optional = false
@@ -131,6 +131,17 @@ python-versions = ">= 2.7, != 3.0.*, != 3.1.*, != 3.2.*, != 3.3.*"
 [package.dependencies]
 Flask = ">=0.10"
 SQLAlchemy = ">=0.8.0"
+
+[[package]]
+name = "flask-talisman"
+version = "0.8.1"
+description = "HTTP security headers for Flask."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = ">=1.9.0"
 
 [[package]]
 name = "freezegun"
@@ -394,7 +405,7 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "setuptools"
-version = "60.2.0"
+version = "60.3.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 category = "main"
 optional = false
@@ -474,12 +485,12 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "1b28e2a58c2be1dc03f1cc6b4bcc9e5630fe2733934f4162497dd689bc76ce40"
+content-hash = "c8dae04c96fe3aa18566ef77b79330d2842e994cf39786684b3c01152ee95753"
 
 [metadata.files]
 astroid = [
-    {file = "astroid-2.9.1-py3-none-any.whl", hash = "sha256:bfd6c41149d1a368e9b7d3cc90470528e080efdd57fbc0c95426794e0be91c5b"},
-    {file = "astroid-2.9.1.tar.gz", hash = "sha256:f973b3622700431b6e8734ce66f6c18503922a13fb8eb8592e78bd4506823efb"},
+    {file = "astroid-2.9.2-py3-none-any.whl", hash = "sha256:aa296702f1a5c3102c860de49473aaa90a7f6d221555d5cf2678940a9be32a4e"},
+    {file = "astroid-2.9.2.tar.gz", hash = "sha256:72ace9c3333e274e9248168fc4f3e300da8545af1c303bd69197027f49e2bfff"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -623,6 +634,10 @@ flask = [
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.5.1.tar.gz", hash = "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912"},
     {file = "Flask_SQLAlchemy-2.5.1-py2.py3-none-any.whl", hash = "sha256:f12c3d4cc5cc7fdcc148b9527ea05671718c3ea45d50c7e732cceb33f574b390"},
+]
+flask-talisman = [
+    {file = "flask-talisman-0.8.1.tar.gz", hash = "sha256:5d502ec0c51bf1755a797b8cffbe4e94f8684af712ba0b56f3d80b79277ef285"},
+    {file = "flask_talisman-0.8.1-py2.py3-none-any.whl", hash = "sha256:08a25360c771f7a79d6d4db2abfa71f7422e62a714418b671d69d6a201764d05"},
 ]
 freezegun = [
     {file = "freezegun-1.1.0-py2.py3-none-any.whl", hash = "sha256:2ae695f7eb96c62529f03a038461afe3c692db3465e215355e1bb4b0ab408712"},
@@ -926,8 +941,8 @@ python-dotenv = [
     {file = "python_dotenv-0.17.1-py2.py3-none-any.whl", hash = "sha256:00aa34e92d992e9f8383730816359647f358f4a3be1ba45e5a5cefd27ee91544"},
 ]
 setuptools = [
-    {file = "setuptools-60.2.0-py3-none-any.whl", hash = "sha256:5c89b1a14a67ac5f0956f1cb0aeb7d1d3f4c8ba4e4e1ab7bf1af4933f9a2f0fe"},
-    {file = "setuptools-60.2.0.tar.gz", hash = "sha256:675fcebecb43c32eb930481abf907619137547f4336206e4d673180242e1a278"},
+    {file = "setuptools-60.3.1-py3-none-any.whl", hash = "sha256:2932bfeb248c648dc411ea9714d5a6de7a33ef1a0db2f0fce644d8172b0479e8"},
+    {file = "setuptools-60.3.1.tar.gz", hash = "sha256:2b62b3dbec1fe95585dadf3bd9a014c8c578624918190428c3a7994bb52ae2b8"},
 ]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
