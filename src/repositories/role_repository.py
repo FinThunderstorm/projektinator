@@ -87,7 +87,7 @@ class RoleRepository:
         try:
             name = db.session.execute(sql, {'id': rid}).fetchone()
         except Exception as error:
-            raise DatabaseException("While getting role's name") from error
+            raise DatabaseException('While getting role´s name') from error
 
         if not name:
             raise NotExistingException('Role')

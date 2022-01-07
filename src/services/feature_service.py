@@ -26,7 +26,7 @@ class FeatureService:
             default_user_repository: UserRepository = user_repository,
             default_task_service: TaskService = task_service,
             default_comment_service: CommentService = comment_service):
-        """Initializes FeatureService
+        '''Initializes FeatureService
 
         Args:
             default_project_repository (ProjectRepository, optional):
@@ -50,7 +50,7 @@ class FeatureService:
             default_comment_service (CommentService, optional):
                 interaction module with comments.
                 Defaults to comment_service.
-        """
+        '''
 
         self._project_repository = default_project_repository
         self._feature_repository = default_feature_repository
@@ -124,7 +124,7 @@ class FeatureService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in "one;two;three;flags;" format', 'flags')
+                'not being in 'one;two;three;flags;' format', 'flags')
 
         try:
             priority = int(priority)
@@ -263,7 +263,7 @@ class FeatureService:
 
         if not validate_uuid4(foid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
-                                        source="feature owner's id")
+                                        source='feature owner´s id')
 
         if not self._user_repository.get_by_id(foid):
             raise NotExistingException('Feature owner')
@@ -298,7 +298,7 @@ class FeatureService:
         '''
 
         if not validate_uuid4(fid):
-            raise UnvalidInputException("feature's id")
+            raise UnvalidInputException('feature´s id')
 
         feature = self._feature_repository.get_by_id(fid)
 
@@ -409,7 +409,7 @@ class FeatureService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in "one;two;three;flags;" format', 'flags')
+                'not being in 'one;two;three;flags;' format', 'flags')
 
         try:
             priority = int(priority)

@@ -15,7 +15,7 @@ class CommentRepository:
         '''new is used to create new comments into the database
 
         Args:
-            aid (str): id of the comments's assignee
+            aid (str): id of the comments´s assignee
             comment (str): content of the comment
             tspent (float): time spent, used for time tracking
             tid (str, optional): id of the related task. Defaults to None.
@@ -26,7 +26,7 @@ class CommentRepository:
                 saving into the database
 
         Returns:
-            tuple: created comment's id, creation and updated on time
+            tuple: created comment´s id, creation and updated on time
         '''
 
         values = {
@@ -181,7 +181,7 @@ class CommentRepository:
 
     def get_all_by_assignee(self, aid: str) -> [tuple]:
         '''get_all_by_assignee is used to get list of all comments
-           associated with given assignee's id in the database.
+           associated with given assignee´s id in the database.
 
            If no comments found, returns empty list.
 
@@ -229,8 +229,8 @@ class CommentRepository:
 
         Args:
             cid (str): id of the comment
-            aid (str): id of the comments's assignee
-            aname (str): name of the comments's assignee
+            aid (str): id of the comments´s assignee
+            aname (str): name of the comments´s assignee
             comment (str): content of the comment
             tspent (float): time spent, used for time tracking
             tid (str, optional): id of the related task. Defaults to None.
@@ -244,7 +244,7 @@ class CommentRepository:
                 saving into the database
 
         Returns:
-            tuple: updated comment's id, creation and updated on time
+            tuple: updated comment´s id, creation and updated on time
         '''
 
         values = {

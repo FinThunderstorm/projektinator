@@ -29,7 +29,7 @@ class TaskRepository:
                 saving into the database
 
         Returns:
-            tuple: created task's id, creation and updated on time
+            tuple: created task´s id, creation and updated on time
         '''
 
         values = {
@@ -230,7 +230,7 @@ class TaskRepository:
         try:
             name = db.session.execute(sql, {'id': tid}).fetchone()
         except Exception as error:
-            raise DatabaseException("While getting task's name") from error
+            raise DatabaseException('While getting task´s name') from error
 
         if not name:
             raise NotExistingException('Task')
@@ -261,7 +261,7 @@ class TaskRepository:
                 saving into the database
 
         Returns:
-            tuple: updated task's id, creation and updated on time
+            tuple: updated task´s id, creation and updated on time
         '''
 
         sql = '''

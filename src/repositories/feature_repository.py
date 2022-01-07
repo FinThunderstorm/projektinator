@@ -28,7 +28,7 @@ class FeatureRepository:
                 saving into the database
 
         Returns:
-            tuple: created feature's id, creation and updated on time
+            tuple: created feature´s id, creation and updated on time
         '''
 
         values = {
@@ -258,7 +258,7 @@ class FeatureRepository:
         try:
             name = db.session.execute(sql, {'id': fid}).fetchone()
         except Exception as error:
-            raise DatabaseException("While getting feature's name") from error
+            raise DatabaseException('While getting feature´s name') from error
 
         if not name:
             raise NotExistingException('Feature')
@@ -289,7 +289,7 @@ class FeatureRepository:
                 saving into the database
 
         Returns:
-            tuple: updated feature's id, creation and updated on time
+            tuple: updated feature´s id, creation and updated on time
         '''
 
         values = {

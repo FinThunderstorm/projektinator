@@ -10,10 +10,10 @@ from services.statistics_service import statistics_service
 from utils.exceptions import DatabaseException, UnvalidInputException, NotExistingException
 
 
-@app.route("/")
+@app.route('/')
 def index():
     try:
-        user_id = session["user"]
+        user_id = session['user']
 
         projects = project_service.get_all_by_project_owner(user_id)
         features = feature_service.get_all_by_feature_owner(user_id)
@@ -22,7 +22,7 @@ def index():
         teams = team_service.get_all_by_team_leader(user_id)
         time_spent = statistics_service.get_time_spent_by_user(user_id)
 
-        return render_template("index.html",
+        return render_template('index.html',
                                projects=projects,
                                features=features,
                                tasks=tasks,
@@ -30,15 +30,15 @@ def index():
                                teams=teams,
                                time_spent=time_spent)
     except (KeyError, NotExistingException, UnvalidInputException):
-        return render_template("index.html")
+        return render_template('index.html')
     except DatabaseException:
         abort(503)
 
 
-@app.route("/health")
+@app.route('/health')
 def health():
     try:
         statistics_service.db_health()
     except OperationalError:
         abort(503)
-    return "PONG"
+    return 'PONG'

@@ -10,7 +10,7 @@ class ProjectRepository:
         '''new is used to create new projects into the database
 
         Args:
-            poid (str): id of the project's owner
+            poid (str): id of the project´s owner
             name (str): name of the project
             descrption (str): description of the project
             flags (str): flags used to identify projects,
@@ -21,7 +21,7 @@ class ProjectRepository:
                 saving into the database
 
         Returns:
-            tuple: created project's id, creation and updated_on time
+            tuple: created project´s id, creation and updated_on time
         '''
 
         values = {
@@ -112,7 +112,7 @@ class ProjectRepository:
         If no features found, returns empty list.
 
         Args:
-            poid (str): id of the project's owner
+            poid (str): id of the project´s owner
 
         Raises:
             DatabaseException: raised if problems occur
@@ -197,7 +197,7 @@ class ProjectRepository:
         try:
             name = db.session.execute(sql, {'id': pid}).fetchone()
         except Exception as error:
-            raise DatabaseException("While getting feature's name") from error
+            raise DatabaseException('While getting feature´s name') from error
 
         if not name:
             raise NotExistingException('Project')
@@ -210,7 +210,7 @@ class ProjectRepository:
 
         Args:
             pid (str): if of the project
-            poid (str): id of the project's owner
+            poid (str): id of the project´s owner
             name (str): name of the project
             descrption (str): description of the project
             flags (str): flags used to identify projects,
@@ -221,7 +221,7 @@ class ProjectRepository:
                 saving into the database
 
         Returns:
-            tuple: updated project's id, creation and updated on time
+            tuple: updated project´s id, creation and updated on time
         '''
 
         values = {

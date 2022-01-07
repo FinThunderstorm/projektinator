@@ -88,7 +88,7 @@ class TypeRepository:
         try:
             name = db.session.execute(sql, {'id': tyid}).fetchone()
         except Exception as error:
-            raise DatabaseException("While getting type's name") from error
+            raise DatabaseException('While getting type´s name') from error
 
         if not name:
             raise NotExistingException('Type')

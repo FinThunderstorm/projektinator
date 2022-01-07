@@ -118,7 +118,7 @@ class TaskService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in "one;two;three;flags;" format', 'flags')
+                'not being in 'one;two;three;flags;' format', 'flags')
 
         try:
             priority = int(priority)
@@ -237,7 +237,7 @@ class TaskService:
 
         if not validate_uuid4(aid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
-                                        source="assignee's id")
+                                        source='assignee´s id')
 
         if not self._user_repository.get_by_id(aid):
             raise NotExistingException('Assignee')
@@ -270,7 +270,7 @@ class TaskService:
             Task: task with given id
         '''
         if not validate_uuid4(tid):
-            raise UnvalidInputException("tasks's id")
+            raise UnvalidInputException('tasks´s id')
 
         task = self._task_repository.get_by_id(tid)
 
@@ -299,7 +299,7 @@ class TaskService:
         '''
 
         if not validate_uuid4(tid):
-            raise UnvalidInputException("tasks's id")
+            raise UnvalidInputException('tasks´s id')
 
         name = self._task_repository.get_name(tid)
 
@@ -367,7 +367,7 @@ class TaskService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in "one;two;three;flags;" format', 'flags')
+                'not being in 'one;two;three;flags;' format', 'flags')
 
         try:
             priority = int(priority)

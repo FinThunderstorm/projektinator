@@ -9,8 +9,8 @@ from utils.helpers import fullname
 
 
 class CommentService:
-    """Class used for handling comments in the application
-    """
+    '''Class used for handling comments in the application
+    '''
 
     def __init__(
         self,
@@ -19,7 +19,7 @@ class CommentService:
         default_task_repository: TaskRepository = task_repository,
         default_user_repository: UserRepository = user_repository,
     ):
-        """Initializes CommentService
+        '''Initializes CommentService
 
         Args:
             default_comment_repository (CommentRepository, optional):
@@ -34,7 +34,7 @@ class CommentService:
             default_user_repository (UserRepository, optional):
                 interaction module with database for users.
                 Defaults to user_repository.
-        """
+        '''
 
         self._comment_repository = default_comment_repository
         self._feature_repository = default_feature_repository
@@ -44,13 +44,13 @@ class CommentService:
     def new(self,
             aid: str,
             comment: str,
-            tspent: str = "0.0",
+            tspent: str = '0.0',
             tid: str = None,
             fid: str = None) -> Comment:
-        """new is used to create new comments
+        '''new is used to create new comments
 
         Args:
-            aid (str): id of the comments's assignee
+            aid (str): id of the comments´s assignee
             comment (str): content of the comment
             tspent (float): time spent, used for time tracking
             tid (str, optional): id of the related task. Defaults to None.
@@ -67,39 +67,39 @@ class CommentService:
 
         Returns:
             Comment: created comment
-        """
+        '''
 
         if len(comment) > 1000:
             raise UnvalidInputException('Input values too long')
 
         if not aid or not comment or not tspent:
             raise EmptyValueException(
-                "One of given values is empty, all values need to have value")
+                'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(aid):
-            raise UnvalidInputException("comment's assignee id")
+            raise UnvalidInputException('comment´s assignee id')
 
         aname = self._user_repository.get_fullname(aid)
         if not aname:
-            raise NotExistingException("comment's assignee")
+            raise NotExistingException('comment´s assignee')
 
         try:
             tspent = float(tspent)
         except ValueError as error:
             raise UnvalidInputException(
-                source="comment's time spent") from error
+                source='comment´s time spent') from error
         except TypeError as error:
             raise UnvalidInputException(
-                source="comment's time spent") from error
+                source='comment´s time spent') from error
 
         if fid:
             if not validate_uuid4(fid):
-                raise UnvalidInputException("comment's feature id")
+                raise UnvalidInputException('comment´s feature id')
 
             fname = self._feature_repository.get_name(fid)
 
             if not fname:
-                raise NotExistingException("comment's related feature")
+                raise NotExistingException('comment´s related feature')
 
             comment_id, created, updated_on = self._comment_repository.new(
                 aid,
@@ -118,12 +118,12 @@ class CommentService:
                                       fname=fname)
         elif tid:
             if not validate_uuid4(tid):
-                raise UnvalidInputException("comment's task id")
+                raise UnvalidInputException('comment´s task id')
 
             tname = self._task_repository.get_name(tid)
 
             if not tname:
-                raise NotExistingException("comment's related task")
+                raise NotExistingException('comment´s related task')
 
             comment_id, created, updated_on = self._comment_repository.new(
                 aid,
@@ -142,11 +142,11 @@ class CommentService:
                                       tname=tname)
         else:
             raise EmptyValueException(
-                "Adding comment", "either feature or task id needs to be given")
+                'Adding comment', 'either feature or task id needs to be given')
         return created_comment
 
     def get_all_by_feature_id(self, fid: str) -> [Comment]:
-        """get_all_by_feature_id is used to get list of all comments
+        '''get_all_by_feature_id is used to get list of all comments
            associated with given feature id in the database.
 
            If no comments found, returns empty list.
@@ -162,9 +162,9 @@ class CommentService:
 
         Returns:
             [Comment]: list of found comments
-        """
+        '''
         if not validate_uuid4(fid):
-            raise UnvalidInputException("comment's feature id")
+            raise UnvalidInputException('comment´s feature id')
 
         comments = [
             Comment(comment[1],
@@ -183,7 +183,7 @@ class CommentService:
         return comments
 
     def get_all_by_task_id(self, tid: str) -> [Comment]:
-        """get_all_by_task_id is used to get list of all comments
+        '''get_all_by_task_id is used to get list of all comments
            associated with given task id in the database.
 
            If no comments found, returns empty list.
@@ -199,9 +199,9 @@ class CommentService:
 
         Returns:
             [Comment]: list of found comments
-        """
+        '''
         if not validate_uuid4(tid):
-            raise UnvalidInputException("comment's task id")
+            raise UnvalidInputException('comment´s task id')
 
         comments = comments = [
             Comment(comment[1],
@@ -219,8 +219,8 @@ class CommentService:
         return comments
 
     def get_all_by_assignee(self, aid: str) -> [Comment]:
-        """get_all_by_assignee is used to get list of all comments
-           associated with given assignee's id in the database.
+        '''get_all_by_assignee is used to get list of all comments
+           associated with given assignee´s id in the database.
 
            If no comments found, returns empty list.
 
@@ -235,9 +235,9 @@ class CommentService:
 
         Returns:
             [Comment]: list of found comments
-        """
+        '''
         if not validate_uuid4(aid):
-            raise UnvalidInputException("comment's assignee id")
+            raise UnvalidInputException('comment´s assignee id')
 
         comments = self._comment_repository.get_all_by_assignee(aid)
         comments = [
@@ -250,7 +250,7 @@ class CommentService:
                     comment[8],
                     fid=comment[9],
                     fname=comment[10],
-                    mode=comment[0]) if comment[0] == "features" else Comment(
+                    mode=comment[0]) if comment[0] == 'features' else Comment(
                         comment[1],
                         comment[2],
                         fullname(comment[3], comment[4]),
@@ -267,7 +267,7 @@ class CommentService:
         return comments
 
     def get_by_id(self, cid: str) -> Comment:
-        """get_by_id is used to find exact comment with
+        '''get_by_id is used to find exact comment with
            given id from the database
 
         Args:
@@ -283,16 +283,16 @@ class CommentService:
 
         Returns:
             Comment: comment with given id
-        """
+        '''
         if not validate_uuid4(cid):
-            raise UnvalidInputException("comment's id")
+            raise UnvalidInputException('comment´s id')
 
         comment = self._comment_repository.get_by_id(cid)
 
         if not comment:
-            raise NotExistingException("Comment")
+            raise NotExistingException('Comment')
 
-        if comment[0] == "features":
+        if comment[0] == 'features':
             return Comment(comment[1],
                            comment[2],
                            fullname(comment[3], comment[4]),
@@ -320,12 +320,12 @@ class CommentService:
                tspent: str,
                tid: str = None,
                fid: str = None) -> Comment:
-        """update is used to update new values into
+        '''update is used to update new values into
            the database for specific comment
 
         Args:
             cid (str): id of the comment
-            aid (str): id of the comments's assignee
+            aid (str): id of the comments´s assignee
             comment_text (str): content of the comment
             tspent (float): time spent, used for time tracking
             tid (str, optional): id of the related task. Defaults to None.
@@ -342,43 +342,43 @@ class CommentService:
 
         Returns:
             Comment: updated comment
-        """
+        '''
         if len(comment_text) > 1000:
             raise UnvalidInputException('Input values too long')
 
         if not cid or not aid or not comment_text or not tspent:
             raise EmptyValueException(
-                "One of given values is empty, all values need to have value")
+                'One of given values is empty, all values need to have value')
 
         if not validate_uuid4(cid):
-            raise UnvalidInputException("comment's id")
+            raise UnvalidInputException('comment´s id')
 
         if not validate_uuid4(aid):
-            raise UnvalidInputException("comment's assignee id")
+            raise UnvalidInputException('comment´s assignee id')
 
         comment = self.get_by_id(cid)
         aname = self._user_repository.get_fullname(aid)
 
         if not aname:
-            raise NotExistingException("comment's assignee")
+            raise NotExistingException('comment´s assignee')
 
         try:
             tspent = float(tspent)
         except ValueError as error:
             raise UnvalidInputException(
-                source="comment's time spent") from error
+                source='comment´s time spent') from error
         except TypeError as error:
             raise UnvalidInputException(
-                source="comment's time spent") from error
+                source='comment´s time spent') from error
 
         if fid:
             if not validate_uuid4(fid):
-                raise UnvalidInputException("comment's feature id")
+                raise UnvalidInputException('comment´s feature id')
 
             fname = self._feature_repository.get_name(fid)
 
             if not fname:
-                raise NotExistingException("comment's related feature")
+                raise NotExistingException('comment´s related feature')
 
             comment_id, created, updated_on = self._comment_repository.update(
                 comment.comment_id, aid, comment_text, fid=fid)
@@ -393,11 +393,11 @@ class CommentService:
                                       fname=fname)
         elif tid:
             if not validate_uuid4(tid):
-                raise UnvalidInputException("comment's task id")
+                raise UnvalidInputException('comment´s task id')
             tname = self._task_repository.get_name(tid)
 
             if not tname:
-                raise NotExistingException("comment's related task")
+                raise NotExistingException('comment´s related task')
 
             comment_id, created, updated_on = self._comment_repository.update(
                 comment.comment_id, aid, comment_text, tspent, tid=tid)
@@ -412,13 +412,13 @@ class CommentService:
                                       tname=tname)
         else:
             raise EmptyValueException(
-                "Updating comment",
-                "either feature or task id needs to be given")
+                'Updating comment',
+                'either feature or task id needs to be given')
 
         return updated_comment
 
     def remove(self, cid: str):
-        """remove is used to remove comment from the database
+        '''remove is used to remove comment from the database
 
         Args:
             cid (str): id of comment to be removed
@@ -430,11 +430,11 @@ class CommentService:
                 id is given
             NotExistingException: raised if there is none
                 comments with given id
-        """
+        '''
 
         if not validate_uuid4(cid):
-            raise UnvalidInputException(reason="unvalid formatting of uuid4",
-                                        source="comment id")
+            raise UnvalidInputException(reason='unvalid formatting of uuid4',
+                                        source='comment id')
 
         self._comment_repository.get_by_id(cid)
         self._comment_repository.remove(cid)

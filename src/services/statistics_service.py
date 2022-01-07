@@ -67,7 +67,7 @@ class StatisticsService:
         '''
 
         if not validate_uuid4(tid):
-            raise UnvalidInputException("task's id")
+            raise UnvalidInputException('task´s id')
 
         self._task_repository.get_by_id(tid)
 
@@ -91,7 +91,7 @@ class StatisticsService:
         '''
 
         if not validate_uuid4(fid):
-            raise UnvalidInputException("feature's id")
+            raise UnvalidInputException('feature´s id')
 
         self._feature_repository.get_by_id(fid)
 
@@ -115,7 +115,7 @@ class StatisticsService:
         '''
 
         if not validate_uuid4(uid):
-            raise UnvalidInputException("users's id")
+            raise UnvalidInputException('users´s id')
 
         self._user_repository.get_by_id(uid)
 

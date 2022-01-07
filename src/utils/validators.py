@@ -3,7 +3,7 @@ from uuid import UUID
 
 
 def validate_uuid4(uuid: str) -> bool:
-    """validate_uuid4 is used to check if given string
+    '''validate_uuid4 is used to check if given string
     is valid uuid4 string.
 
     Args:
@@ -12,7 +12,7 @@ def validate_uuid4(uuid: str) -> bool:
     Returns:
         bool: returns valid string and if not valid,
              returns None
-    """
+    '''
     pattern = re.compile(
         r'^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$'    # pylint: disable=line-too-long
     )

@@ -39,13 +39,13 @@ class UserService:
         '''new is used to create new users
 
         Args:
-            username (str): user's unique username
-            user_role (str): user's role in the application
-            password (str): user's password as not encrypted version,
+            username (str): user´s unique username
+            user_role (str): user´s role in the application
+            password (str): user´s password as not encrypted version,
                 used to create encrypted hash
-            firstname (str): user's firstname
-            lastname (str): user's lastname
-            email (str): user's email
+            firstname (str): user´s firstname
+            lastname (str): user´s lastname
+            email (str): user´s email
 
         Raises:
             DatabaseException: raised if problems occurs while
@@ -119,7 +119,7 @@ class UserService:
         '''
 
         if not validate_uuid4(uid):
-            raise UnvalidInputException("User's id")
+            raise UnvalidInputException('User´s id')
 
         user = self._user_repository.get_by_id(uid)
         return User(user[0], user[1], user[2], user[3],
@@ -308,7 +308,7 @@ class UserService:
         return image_string(image[0], image[1])
 
     def update_profile_image(self, uid: str, img_type: str, img_data: str):
-        """update_profile_image is used to update user's
+        '''update_profile_image is used to update user´s
            profile images into the database
 
         Args:
@@ -323,7 +323,7 @@ class UserService:
                 id or mage is given
             NotExistingException: raised if user is not
                 found with given id
-        """
+        '''
         if not validate_uuid4(uid):
             raise UnvalidInputException(reason='unvalid formatting of uuid4',
                                         source='User ID')
@@ -333,7 +333,7 @@ class UserService:
 
         if img_type not in ['image/jpeg', 'image/png', 'image/gif']:
             raise UnvalidInputException('''Profile image type not supported,
-                supported types are "image/jpeg", "image/png", "image/gif"''')
+                supported types are 'image/jpeg', 'image/png', 'image/gif'''')
 
         if len(img_data) > 1000 * 1024:
             raise UnvalidInputException(
@@ -348,14 +348,14 @@ class UserService:
 
         Args:
             uid (str): id of user to be updated
-            username (str): user's username, needs to be unique
-            user_role (str): user's user role
-            password (str): user's password as not encrypted
+            username (str): user´s username, needs to be unique
+            user_role (str): user´s user role
+            password (str): user´s password as not encrypted
                 version, used to create encrypted hash
-            firstname (str): user's firstname
-            lastname (str): user's lastname
-            email (str): user's email
-            profile_image (str): user's profile image as base64 encoded
+            firstname (str): user´s firstname
+            lastname (str): user´s lastname
+            email (str): user´s email
+            profile_image (str): user´s profile image as base64 encoded
 
         Raises:
             ValueShorterThanException: raised if username or

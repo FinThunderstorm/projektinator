@@ -13,12 +13,12 @@ class UserRepository:
         '''new is used to create new users into the database.
 
         Args:
-            username (str): user's unique username
-            user_role (int): user's role in the application
-            password_hash (str): user's password in encrypted format
-            firstname (str): user's firstname
-            lastname (str): user's lastname
-            email (str): user's email address
+            username (str): user´s unique username
+            user_role (int): user´s role in the application
+            password_hash (str): user´s password in encrypted format
+            firstname (str): user´s firstname
+            lastname (str): user´s lastname
+            email (str): user´s email address
 
         Raises:
             DatabaseException: raised if problems occurs while
@@ -29,7 +29,7 @@ class UserRepository:
                 username is already in use.
 
         Returns:
-            tuple: created user's id'
+            tuple: created user´s id'
         '''
 
         values = {
@@ -54,9 +54,9 @@ class UserRepository:
             user_id = db.session.execute(sql, values).fetchone()[0]
             db.session.commit()
         except IntegrityError as error:
-            unvalid_email = re.compile(r'.*"users_email_check".*')
+            unvalid_email = re.compile(r'.*'users_email_check'.*')
             duplicate_username = re.compile(
-                r'.*violates unique constraint "users_username_key".*')
+                r'.*violates unique constraint 'users_username_key'.*')
 
             if unvalid_email.match(str(error)):
                 raise UnvalidInputException('Unvalid input',
@@ -317,7 +317,7 @@ class UserRepository:
         return [(user[0], user[1], user[2], user[3], user[4]) for user in users]
 
     def get_team_users(self, teid: str) -> [tuple]:
-        '''get_team_users is used to get all team's users for
+        '''get_team_users is used to get all team´s users for
            selecting users in the frontend
 
         If no users found, returns empty list.
@@ -350,7 +350,7 @@ class UserRepository:
 
     def update_profile_image(self, uid: str, img_type: str,
                              img_data: str) -> str:
-        """update_profile_image is used to update user's
+        '''update_profile_image is used to update user´s
            profile images into the database
 
         Args:
@@ -361,7 +361,7 @@ class UserRepository:
         Raises:
             DatabaseException: raised if problems occurs while
                 saving into the database
-        """
+        '''
 
         sql = '''
             INSERT INTO ProfileImages
@@ -392,12 +392,12 @@ class UserRepository:
 
         Args:
             uid (str): id of the user
-            username (str): user's unique username
-            user_role (int): user's role in the application
-            password_hash (str): user's password in encrypted format
-            firstname (str): user's firstname
-            lastname (str): user's lastname
-            email (str): user's email address
+            username (str): user´s unique username
+            user_role (int): user´s role in the application
+            password_hash (str): user´s password in encrypted format
+            firstname (str): user´s firstname
+            lastname (str): user´s lastname
+            email (str): user´s email address
 
         Raises:
             DatabaseException: raised if problems occurs while
@@ -406,7 +406,7 @@ class UserRepository:
                 is already in use.
 
         Returns:
-            str: user's id
+            str: user´s id
         '''
 
         values = {

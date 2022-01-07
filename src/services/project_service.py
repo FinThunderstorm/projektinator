@@ -41,7 +41,7 @@ class ProjectService:
         '''new is used to create new projects into the database
 
         Args:
-            poid (str): id of the project's owner
+            poid (str): id of the project´s owner
             name (str): name of the project
             description (str): description of the project
             flags (str): flags used to identify projects,
@@ -80,7 +80,7 @@ class ProjectService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in "one;two;three;flags;" format', 'flags')
+                'not being in 'one;two;three;flags;' format', 'flags')
 
         project_id, created, updated_on = self._project_repository.new(
             poid, name, description, flags)
@@ -96,7 +96,7 @@ class ProjectService:
 
         Args:
             pid (str): if of the project
-            poid (str): id of the project's owner
+            poid (str): id of the project´s owner
             name (str): name of the project
             description (str): description of the project
             flags (str): flags used to identify projects,
@@ -144,7 +144,7 @@ class ProjectService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in "one;two;three;flags;" format', 'flags')
+                'not being in 'one;two;three;flags;' format', 'flags')
 
         project_id, created, updated_on = self._project_repository.update(
             pid, poid, name, description, flags)
@@ -199,7 +199,7 @@ class ProjectService:
         If no features found, returns empty list.
 
         Args:
-            poid (str): id of the project's owner
+            poid (str): id of the project´s owner
 
         Raises:
             DatabaseException: raised if problems occur

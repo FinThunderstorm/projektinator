@@ -144,7 +144,7 @@ class TeamService:
         '''
 
         if not validate_uuid4(teid):
-            raise UnvalidInputException("team's id")
+            raise UnvalidInputException('team´s id')
 
         team = self._team_repository.get_by_id(teid)
         return Team(team[0], team[1], team[2], team[3],

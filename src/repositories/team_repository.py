@@ -22,7 +22,7 @@ class TeamRepository:
                 is already in some team
 
         Returns:
-            str: created team's id
+            str: created team´s id
         '''
 
         sql_teams = '''
@@ -184,7 +184,7 @@ class TeamRepository:
         try:
             name = db.session.execute(sql, {'id': teid}).fetchone()
         except Exception as error:
-            raise DatabaseException("While getting team's name") from error
+            raise DatabaseException('While getting team´s name') from error
 
         return name[0]
 
@@ -204,7 +204,7 @@ class TeamRepository:
                 is already in some team
 
         Returns:
-            str: updated team's id
+            str: updated team´s id
         '''
 
         values = {

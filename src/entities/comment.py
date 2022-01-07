@@ -24,8 +24,8 @@ class Comment:
 
         Args:
             cid (str): id of comment, uuid4 formatted by database
-            aid (str): id of comment's assignee
-            aname(str): name of comment's assignee
+            aid (str): id of comment´s assignee
+            aname(str): name of comment´s assignee
             tspent (float): used time for this comment
             comment (str): description of what have been done
             created (datetime): datetime when added into database
