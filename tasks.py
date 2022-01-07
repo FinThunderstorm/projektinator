@@ -10,7 +10,7 @@ def start(ctx):
 
 @task
 def start_production(ctx):
-    ctx.run(f'cd src && gunicorn app:app --bind 0.0.0.0:{getenv('PORT')}')
+    ctx.run(f'cd src && gunicorn app:app --bind 0.0.0.0:{getenv("PORT")}')
 
 
 @task

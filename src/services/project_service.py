@@ -80,7 +80,7 @@ class ProjectService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in 'one;two;three;flags;' format', 'flags')
+                'not being in "one;two;three;flags;" format', 'flags')
 
         project_id, created, updated_on = self._project_repository.new(
             poid, name, description, flags)
@@ -144,7 +144,7 @@ class ProjectService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in 'one;two;three;flags;' format', 'flags')
+                'not being in "one;two;three;flags;" format', 'flags')
 
         project_id, created, updated_on = self._project_repository.update(
             pid, poid, name, description, flags)

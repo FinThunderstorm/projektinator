@@ -118,7 +118,7 @@ class TaskService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in 'one;two;three;flags;' format', 'flags')
+                'not being in "one;two;three;flags;" format', 'flags')
 
         try:
             priority = int(priority)
@@ -367,7 +367,7 @@ class TaskService:
         if not validate_flags(flags):
             raise UnvalidInputException(
                 'Unvalid formatting',
-                'not being in 'one;two;three;flags;' format', 'flags')
+                'not being in "one;two;three;flags;" format', 'flags')
 
         try:
             priority = int(priority)

@@ -333,7 +333,7 @@ class UserService:
 
         if img_type not in ['image/jpeg', 'image/png', 'image/gif']:
             raise UnvalidInputException('''Profile image type not supported,
-                supported types are 'image/jpeg', 'image/png', 'image/gif'''')
+                supported types are "image/jpeg", "image/png", "image/gif"''')
 
         if len(img_data) > 1000 * 1024:
             raise UnvalidInputException(

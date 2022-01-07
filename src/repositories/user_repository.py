@@ -54,9 +54,9 @@ class UserRepository:
             user_id = db.session.execute(sql, values).fetchone()[0]
             db.session.commit()
         except IntegrityError as error:
-            unvalid_email = re.compile(r'.*'users_email_check'.*')
+            unvalid_email = re.compile(r'.*"users_email_check".*')
             duplicate_username = re.compile(
-                r'.*violates unique constraint 'users_username_key'.*')
+                r'.*violates unique constraint "users_username_key".*')
 
             if unvalid_email.match(str(error)):
                 raise UnvalidInputException('Unvalid input',

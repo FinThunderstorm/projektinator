@@ -88,7 +88,7 @@ class StatusRepository:
         try:
             name = db.session.execute(sql, {'id': sid}).fetchone()
         except Exception as error:
-            raise DatabaseException('While getting status' name') from error
+            raise DatabaseException('While getting status´ name') from error
 
         if not name:
             raise NotExistingException('Status')
