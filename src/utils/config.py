@@ -6,8 +6,12 @@ mode = getenv('mode')
 
 csp = {
     'default-src': [
-        '\'self\'', 'https://fonts.googleapis.com/',
-        'https://fonts.gstatic.com/', 'code.getmdl.io', 'cdn.jsdelivr.net',
-        '\'unsafe-inline\''
+        '\'self\'',
+        'https://fonts.googleapis.com/',
+        'https://fonts.gstatic.com/',
+        'code.getmdl.io',
+        'cdn.jsdelivr.net',
+        '\'unsafe-inline\'',
+        'data:',
     ]
 }
